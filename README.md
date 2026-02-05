@@ -4,6 +4,16 @@ Data Structure Visualization project for CS163 - Data Structures.
 <!-- This project uses **C++**, **CMake**, and the **raylib** graphics library. -->
 This project uses **C++**, **CMake**, the **SFML** graphics library, and the **Dear ImGui** and **ImGui-SFML** GUI libraries.
 
+This project contains visualizations for these data structures and algorithms:
+
+- Singly linked list
+
+- Hash table *(linear probing)*
+
+- Trees: AVL, Trie *(26-ary tree)*
+
+- Graphs: Minimum Spanning Tree, Shortest Path *(Dijkstra's algorithm)*
+
 ## Building
 
 This project uses **CMake** as its build system.
@@ -20,14 +30,31 @@ Clone this repository using git:
 ```bash
 git clone --single-branch --branch main https://github.com/khanhf-ng820/CS163-DataVisualization.git
 ```
+Enter the repository folder:
+```bash
+cd CS163-DataVisualization
+```
+
+If you use Linux, install SFML's dependencies using your system package manager. On Ubuntu and other Debian-based distributions, you can use the following commands:
+```bash
+sudo apt update
+sudo apt install \
+	libxrandr-dev \
+	libxcursor-dev \
+	libxi-dev \
+	libudev-dev \
+	libfreetype-dev \
+	libflac-dev \
+	libvorbis-dev \
+	libgl1-mesa-dev \
+	libegl1-mesa-dev \
+	libfreetype-dev
+```
 
 ### 2. Build the project
-Open the Terminal in the **project root folder** and run:
 
 **macOS** and **Linux:**
 ```bash
-#!/bin/bash
-
 # Create a build folder
 mkdir build
 cd build
@@ -39,11 +66,8 @@ cmake -DCMAKE_BUILD_TYPE=Release -S .. -B .
 cmake --build .
 ```
 
-
 **Windows:**
 ```bash
-#!/bin/bash
-
 # Create a build folder
 mkdir build
 cd build
@@ -58,15 +82,15 @@ cmake -DCMAKE_BUILD_TYPE=Release -S .. -B .
 cmake --build .
 ```
 
-### 3. Running the program
-You can run the program by double-clicking the application in the ```build/``` folder inside the project's directory in File Explorer/Finder, or by open the Terminal in the **project root folder** and run:
+### 3. Running the application
+You can run the application by double-clicking the application in the ```build/``` folder inside the project's directory in File Explorer/Finder, or by open the Terminal in the **project root folder** and run:
 
 **macOS** and **Linux:**
 ```bash
-./build/DSVisualizer
+./build/src/DSVisualizer
 ```
 
 **Windows:**
-```bash
-.\build\DSVisualizer.exe
+```powershell
+.\build\src\DSVisualizer.exe
 ```
