@@ -6,6 +6,8 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include "Program.h"
+
 
 
 int main() {
@@ -28,11 +30,15 @@ int main() {
 
 		ImGui::SFML::Update(window, deltaClock.restart());
 
+
 		// Show the demo window
 		// ImGui::ShowDemoWindow();
 
 
-		ImGui::Begin("Hello, world!");
+		ImGui::Begin("Hello, world!",
+			nullptr,
+			ImGuiWindowFlags_NoCollapse
+		);
 		ImGui::Button("Look at this pretty button");
 		char* buf = new char[25];
 		// ImGui::InputText("string", buf, IM_COUNTOF(buf));
@@ -40,6 +46,7 @@ int main() {
 		float f;
 		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
 		ImGui::End();
+
 
 		ImGui::SetNextWindowPos({200, 150});
 		ImGui::Begin("BtnWin",
