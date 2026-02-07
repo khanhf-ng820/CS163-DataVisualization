@@ -1,11 +1,9 @@
 #pragma once
 #include "imgui.h"
 #include "imgui-SFML.h"
-
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/Window/Event.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
+#include <SFML/Window.hpp>
 
 #include <iostream>
 #include <string>
@@ -24,6 +22,9 @@ public:
 	Program();
 	// Main loop of program
 	void mainLoop();
+	// Function to update View based on new window size
+	void resizeView();
+
 
 private:
 	// Constants
@@ -35,7 +36,12 @@ private:
 
 	sf::RenderWindow window;
 	sf::Clock deltaClock;
+	sf::View view; // The app's view
 	bool init_successful = true;
+
+	bool draggingCanvas = false; // If mouse is dragging canvas
+	sf::Vector2f lastWorldPos; // Position of last dragged view
+
 
 	ProgramState pgState;
 };

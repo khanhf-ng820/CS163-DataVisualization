@@ -3,5 +3,6 @@
 # Build directory
 build/
 
-
+notes.txt
+notes.cpp
 
