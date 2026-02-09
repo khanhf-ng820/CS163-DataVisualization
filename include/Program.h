@@ -15,7 +15,11 @@ enum class ProgramState {
 	CHOOSING_DS_MENU
 };
 
-
+struct ScaleInfo {
+    float scaleFactor;
+    sf::Vector2f uiOffset;
+    sf::Vector2f viewSize;
+};
 
 class Program {
 public:
@@ -25,13 +29,16 @@ public:
 	// Function to update View based on new window size
 	void resizeView();
 
+	// Display main menu screen
+	void displayMainMenu();
+
 
 private:
 	// Constants
 	const std::string PROGRAM_WINDOW_NAME = "Data Structure Visualizer";
 	// Logical resolution
-	const float GAME_WIDTH = 1920.0f;
-	const float GAME_HEIGHT = 1080.0f;
+	const float NORMAL_WIDTH = 1920.0f;
+	const float NORMAL_HEIGHT = 1080.0f;
 	const unsigned int FRAMERATE_LIMIT = 60;
 
 	sf::RenderWindow window;
@@ -44,4 +51,8 @@ private:
 
 
 	ProgramState pgState;
+
+
+
+
 };

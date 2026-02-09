@@ -3,8 +3,10 @@
 
 
 Program::Program()
-	: window(sf::VideoMode({static_cast<unsigned int>(GAME_WIDTH), static_cast<unsigned int>(GAME_HEIGHT)}), PROGRAM_WINDOW_NAME)
-	// , view(sf::FloatRect({0.f, 0.f}, {GAME_WIDTH, GAME_HEIGHT}))
+	: window(sf::VideoMode({static_cast<unsigned int>(NORMAL_WIDTH), static_cast<unsigned int>(NORMAL_HEIGHT)}), PROGRAM_WINDOW_NAME
+		// , sf::Style::Titlebar | sf::Style::Close
+	)
+	// , view(sf::FloatRect({0.f, 0.f}, {NORMAL_WIDTH, NORMAL_HEIGHT}))
 	, view(window.getDefaultView())
 {
 	window.requestFocus();
@@ -18,7 +20,7 @@ Program::Program()
 	ImGuiStyle& style = ImGui::GetStyle();
 	// Modify the window background color (RGB alpha)
 	style.Colors[ImGuiCol_WindowBg] = ImVec4(0.6f, 0.4f, 0.6f, 0.9f);
-	// Can adjust padding, rounding, borders, etc., here.
+	// Can adjust padding, rounding, borders,...
 
 	resizeView();
 }
@@ -30,13 +32,39 @@ void Program::mainLoop() {
 		return; // Initialization unsuccessful
 	}
 
-	sf::CircleShape shape(100.0f);
-	shape.setFillColor(sf::Color::Green);
-	sf::RectangleShape rectangle({GAME_WIDTH, GAME_HEIGHT});
-	rectangle.setFillColor(sf::Color::Blue);
-
 	char* buf = new char[25];
 	float f;
+
+	sf::CircleShape shape(100.0f);
+	shape.setFillColor(sf::Color::Green);
+	sf::RectangleShape rectangle({NORMAL_WIDTH, NORMAL_HEIGHT});
+	rectangle.setFillColor(sf::Color::Blue);
+
+    sf::RectangleShape border({NORMAL_WIDTH, NORMAL_HEIGHT});
+    border.setOrigin({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f}); // origin at center
+    border.setPosition({0.f, 0.f}); // position at 0,0
+    border.setFillColor(sf::Color::Transparent);
+    border.setOutlineColor(sf::Color::Red);
+    border.setOutlineThickness(5.f);
+
+    sf::CircleShape splitCircle(60.f);
+    splitCircle.setFillColor(sf::Color::Yellow);
+    
+    // set origin
+    splitCircle.setOrigin({60.f, 60.f}); 
+    
+    // set position
+    splitCircle.setPosition({NORMAL_WIDTH / 2.f, 0.f});
+
+    sf::RectangleShape cornerBox({100.f, 100.f});
+    cornerBox.setFillColor(sf::Color::Green);
+    
+    // set origin
+    cornerBox.setOrigin({50.f, 50.f});
+    
+    // set position
+    cornerBox.setPosition({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f});
+
 
 	while (window.isOpen()) {
 		while (const auto event = window.pollEvent()) {
@@ -148,19 +176,25 @@ void Program::mainLoop() {
 
 
 		// window.clear();
-		window.clear(sf::Color(20, 20, 20));
+		window.clear(sf::Color(20, 100, 20));
 
 		// Use view of app (centered and scaled)
 		window.setView(view);
 
+
+		// Draw objects
 		window.draw(rectangle);
 		window.draw(shape);
+        window.draw(border);      // Border
+        window.draw(splitCircle); // Yellow circle on border
+        window.draw(cornerBox);   // Box on border
 
+
+		ImGui::SFML::Render(window);
 		// Use default view to draw ImGui GUI
 		// ImGui is drawn over entire window instead
 		window.setView(window.getDefaultView());
 		
-		ImGui::SFML::Render(window);
 		window.display();
 	}
 
@@ -174,26 +208,20 @@ void Program::mainLoop() {
 
 // Function to update view based on new window resolution
 void Program::resizeView() {
-	float windowRatio = static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y);
-	float gameRatio = GAME_WIDTH / GAME_HEIGHT;
-	float sizeX = 1.0f;
-	float sizeY = 1.0f;
-	float posX = 0.0f;
-	float posY = 0.0f;
+    sf::Vector2f windowSize = sf::Vector2f(window.getSize());
 
-	// Compare ratios to decide Letterboxing or Pillarboxing
-	if (windowRatio >= gameRatio) {
-		// Wider -> Pillarboxing
-		sizeX = gameRatio / windowRatio;
-		posX = (1.0f - sizeX) / 2.0f;
-	} else {
-		// Taller -> Letterboxing
-		sizeY = windowRatio / gameRatio;
-		posY = (1.0f - sizeY) / 2.0f;
-	}
+    // Calculate amount to scale
+    float scaleX = windowSize.x / NORMAL_WIDTH;
+    float scaleY = windowSize.y / NORMAL_HEIGHT;
 
-	// Set Viewport
-	// Viewport uses coordinates 0.0 -> 1.0
-	view.setSize({GAME_WIDTH, GAME_HEIGHT});
-	view.setViewport(sf::FloatRect({posX, posY}, {sizeX, sizeY}));
+    // Use smaller scale factor
+    float scale = std::min(scaleX, scaleY);
+
+    // Set size of view to see the outside
+    if (scale > 0.0f) { // avoid div by 0
+        view.setSize({windowSize.x / scale, windowSize.y / scale});
+    }
+    
+    // set center of view camera
+    view.setCenter({0.0f, 0.0f});
 }
