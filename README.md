@@ -26,7 +26,7 @@ Download and make sure you have:
 
 Make sure all of them are available in **PATH** in order to be used in the Terminal, and make sure you have Internet connection while following these building steps.
 
-Clone this repository using git:
+Clone this repository using *git*:
 ```bash
 git clone --single-branch --branch main https://github.com/khanhf-ng820/CS163-DataVisualization.git
 ```
@@ -35,7 +35,7 @@ Enter the repository folder:
 cd CS163-DataVisualization
 ```
 
-If you use Linux, install SFML's dependencies using your system package manager. On Ubuntu and other Debian-based distributions, you can use the following commands:
+If you use **Linux**, install SFML's dependencies using your system package manager. On Ubuntu and other Debian-based distributions, you can use the following commands:
 ```bash
 sudo apt update
 sudo apt install \
@@ -83,7 +83,7 @@ cmake --build .
 ```
 
 ### 3. Running the application
-You can run the application by double-clicking the application in the ```build/``` folder inside the project's directory in File Explorer/Finder, or by open the Terminal in the **project root folder** and run:
+You can run the application by double-clicking the application in the ```build/``` folder inside the project's directory in File Explorer/Finder, or you can open the Terminal in the **project root folder** and run:
 
 **macOS** and **Linux:**
 ```bash

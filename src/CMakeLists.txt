@@ -8,7 +8,11 @@ set(PROJECT_INCLUDE "${CMAKE_CURRENT_LIST_DIR}/../include/")
 add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE})
+
 target_link_libraries(${PROJECT_NAME} PRIVATE ImGui-SFML::ImGui-SFML)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE ASSET_DIR="${CMAKE_CURRENT_LIST_DIR}/../assets")
+
 
 
 # Copy DLLs needed for runtime on Windows

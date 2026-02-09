@@ -8,9 +8,12 @@ Program::Program()
 	)
 	// , view(sf::FloatRect({0.f, 0.f}, {NORMAL_WIDTH, NORMAL_HEIGHT}))
 	, view(window.getDefaultView())
+	, textFont(fs::path(ASSET_DIR) / "Roboto_Mono/RobotoMono-VariableFont_wght.ttf")
 {
 	window.requestFocus();
 	window.setFramerateLimit(FRAMERATE_LIMIT);
+	window.setMinimumSize(sf::Vector2u(800, 600));
+	// window.setMaximumSize(sf::Vector2u(1200, 900));
 	init_successful = ImGui::SFML::Init(window);
 	ImGui::StyleColorsDark();
 
@@ -21,8 +24,30 @@ Program::Program()
 	// Modify the window background color (RGB alpha)
 	style.Colors[ImGuiCol_WindowBg] = ImVec4(0.6f, 0.4f, 0.6f, 0.9f);
 	// Can adjust padding, rounding, borders,...
+	// io.FontGlobalScale = 2.0f;
 
 	resizeView();
+}
+
+
+// Function to update view based on new window resolution
+void Program::resizeView() {
+	sf::Vector2f windowSize = sf::Vector2f(window.getSize());
+
+	// Calculate amount to scale
+	float scaleX = windowSize.x / NORMAL_WIDTH;
+	float scaleY = windowSize.y / NORMAL_HEIGHT;
+
+	// Use smaller scale factor
+	float scale = std::min(scaleX, scaleY);
+
+	// Set size of view to see the outside
+	if (scale > 0.0f) { // avoid div by 0
+		view.setSize({windowSize.x / scale, windowSize.y / scale});
+	}
+	
+	// set center of view camera
+	view.setCenter({0.0f, 0.0f});
 }
 
 
@@ -32,38 +57,56 @@ void Program::mainLoop() {
 		return; // Initialization unsuccessful
 	}
 
-	char* buf = new char[25];
-	float f;
-
+	// REMEMBER:
+	// Drawing SFML: The center of the window is now (0, 0) coordinates
+	// Drawing GUI: The top-left of the window is (0, 0) coordinates
 	sf::CircleShape shape(100.0f);
 	shape.setFillColor(sf::Color::Green);
 	sf::RectangleShape rectangle({NORMAL_WIDTH, NORMAL_HEIGHT});
 	rectangle.setFillColor(sf::Color::Blue);
 
-    sf::RectangleShape border({NORMAL_WIDTH, NORMAL_HEIGHT});
-    border.setOrigin({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f}); // origin at center
-    border.setPosition({0.f, 0.f}); // position at 0,0
-    border.setFillColor(sf::Color::Transparent);
-    border.setOutlineColor(sf::Color::Red);
-    border.setOutlineThickness(5.f);
+	sf::RectangleShape border({NORMAL_WIDTH, NORMAL_HEIGHT});
+	border.setOrigin({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f}); // origin at center
+	border.setPosition({0.f, 0.f}); // position at 0,0
+	border.setFillColor(sf::Color::Transparent);
+	border.setOutlineColor(sf::Color::Red);
+	border.setOutlineThickness(5.f);
 
-    sf::CircleShape splitCircle(60.f);
-    splitCircle.setFillColor(sf::Color::Yellow);
-    
-    // set origin
-    splitCircle.setOrigin({60.f, 60.f}); 
-    
-    // set position
-    splitCircle.setPosition({NORMAL_WIDTH / 2.f, 0.f});
+	sf::CircleShape splitCircle(60.f);
+	splitCircle.setFillColor(sf::Color::Yellow);
+	// set origin
+	splitCircle.setOrigin({60.f, 60.f}); 
+	// set position
+	splitCircle.setPosition({NORMAL_WIDTH / 2.f, 0.f});
 
-    sf::RectangleShape cornerBox({100.f, 100.f});
-    cornerBox.setFillColor(sf::Color::Green);
-    
-    // set origin
-    cornerBox.setOrigin({50.f, 50.f});
-    
-    // set position
-    cornerBox.setPosition({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f});
+	sf::RectangleShape cornerBox({100.f, 100.f});
+	cornerBox.setFillColor(sf::Color::Green);
+	// set origin
+	cornerBox.setOrigin({50.f, 50.f});
+	// set position
+	cornerBox.setPosition({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f});
+
+
+	sf::Text text(textFont, "Data Structure Visualizer", 40);
+	text.setFillColor(sf::Color::White);
+
+	// 1. Measure unscaled text
+	sf::FloatRect bounds = text.getLocalBounds();
+
+	// 2. Scale so the width matches your desired width
+	float targetWidth = 1000.f;
+	float scale = targetWidth / bounds.size.x;
+	text.setScale({scale, scale});
+
+	// 3. Set origin to the visual center
+	text.setOrigin({
+		bounds.size.x / 2.f,
+		bounds.size.y / 2.f
+	});
+	// 4. Position the center where you want it
+	sf::Vector2u window_size = window.getSize();
+	text.setPosition({0.f, -static_cast<float>(window_size.y) / 4});
+
 
 
 	while (window.isOpen()) {
@@ -84,6 +127,7 @@ void Program::mainLoop() {
 				defaultView.setSize({static_cast<float>(resized->size.x), static_cast<float>(resized->size.y)});
 				// Don't set viewport to defaultView because we want UI to cover entire window
 			}
+			if (!allowDragCanvas) continue;
 			// Start dragging
 			if (const auto* mb = event->getIf<sf::Event::MouseButtonPressed>())
 			{
@@ -119,59 +163,19 @@ void Program::mainLoop() {
 
 		ImGui::SFML::Update(window, deltaClock.restart());
 
-
-		// Show the demo window
-		// ImGui::ShowDemoWindow();
-
-
-		ImGui::Begin("Hello, world!",
-			nullptr
-			// ImGuiWindowFlags_NoCollapse
-			// ImGuiWindowFlags_NoBackground
-		);
-		ImGui::Button("Look at this pretty button");
-		// char buf[25];
-		// ImGui::InputText("string", buf, IM_COUNTOF(buf));
-		ImGui::InputText("string", buf, 25);
-		// float f;
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-		const char* items[] = { "Option 1", "Option 2", "Option 3", "Option 4" };
-		static int current_item = 0;
-
-		if (ImGui::BeginCombo("##mycombo", items[current_item])) { // Pass the "current" item name as the preview
-			for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
-				bool is_selected = (current_item == n);
-				if (ImGui::Selectable(items[n], is_selected)) {
-					current_item = n;
-				}
-
-				// Set the initial focus when opening the combo (scrolling + keyboard navigation)
-				if (is_selected) {
-					ImGui::SetItemDefaultFocus();
-				}
-			}
-			ImGui::EndCombo();
-		}
-		ImGui::End();
+		// Get the current window size
+		window_size = window.getSize();
 
 
-		ImGui::SetNextWindowPos({200, 150});
-		ImGui::Begin("BtnWin",
-			nullptr,
-			ImGuiWindowFlags_NoTitleBar |
-			ImGuiWindowFlags_NoCollapse |
-			ImGuiWindowFlags_NoResize |
-			ImGuiWindowFlags_NoMove |
-			ImGuiWindowFlags_NoScrollbar |
-			ImGuiWindowFlags_NoBackground
-		);
 
-		if (ImGui::Button("OK", {120, 40})) {
-			// clicked
-			printf("%s %f\nButton clicked!\n", buf, f);
-		}
-
-		ImGui::End();
+		// Display GUI
+		switch (programState) {
+		case ProgramState::MAIN_MENU:
+			displayMainMenuScreenGUI();
+			break;
+		default:
+			break;
+		};
 
 
 
@@ -185,9 +189,10 @@ void Program::mainLoop() {
 		// Draw objects
 		window.draw(rectangle);
 		window.draw(shape);
-        window.draw(border);      // Border
-        window.draw(splitCircle); // Yellow circle on border
-        window.draw(cornerBox);   // Box on border
+		window.draw(border);      // Border
+		window.draw(splitCircle); // Yellow circle on border
+		window.draw(cornerBox);   // Box on border
+		window.draw(text);        // Text
 
 
 		ImGui::SFML::Render(window);
@@ -206,22 +211,117 @@ void Program::mainLoop() {
 }
 
 
-// Function to update view based on new window resolution
-void Program::resizeView() {
-    sf::Vector2f windowSize = sf::Vector2f(window.getSize());
 
-    // Calculate amount to scale
-    float scaleX = windowSize.x / NORMAL_WIDTH;
-    float scaleY = windowSize.y / NORMAL_HEIGHT;
 
-    // Use smaller scale factor
-    float scale = std::min(scaleX, scaleY);
+// Display test screen (FOR TESTING ONLY)
+// void displayTestScreen();
 
-    // Set size of view to see the outside
-    if (scale > 0.0f) { // avoid div by 0
-        view.setSize({windowSize.x / scale, windowSize.y / scale});
-    }
-    
-    // set center of view camera
-    view.setCenter({0.0f, 0.0f});
+// Display main menu screen
+void Program::initMainMenuScreen() {
+	allowDragCanvas = false;
+}
+
+void Program::displayMainMenuScreenSFML() {
+
+}
+
+void Program::displayMainMenuScreenGUI() {
+	// Show the demo window
+	// ImGui::ShowDemoWindow();
+
+	// Get the current window size
+	sf::Vector2u window_size = window.getSize();
+
+	ImGui::Begin("Hello, world!",
+		nullptr
+		// ImGuiWindowFlags_NoCollapse
+		// ImGuiWindowFlags_NoBackground
+	);
+	ImGui::Button("Look at this pretty button");
+	// char buf[25];
+	// ImGui::InputText("string", buf, IM_COUNTOF(buf));
+	ImGui::InputText("string", buf, 25);
+	// float f;
+	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+	const char* items[] = { "Option 1", "Option 2", "Option 3", "Option 4" };
+	static int current_item = 0;
+
+	if (ImGui::BeginCombo("##mycombo", items[current_item])) { // Pass the "current" item name as the preview
+		for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
+			bool is_selected = (current_item == n);
+			if (ImGui::Selectable(items[n], is_selected)) {
+				current_item = n;
+			}
+
+			// Set the initial focus when opening the combo (scrolling + keyboard navigation)
+			if (is_selected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+	ImGui::End();
+
+
+	sf::Vector2u btnSize, btnPosition;
+	btnSize = sf::Vector2u(120, 40);
+	btnPosition = window_size / 2U;
+	ImGui::SetNextWindowPos(btnPosition - btnSize / 2U);
+	ImGui::Begin("StartBtn",
+		nullptr,
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoBackground
+	);
+
+	if (ImGui::Button("Start", btnSize)) { // clicked
+		printf("%s %f\nButton clicked!\n", buf, f);
+	}
+	ImGui::End();
+
+
+	btnSize = sf::Vector2u(120, 40);
+	btnPosition = window_size / 2U + sf::Vector2u(0, 100);
+	ImGui::SetNextWindowPos(btnPosition - btnSize / 2U);
+	ImGui::Begin("QuitBtn",
+		nullptr,
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoBackground
+	);
+
+	if (ImGui::Button("Quit", btnSize)) { // clicked
+		printf("Program exited.\n");
+		window.close();
+	}
+	ImGui::End();
+
+
+	ImGui::SetNextWindowPos({200, 150});
+	ImGui::Begin("BtnWin",
+		nullptr,
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoBackground
+	);
+
+	if (ImGui::Button("OK", {120, 40})) {
+		// clicked
+		printf("%s %f\nButton clicked!\n", buf, f);
+	}
+
+	ImGui::End();
+}
+
+void Program::finishMainMenuScreen() {
+
 }
