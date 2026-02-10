@@ -25,6 +25,7 @@ struct ScaleInfo {
 	sf::Vector2f viewSize;
 };
 
+
 class Program {
 public:
 	Program();
@@ -45,6 +46,12 @@ public:
 	void displayMainMenuScreenGUI();
 	void finishMainMenuScreen();
 
+	// Display settings menu screen
+	void initSettingsMenuScreen();
+	void displaySettingsMenuScreenSFML();
+	void displaySettingsMenuScreenGUI();
+	void finishSettingsMenuScreen();
+
 
 
 private:
@@ -54,6 +61,7 @@ private:
 	const float NORMAL_WIDTH = 1920.0f;
 	const float NORMAL_HEIGHT = 1080.0f;
 	const unsigned int FRAMERATE_LIMIT = 60;
+	const sf::Vector2u MINIMUM_WINDOW_SIZE = {800, 600};
 
 	sf::RenderWindow window;
 	sf::Clock deltaClock;

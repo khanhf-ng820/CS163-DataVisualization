@@ -1,4 +1,6 @@
 #include "Program.h"
+#include "UILayout/MainMenu.h"
+#include "UILayout/Settings.h"
 
 
 
