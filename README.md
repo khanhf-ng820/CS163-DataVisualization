@@ -10,9 +10,9 @@ This project contains visualizations for these data structures and algorithms:
 
 - Hash table *(linear probing)*
 
-- Trees: AVL, Trie *(26-ary tree)*
+- **Trees:** AVL, Trie *(26-ary tree)*
 
-- Graphs: Minimum Spanning Tree, Shortest Path *(Dijkstra's algorithm)*
+- **Graphs:** Minimum Spanning Tree, Shortest Path *(Dijkstra's algorithm)*
 
 ## Building
 

@@ -4,6 +4,8 @@
 #define ALL_DS_TYPE_LIST { "Lists - Singly Linked List", "Hash Table - Linear Probing", "Trees - AVL Tree", "Trees - Trie", "Graphs - Minimum Spanning Tree", "Graphs - Shortest Path (Dijkstra\'s algorithm)" }
 
 
+const std::vector<std::string> ALL_DS_LIST = ALL_DS_TYPE_LIST;
+
 
 enum class DSType {
 	SINGLY_LINKED_LIST,
@@ -26,3 +28,5 @@ enum DataInitOption {
 
 DSType strToDSType(std::string str);
 std::string getDataFileName(std::string ds_selection_str);
+
+std::string getLongestDS_Str();

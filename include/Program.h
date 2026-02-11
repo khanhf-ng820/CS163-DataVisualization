@@ -20,7 +20,13 @@ namespace fs = std::filesystem;
 enum class ProgramState {
 	MAIN_MENU,
 	SETTINGS_MENU,
-	CHOOSE_DS_MENU
+	CHOOSE_DS_MENU,
+	VIS_SLL_SCREEN,
+	VIS_HASH_SCREEN,
+	VIS_AVL_SCREEN,
+	VIS_TRIE_SCREEN,
+	VIS_MST_SCREEN,
+	VIS_DIJKSTRA_SCREEN
 };
 
 struct ScaleInfo {

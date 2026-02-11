@@ -45,6 +45,18 @@ std::string getDataFileName(std::string ds_selection_str) {
 	}
 }
 
+std::string getLongestDS_Str() {
+	float maxStringSize = 0; std::string longestString = "";
+	for (const auto& DS_string : ALL_DS_LIST) {
+		float textSize = ImGui::CalcTextSize(DS_string.c_str()).x;
+		if (textSize > maxStringSize) {
+			maxStringSize = textSize;
+			longestString = DS_string;
+		}
+	}
+	return longestString;
+}
+
 
 
 
@@ -187,19 +199,18 @@ void Program::displayChooseDSMenuScreenGUI() {
 		resizeView();
 	}
 
-	const std::string titleText = "Choose a data structure to visualize:";
+	std::string titleText = "Choose a data structure to visualize:";
 	ImVec2 textSize = ImGui::CalcTextSize(titleText.c_str());
-	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (Im_gui_window_size.x/2.f) - textSize.x/2.f);
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + Im_gui_window_size.x/2.f - textSize.x/2.f);
 	ImGui::Text("%s", titleText.c_str());
 
-	// const char* DSOptions[] = {
-	// 	"Lists - Singly Linked List",
-	// 	"Hash Table - Linear Probing",
-	// 	"Trees - AVL Tree",
-	// 	"Trees - Trie",
-	// 	"Graphs - Minimum Spanning Tree",
-	// 	"Graphs - Shortest Path (Dijkstra\'s algorithm)"
-	// };
+	// Get width of combo before drawing
+	// float DSComboWidth = ImGui::CalcTextSize(getLongestDS_Str().c_str()).x + stylePtr->FramePadding.x * 2.0f;
+	float DSComboWidth = ImGui::CalcTextSize(getLongestDS_Str().c_str()).x * 1.2;
+	ImGui::SetNextItemWidth(DSComboWidth);
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + Im_gui_window_size.x/2.f - DSComboWidth/2);
+
+	// Draw combo
 	const char* DSOptions[] = ALL_DS_TYPE_LIST;
 	const std::vector<std::string> DSVectors = ALL_DS_TYPE_LIST;
 	static int current_DS_item = 0;
@@ -219,11 +230,18 @@ void Program::displayChooseDSMenuScreenGUI() {
 		ImGui::EndCombo();
 	}
 	// ImGui::PopStyleColor();
+	// Selected DS type
+	DSType chosenDSType = strToDSType(DSVectors[current_DS_item]);
 
 	// ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
 	ImGui::Dummy(ImVec2(10, 10)); ImGui::Separator(); ImGui::Dummy(ImVec2(10, 10));
 
-	ImGui::Text("Choose initial starting data:");
+	titleText = "Choose initial starting data:";
+	textSize = ImGui::CalcTextSize(titleText.c_str());
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + Im_gui_window_size.x/2.f - textSize.x/2.f);
+	ImGui::Text("%s", titleText.c_str());
+
+	ImGui::BeginGroup();
 	static int dataInitOption = DATA_INIT_EMPTY; // State variable to hold the selected option's value
 	ImGui::RadioButton("Empty data", &dataInitOption, DATA_INIT_EMPTY); // Value 0
 	ImGui::SameLine();
@@ -243,11 +261,12 @@ void Program::displayChooseDSMenuScreenGUI() {
 		ImGui::Text("\"data/%s\"", dataFileName.c_str());
 		ImGui::PopStyleColor();
 		ImGui::SameLine();
-		ImGui::Text(".)");
+		ImGui::Text(" before confirmation.)");
 		ImGui::PopStyleVar();
 	} else {
 		ImGui::Dummy(ImVec2(ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight()));
 	}
+	ImGui::EndGroup();
 
 
 	ImGui::Dummy(ImVec2(20, 20));
@@ -256,6 +275,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 	if (ImGui::Button("Confirm", sf::Vector2f(btnSize))) {
 		printf("%s %d\n", DSVectors[current_DS_item].c_str(), dataInitOption);
 	}
+
 	ImGui::End();
 }
 
