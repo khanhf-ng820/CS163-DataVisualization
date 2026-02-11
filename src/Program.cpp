@@ -14,15 +14,22 @@ Program::Program()
 	window.setFramerateLimit(FRAMERATE_LIMIT);
 	window.setMinimumSize(MINIMUM_WINDOW_SIZE);
 	// window.setMaximumSize(sf::Vector2u(1200, 900));
+
 	init_successful = ImGui::SFML::Init(window);
 	ImGui::StyleColorsDark();
+	// ImGui::StyleColorsClassic();
 
 	// Styling ImGui windows
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuiStyle& style = ImGui::GetStyle();
+	ioPtr = &io;
+	stylePtr = &style;
 	// Modify the window background color (RGB alpha)
-	style.Colors[ImGuiCol_WindowBg] = ImVec4(0.6f, 0.4f, 0.6f, 0.9f);
+	// style.Colors[ImGuiCol_WindowBg] = ImVec4(0.6f, 0.4f, 0.6f, 0.9f);
+	// style.Colors[ImGuiCol_WindowBg] = ImVec4(173.f/255, 216.f/255, 230.f/255, 0.6f);
+	// style.Colors[ImGuiCol_PopupBg] = ImVec4(173.f/255, 216.f/255, 230.f/255, 1.f);
+	// style.Colors[ImGuiCol_Text] = ImVec4(0.f, 0.f, 0.f, 1.f);
 	// Can adjust padding, rounding, borders,...
 	// io.FontGlobalScale = 2.0f;
 
@@ -88,13 +95,13 @@ void Program::mainLoop() {
 
 
 	sf::Text text(textFont, "Data Structure Visualizer", 40);
-	text.setFillColor(sf::Color::White);
+	text.setFillColor(sf::Color::Black);
 
 	// 1. Measure unscaled text
 	sf::FloatRect bounds = text.getLocalBounds();
 
 	// 2. Scale so the width matches your desired width
-	float targetWidth = 1000.f;
+	const float targetWidth = NORMAL_WIDTH * 0.625;
 	float scale = targetWidth / bounds.size.x;
 	text.setScale({scale, scale});
 
@@ -115,6 +122,9 @@ void Program::mainLoop() {
 		break;
 	case ProgramState::SETTINGS_MENU:
 		initSettingsMenuScreen();
+		break;
+	case ProgramState::CHOOSE_DS_MENU:
+		initChooseDSMenuScreen();
 		break;
 	default:
 		break;
@@ -142,11 +152,9 @@ void Program::mainLoop() {
 			}
 			if (!allowDragCanvas) continue;
 			// Start dragging
-			if (const auto* mb = event->getIf<sf::Event::MouseButtonPressed>())
-			{
+			if (const auto* mb = event->getIf<sf::Event::MouseButtonPressed>()) {
 				if (mb->button == sf::Mouse::Button::Left &&
-					!ImGui::GetIO().WantCaptureMouse)
-				{
+					!ImGui::GetIO().WantCaptureMouse) {
 					draggingCanvas = true;
 
 					lastWorldPos = window.mapPixelToCoords(
@@ -155,16 +163,14 @@ void Program::mainLoop() {
 			}
 
 			// Stop dragging
-			if (const auto* mb = event->getIf<sf::Event::MouseButtonReleased>())
-			{
+			if (const auto* mb = event->getIf<sf::Event::MouseButtonReleased>()) {
 				if (mb->button == sf::Mouse::Button::Left)
 					draggingCanvas = false;
 			}
 		}
 
 		// If mouse is dragging canvas
-		if (draggingCanvas)
-		{
+		if (draggingCanvas) {
 			sf::Vector2i pixel = sf::Mouse::getPosition(window);
 			sf::Vector2f worldPos = window.mapPixelToCoords(pixel, view);
 
@@ -189,6 +195,9 @@ void Program::mainLoop() {
 		case ProgramState::SETTINGS_MENU:
 			displaySettingsMenuScreenGUI();
 			break;
+		case ProgramState::CHOOSE_DS_MENU:
+			displayChooseDSMenuScreenGUI();
+			break;
 		default:
 			break;
 		};
@@ -197,7 +206,7 @@ void Program::mainLoop() {
 
 		// window.clear();
 		// window.clear(sf::Color(20, 100, 20));
-		window.clear(sf::Color::Black);
+		window.clear(sf::Color::White);
 
 		// Use view of app (centered and scaled)
 		window.setView(view);
@@ -211,6 +220,21 @@ void Program::mainLoop() {
 		window.draw(cornerBox);   // Box on border
 		window.draw(text);        // Text
 
+		// Display SFML
+		switch (programState) {
+		case ProgramState::MAIN_MENU:
+			displayMainMenuScreenSFML();
+			break;
+		case ProgramState::SETTINGS_MENU:
+			displaySettingsMenuScreenSFML();
+			break;
+		case ProgramState::CHOOSE_DS_MENU:
+			displayChooseDSMenuScreenSFML();
+			break;
+		default:
+			break;
+		};
+
 
 		ImGui::SFML::Render(window);
 		// Use default view to draw ImGui GUI
@@ -221,6 +245,23 @@ void Program::mainLoop() {
 	}
 
 	ImGui::SFML::Shutdown();
+
+
+
+	// Finish program
+	switch (programState) {
+	case ProgramState::MAIN_MENU:
+		finishMainMenuScreen();
+		break;
+	case ProgramState::SETTINGS_MENU:
+		finishSettingsMenuScreen();
+		break;
+	case ProgramState::CHOOSE_DS_MENU:
+		finishChooseDSMenuScreen();
+		break;
+	default:
+		break;
+	};
 
 
 	// Delete everything on the heap

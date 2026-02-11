@@ -1,12 +1,16 @@
 #pragma once
+#define IMGUI_DEFINE_MATH_OPERATORS
+
 #include "imgui.h"
 #include "imgui-SFML.h"
+#include "imgui_internal.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include <filesystem>
 
 namespace fs = std::filesystem;
@@ -16,7 +20,7 @@ namespace fs = std::filesystem;
 enum class ProgramState {
 	MAIN_MENU,
 	SETTINGS_MENU,
-	CHOOSING_DS_MENU
+	CHOOSE_DS_MENU
 };
 
 struct ScaleInfo {
@@ -24,6 +28,7 @@ struct ScaleInfo {
 	sf::Vector2f uiOffset;
 	sf::Vector2f viewSize;
 };
+
 
 
 class Program {
@@ -52,23 +57,35 @@ public:
 	void displaySettingsMenuScreenGUI();
 	void finishSettingsMenuScreen();
 
+	// Display "choosing data structure to visualize" menu screen
+	void initChooseDSMenuScreen();
+	void displayChooseDSMenuScreenSFML();
+	void displayChooseDSMenuScreenGUI();
+	void finishChooseDSMenuScreen();
+
 
 
 private:
 	// Constants
 	const std::string PROGRAM_WINDOW_NAME = "Data Structure Visualizer";
 	// Logical resolution
-	const float NORMAL_WIDTH = 1920.0f;
-	const float NORMAL_HEIGHT = 1080.0f;
+	// const float NORMAL_WIDTH  = 1920.0f;
+	// const float NORMAL_HEIGHT = 1080.0f;
+	const float NORMAL_WIDTH  = 800.0f;
+	const float NORMAL_HEIGHT = 600.0f;
 	const unsigned int FRAMERATE_LIMIT = 60;
-	const sf::Vector2u MINIMUM_WINDOW_SIZE = {800, 600};
+	const sf::Vector2u MINIMUM_WINDOW_SIZE = {800U, 600U};
 
 	sf::RenderWindow window;
 	sf::Clock deltaClock;
 	sf::View view; // The app's view
 	sf::Font textFont;
-	bool init_successful = true;
 
+	// ImGui global vars
+	ImGuiIO* ioPtr;
+	ImGuiStyle* stylePtr;
+
+	bool init_successful = true;
 	bool draggingCanvas = false; // If mouse is dragging canvas
 	bool allowDragCanvas = false; // Allow dragging canvas (remember to set false)
 	sf::Vector2f lastWorldPos; // Position of last dragged view

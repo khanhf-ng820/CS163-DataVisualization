@@ -40,9 +40,9 @@ void Program::displayMainMenuScreenGUI() {
 	ImGui::InputText("string", buf, 25);
 	// float f;
 	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+
 	const char* items[] = { "Option 1", "Option 2", "Option 3", "Option 4" };
 	static int current_item = 0;
-
 	if (ImGui::BeginCombo("##mycombo", items[current_item])) { // Pass the "current" item name as the preview
 		for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
 			bool is_selected = (current_item == n);
@@ -70,12 +70,14 @@ void Program::displayMainMenuScreenGUI() {
 		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoScrollbar |
-		ImGuiWindowFlags_NoBackground
+		// ImGuiWindowFlags_NoBackground |
+		ImGuiWindowFlags_NoScrollbar
 	);
 
 	if (ImGui::Button("Start", btnSize)) { // clicked
 		printf("%s %f\nButton clicked!\n", buf, f);
+		printf("-- Data structure selection menu.\n");
+		programState = ProgramState::CHOOSE_DS_MENU;
 	}
 	ImGui::End();
 
@@ -89,12 +91,12 @@ void Program::displayMainMenuScreenGUI() {
 		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoScrollbar |
-		ImGuiWindowFlags_NoBackground
+		// ImGuiWindowFlags_NoBackground |
+		ImGuiWindowFlags_NoScrollbar
 	);
 
 	if (ImGui::Button("Settings", btnSize)) { // clicked
-		printf("Go to Settings menu.\n");
+		printf("-- Go to Settings menu.\n");
 		programState = ProgramState::SETTINGS_MENU;
 	}
 	ImGui::End();
@@ -109,31 +111,13 @@ void Program::displayMainMenuScreenGUI() {
 		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoScrollbar |
-		ImGuiWindowFlags_NoBackground
+		// ImGuiWindowFlags_NoBackground |
+		ImGuiWindowFlags_NoScrollbar
 	);
 
 	if (ImGui::Button("Quit", btnSize)) { // clicked
-		printf("Program exited.\n");
+		printf("-- Program exited.\n");
 		window.close();
-	}
-	ImGui::End();
-
-
-	ImGui::SetNextWindowPos({200, 150});
-	ImGui::Begin("BtnWin",
-		nullptr,
-		ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoScrollbar |
-		ImGuiWindowFlags_NoBackground
-	);
-
-	if (ImGui::Button("OK", {120, 40})) {
-		// clicked
-		printf("%s %f\nButton clicked!\n", buf, f);
 	}
 	ImGui::End();
 }
