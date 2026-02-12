@@ -8,9 +8,12 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
+#include "sfLayout/sfLayout.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include <filesystem>
 
 namespace fs = std::filesystem;
@@ -45,12 +48,6 @@ public:
 	// Function to update View based on new window size
 	void resizeView();
 
-	// Display test screen (FOR TESTING ONLY)
-	void initTestScreen();
-	void displayTestScreenSFML();
-	void displayTestScreenGUI();
-	void finishTestScreen();
-
 	// Display main menu screen
 	void initMainMenuScreen();
 	void displayMainMenuScreenSFML();
@@ -68,6 +65,12 @@ public:
 	void displayChooseDSMenuScreenSFML();
 	void displayChooseDSMenuScreenGUI();
 	void finishChooseDSMenuScreen();
+
+	// Display SLL visualization screen
+	void initVisSLLScreen();
+	void displayVisSLLScreenSFML();
+	void displayVisSLLScreenGUI();
+	void finishVisSLLScreen();
 
 
 
@@ -98,6 +101,9 @@ private:
 
 
 	ProgramState programState = ProgramState::MAIN_MENU;
+
+	// SFML shapes to draw
+	std::map<ProgramState, std::unique_ptr<sfLayout>> sfDrawables;
 
 
 

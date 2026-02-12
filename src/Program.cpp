@@ -33,6 +33,17 @@ Program::Program()
 	// Can adjust padding, rounding, borders,...
 	// io.FontGlobalScale = 2.0f;
 
+	// Initialize sfDrawables map to draw later
+	sfDrawables[ProgramState::MAIN_MENU] = std::make_unique<sfLayout>(&window);
+	sfDrawables[ProgramState::SETTINGS_MENU] = std::make_unique<sfLayout>(&window);
+	sfDrawables[ProgramState::CHOOSE_DS_MENU] = std::make_unique<sfLayout>(&window);
+	sfDrawables[ProgramState::VIS_SLL_SCREEN] = std::make_unique<sfLayout>(&window);
+	sfDrawables[ProgramState::VIS_HASH_SCREEN] = std::make_unique<sfLayout>(&window);
+	sfDrawables[ProgramState::VIS_AVL_SCREEN] = std::make_unique<sfLayout>(&window);
+	sfDrawables[ProgramState::VIS_TRIE_SCREEN] = std::make_unique<sfLayout>(&window);
+	sfDrawables[ProgramState::VIS_MST_SCREEN] = std::make_unique<sfLayout>(&window);
+	sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN] = std::make_unique<sfLayout>(&window);
+
 	resizeView();
 }
 
@@ -67,52 +78,8 @@ void Program::mainLoop() {
 	// REMEMBER:
 	// Drawing SFML: The center of the window is now (0, 0) coordinates
 	// Drawing GUI: The top-left of the window is (0, 0) coordinates
-	sf::CircleShape shape(100.0f);
-	shape.setFillColor(sf::Color::Green);
-	sf::RectangleShape rectangle({NORMAL_WIDTH, NORMAL_HEIGHT});
-	rectangle.setFillColor(sf::Color::Blue);
-
-	sf::RectangleShape border({NORMAL_WIDTH, NORMAL_HEIGHT});
-	border.setOrigin({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f}); // origin at center
-	border.setPosition({0.f, 0.f}); // position at 0,0
-	border.setFillColor(sf::Color::Transparent);
-	border.setOutlineColor(sf::Color::Red);
-	border.setOutlineThickness(5.f);
-
-	sf::CircleShape splitCircle(60.f);
-	splitCircle.setFillColor(sf::Color::Yellow);
-	// set origin
-	splitCircle.setOrigin({60.f, 60.f}); 
-	// set position
-	splitCircle.setPosition({NORMAL_WIDTH / 2.f, 0.f});
-
-	sf::RectangleShape cornerBox({100.f, 100.f});
-	cornerBox.setFillColor(sf::Color::Green);
-	// set origin
-	cornerBox.setOrigin({50.f, 50.f});
-	// set position
-	cornerBox.setPosition({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f});
-
-
-	sf::Text text(textFont, "Data Structure Visualizer", 40);
-	text.setFillColor(sf::Color::Black);
-
-	// 1. Measure unscaled text
-	sf::FloatRect bounds = text.getLocalBounds();
-
-	// 2. Scale so the width matches your desired width
-	const float targetWidth = NORMAL_WIDTH * 0.625;
-	float scale = targetWidth / bounds.size.x;
-	text.setScale({scale, scale});
-
-	// 3. Set origin to the visual center
-	text.setOrigin({
-		bounds.size.x / 2.f,
-		bounds.size.y / 2.f
-	});
-	// 4. Position the center where you want it
 	sf::Vector2u window_size = window.getSize();
-	text.setPosition({0.f, -static_cast<float>(window_size.y) / 4});
+
 
 
 	// Initialization step (SFML/GUI)
@@ -125,6 +92,9 @@ void Program::mainLoop() {
 		break;
 	case ProgramState::CHOOSE_DS_MENU:
 		initChooseDSMenuScreen();
+		break;
+	case ProgramState::VIS_SLL_SCREEN:
+		initVisSLLScreen();
 		break;
 	default:
 		break;
@@ -198,6 +168,9 @@ void Program::mainLoop() {
 		case ProgramState::CHOOSE_DS_MENU:
 			displayChooseDSMenuScreenGUI();
 			break;
+		case ProgramState::VIS_SLL_SCREEN:
+			displayVisSLLScreenGUI();
+			break;
 		default:
 			break;
 		};
@@ -212,14 +185,6 @@ void Program::mainLoop() {
 		window.setView(view);
 
 
-		// Draw objects
-		window.draw(rectangle);
-		window.draw(shape);
-		window.draw(border);      // Border
-		window.draw(splitCircle); // Yellow circle on border
-		window.draw(cornerBox);   // Box on border
-		window.draw(text);        // Text
-
 		// Display SFML
 		switch (programState) {
 		case ProgramState::MAIN_MENU:
@@ -230,6 +195,9 @@ void Program::mainLoop() {
 			break;
 		case ProgramState::CHOOSE_DS_MENU:
 			displayChooseDSMenuScreenSFML();
+			break;
+		case ProgramState::VIS_SLL_SCREEN:
+			displayVisSLLScreenSFML();
 			break;
 		default:
 			break;
@@ -258,6 +226,9 @@ void Program::mainLoop() {
 		break;
 	case ProgramState::CHOOSE_DS_MENU:
 		finishChooseDSMenuScreen();
+		break;
+	case ProgramState::VIS_SLL_SCREEN:
+		finishVisSLLScreen();
 		break;
 	default:
 		break;

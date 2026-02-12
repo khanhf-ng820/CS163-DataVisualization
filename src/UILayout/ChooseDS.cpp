@@ -66,7 +66,7 @@ std::string getLongestDS_Str() {
 // Drawing GUI: The top-left of the window is (0, 0) coordinates
 // Display settings menu screen
 void Program::initChooseDSMenuScreen() {
-	allowDragCanvas = true;
+	allowDragCanvas = false;
 }
 
 
@@ -78,7 +78,7 @@ void Program::displayChooseDSMenuScreenSFML() {
 
 
 void Program::displayChooseDSMenuScreenGUI() {
-	allowDragCanvas = true;
+	allowDragCanvas = false;
 
 	// Get the current window size
 	sf::Vector2u sfml_window_size = window.getSize();
@@ -230,7 +230,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 		ImGui::EndCombo();
 	}
 	// ImGui::PopStyleColor();
-	// Selected DS type
+	// --- Selected DS type ---
 	DSType chosenDSType = strToDSType(DSVectors[current_DS_item]);
 
 	// ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
@@ -272,8 +272,32 @@ void Program::displayChooseDSMenuScreenGUI() {
 	ImGui::Dummy(ImVec2(20, 20));
 	sf::Vector2u btnSize = {120, 40};
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + Im_gui_window_size.x/2.f - btnSize.x/2.f);
+
 	if (ImGui::Button("Confirm", sf::Vector2f(btnSize))) {
 		printf("%s %d\n", DSVectors[current_DS_item].c_str(), dataInitOption);
+		// Change program mode
+		switch (chosenDSType) {
+		case DSType::SINGLY_LINKED_LIST:
+			programState = ProgramState::VIS_SLL_SCREEN;
+			break;
+		case DSType::HASH_TABLE_LINEAR:
+			programState = ProgramState::VIS_HASH_SCREEN;
+			break;
+		case DSType::AVL_TREE:
+			programState = ProgramState::VIS_AVL_SCREEN;
+			break;
+		case DSType::TRIE_TREE:
+			programState = ProgramState::VIS_TRIE_SCREEN;
+			break;
+		case DSType::MST_GRAPH:
+			programState = ProgramState::VIS_MST_SCREEN;
+			break;
+		case DSType::DIJKSTRA_GRAPH:
+			programState = ProgramState::VIS_DIJKSTRA_SCREEN;
+			break;
+		default:
+			break;
+		}
 	}
 
 	ImGui::End();

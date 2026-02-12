@@ -1,4 +1,4 @@
-#include "UILayout/MainMenu.h"
+#include "UILayout/VisSLL.h"
 
 
 
@@ -8,8 +8,8 @@
 // Drawing SFML: The center of the window is now (0, 0) coordinates
 // Drawing GUI: The top-left of the window is (0, 0) coordinates
 // Display main menu screen
-void Program::initMainMenuScreen() {
-	auto shape = std::make_unique<sf::CircleShape>(100.0f);
+void Program::initVisSLLScreen() {
+	auto shape = std::make_unique<sf::CircleShape>(101.0f);
 	shape->setFillColor(sf::Color::Green);
 	auto rectangle = std::make_unique<sf::RectangleShape>(sf::Vector2f({NORMAL_WIDTH, NORMAL_HEIGHT}));
 	rectangle->setFillColor(sf::Color::Blue);
@@ -36,7 +36,7 @@ void Program::initMainMenuScreen() {
 	cornerBox->setPosition({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f});
 
 
-	auto text = std::make_unique<sf::Text>(textFont, "Data Structure Visualizer", 40);
+	auto text = std::make_unique<sf::Text>(textFont, "Singly Linked List", 40);
 	text->setFillColor(sf::Color::Black);
 
 	// Measure unscaled text
@@ -58,24 +58,29 @@ void Program::initMainMenuScreen() {
 
 
 	// Push back to vector
-	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(shape));
-	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(rectangle));
-	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(border));
-	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(splitCircle));
-	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(cornerBox));
-	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(text));
+	sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.clear();
+	sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(shape));
+	sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(rectangle));
+	sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(border));
+	sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(splitCircle));
+	sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(cornerBox));
+	sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(text));
+	// printf("VisSLL SFML init function called\n"); // DEBUG
 }
 
 
 
-void Program::displayMainMenuScreenSFML() {
-	sfDrawables[ProgramState::MAIN_MENU]->displayAll();
+void Program::displayVisSLLScreenSFML() {
+	initVisSLLScreen();
+	sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
+	// std::cout << sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.size() << std::endl;
+	// printf("VisSLL SFML function called\n"); // DEBUG
 }
 
 
 
-void Program::displayMainMenuScreenGUI() {
-	allowDragCanvas = false;
+void Program::displayVisSLLScreenGUI() {
+	allowDragCanvas = true;
 
 	// Show the demo window
 	// ImGui::ShowDemoWindow();
@@ -83,7 +88,7 @@ void Program::displayMainMenuScreenGUI() {
 	// Get the current window size
 	sf::Vector2u sfml_window_size = window.getSize();
 
-	ImGui::Begin("Hello, world!",
+	ImGui::Begin("Singly Linked List",
 		nullptr
 		// ImGuiWindowFlags_NoCollapse
 		// ImGuiWindowFlags_NoBackground
@@ -117,67 +122,27 @@ void Program::displayMainMenuScreenGUI() {
 	sf::Vector2u btnSize, btnPosition;
 	btnSize = sf::Vector2u(120, 40);
 	btnPosition = sfml_window_size / 2U;
-	ImGui::SetNextWindowPos(btnPosition - btnSize / 2U);
-	ImGui::Begin("StartBtn",
-		nullptr,
-		ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoMove |
-		// ImGuiWindowFlags_NoBackground |
-		ImGuiWindowFlags_NoScrollbar
-	);
+// 	ImGui::SetNextWindowPos(btnPosition - btnSize / 2U);
+// 	ImGui::Begin("StartBtn",
+// 		nullptr,
+// 		ImGuiWindowFlags_NoTitleBar |
+// 		ImGuiWindowFlags_NoCollapse |
+// 		ImGuiWindowFlags_NoResize |
+// 		ImGuiWindowFlags_NoMove |
+// 		// ImGuiWindowFlags_NoBackground |
+// 		ImGuiWindowFlags_NoScrollbar
+// 	);
 
-	if (ImGui::Button("Start", btnSize)) { // clicked
-		printf("%s %f\nButton clicked!\n", buf, f);
-		printf("-- Data structure selection menu.\n");
-		programState = ProgramState::CHOOSE_DS_MENU;
-	}
-	ImGui::End();
-
-
-	btnSize = sf::Vector2u(120, 40);
-	btnPosition = sfml_window_size / 2U + sf::Vector2u(0, 60);
-	ImGui::SetNextWindowPos(btnPosition - btnSize / 2U);
-	ImGui::Begin("SettingsBtn",
-		nullptr,
-		ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoMove |
-		// ImGuiWindowFlags_NoBackground |
-		ImGuiWindowFlags_NoScrollbar
-	);
-
-	if (ImGui::Button("Settings", btnSize)) { // clicked
-		printf("-- Go to Settings menu.\n");
-		programState = ProgramState::SETTINGS_MENU;
-	}
-	ImGui::End();
-
-
-	btnSize = sf::Vector2u(120, 40);
-	btnPosition = sfml_window_size / 2U + sf::Vector2u(0, 120);
-	ImGui::SetNextWindowPos(btnPosition - btnSize / 2U);
-	ImGui::Begin("QuitBtn",
-		nullptr,
-		ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoMove |
-		// ImGuiWindowFlags_NoBackground |
-		ImGuiWindowFlags_NoScrollbar
-	);
-
-	if (ImGui::Button("Quit", btnSize)) { // clicked
-		printf("-- Program exited.\n");
-		window.close();
-	}
-	ImGui::End();
+// 	if (ImGui::Button("Start", btnSize)) { // clicked
+// 		printf("%s %f\nButton clicked!\n", buf, f);
+// 		printf("-- Data structure selection menu.\n");
+// 		// programState = ProgramState::CHOOSE_DS_MENU;
+// 	}
+// 	ImGui::End();
 }
 
 
 
-void Program::finishMainMenuScreen() {
+void Program::finishVisSLLScreen() {
 
 }
