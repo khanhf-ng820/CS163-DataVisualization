@@ -4,7 +4,7 @@
 
 
 
-enum class AnimType : int {
+enum class SLLAnimType : unsigned char {
 	NONE,
 	CREATE_CUR, // Create cur pointer at head
 	MOVE_CUR_FORWARD // Move cur to cur->pNext
@@ -14,13 +14,14 @@ enum class AnimType : int {
 class SLLAnimStep {
 public:
 	SLLAnimStep();
+	SLLAnimStep(SLLAnimType type, std::string text);
 	~SLLAnimStep();
 	
-	AnimType type;
+	SLLAnimType type = SLLAnimType::NONE;
 
 	// Index
-	int idxCreateCur = -1;
-	int idxMoveCur = -1;
+	// int idxCreateCur = -1;
+	// int idxMoveCur = -1;
 
-	std::string text; // Text to display
+	std::string text = ""; // Text to display
 };

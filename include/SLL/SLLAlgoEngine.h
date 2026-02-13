@@ -1,5 +1,6 @@
 #pragma once
 #include "SLL/SLLAnimStep.h"
+#include <vector>
 
 
 
@@ -11,17 +12,20 @@ struct SLLNode {
 };
 
 
-
 class SLLAlgoEngine {
 public:
 	SLLAlgoEngine();
 	~SLLAlgoEngine();
 
-	void clear(); // Clear the linked list
 
 	SLLNode* pHead = nullptr;
 	SLLNode* pCur = nullptr;
+	int curIndex = -1;
 	SLLNode* pSearch = nullptr; // Hold the searched node
 
 	bool pCurCreated = false;
+
+
+	void clear(); // Clear the linked list
+	std::vector<SLLAnimStep> getEventsSearch(int x);
 };

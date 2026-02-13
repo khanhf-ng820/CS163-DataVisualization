@@ -7,7 +7,7 @@
 // REMEMBER:
 // Drawing SFML: The center of the window is now (0, 0) coordinates
 // Drawing GUI: The top-left of the window is (0, 0) coordinates
-// Display main menu screen
+// Display vis SLL screen, set up SFML drawables
 void Program::initVisSLLScreen() {
 	auto shape = std::make_unique<sf::CircleShape>(101.0f);
 	shape->setFillColor(sf::Color::Green);

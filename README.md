@@ -1,5 +1,5 @@
 # CS163-DataVisualization
-**Data Structure Visualization** — a solo project for CS163 - Data Structures course.
+**Data Structure Visualization**, a solo project for CS163 - Data Structures course.
 
 <!-- This project uses **C++**, **CMake**, and the **raylib** graphics library. -->
 This project uses **C++**, **CMake**, the **SFML** graphics library, and the **Dear ImGui/ImGui-SFML** GUI libraries.
