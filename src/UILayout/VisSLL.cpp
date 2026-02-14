@@ -73,12 +73,28 @@ void Program::initVisSLLScreen() {
 
 
 void Program::displayVisSLLScreenSFML() {
+	switch (visEngine_SLL.visMode) {
+	case SLLVisMode::NONE:
+		visEngine_SLL.createDrawables(
+			sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables, 
+			std::vector<SLLAnimStep>()
+		);
+		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
+		visEngine_SLL.increaseTime();
+		break;
+	case SLLVisMode::SEARCH:
+		visEngine_SLL.createDrawables(
+			sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables, 
+			visEngine_SLL.getEventsSearch(visEngine_SLL.valToSearch)
+		);
+		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
+		visEngine_SLL.increaseTime();
+		break;
+	default:
+		break;
+	}
+
 	// initVisSLLScreen();
-	visEngine_SLL.initDrawables(
-		sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables, 
-		std::vector<SLLAnimStep>()
-	);
-	sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
 	// std::cout << sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.size() << std::endl;
 	// printf("VisSLL SFML function called\n"); // DEBUG
 }
@@ -99,12 +115,18 @@ void Program::displayVisSLLScreenGUI() {
 		// ImGuiWindowFlags_NoCollapse
 		// ImGuiWindowFlags_NoBackground
 	);
-	ImGui::Button("Look at this pretty button");
+	// ImGui::Button("Look at this pretty button"); // useless button
 	// char buf[25];
 	// ImGui::InputText("string", buf, IM_COUNTOF(buf));
-	ImGui::InputText("string", buf, 25);
+	ImGui::Text("Enter value to search:");
+	ImGui::InputInt("Value to search", &visEngine_SLL.valToSearch);
 	// float f;
-	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+	// ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+
+	if (ImGui::Button("Search")) {
+		visEngine_SLL.visMode = SLLVisMode::SEARCH;
+		visEngine_SLL.resetParams();
+	}
 
 	const char* items[] = { "Option 1", "Option 2", "Option 3", "Option 4" };
 	static int current_item = 0;
@@ -128,23 +150,23 @@ void Program::displayVisSLLScreenGUI() {
 	sf::Vector2u btnSize, btnPosition;
 	btnSize = sf::Vector2u(120, 40);
 	btnPosition = sfml_window_size / 2U;
-// 	ImGui::SetNextWindowPos(btnPosition - btnSize / 2U);
-// 	ImGui::Begin("StartBtn",
-// 		nullptr,
-// 		ImGuiWindowFlags_NoTitleBar |
-// 		ImGuiWindowFlags_NoCollapse |
-// 		ImGuiWindowFlags_NoResize |
-// 		ImGuiWindowFlags_NoMove |
-// 		// ImGuiWindowFlags_NoBackground |
-// 		ImGuiWindowFlags_NoScrollbar
-// 	);
+	// ImGui::SetNextWindowPos(btnPosition - btnSize / 2U);
+	// ImGui::Begin("StartBtn",
+	// 	nullptr,
+	// 	ImGuiWindowFlags_NoTitleBar |
+	// 	ImGuiWindowFlags_NoCollapse |
+	// 	ImGuiWindowFlags_NoResize |
+	// 	ImGuiWindowFlags_NoMove |
+	// 	// ImGuiWindowFlags_NoBackground |
+	// 	ImGuiWindowFlags_NoScrollbar
+	// );
 
-// 	if (ImGui::Button("Start", btnSize)) { // clicked
-// 		printf("%s %f\nButton clicked!\n", buf, f);
-// 		printf("-- Data structure selection menu.\n");
-// 		// programState = ProgramState::CHOOSE_DS_MENU;
-// 	}
-// 	ImGui::End();
+	// if (ImGui::Button("Start", btnSize)) { // clicked
+	// 	printf("%s %f\nButton clicked!\n", buf, f);
+	// 	printf("-- Data structure selection menu.\n");
+	// 	// programState = ProgramState::CHOOSE_DS_MENU;
+	// }
+	// ImGui::End();
 }
 
 
