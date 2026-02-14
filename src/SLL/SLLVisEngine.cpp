@@ -13,6 +13,7 @@ SLLVisEngine::SLLVisEngine(sf::RenderWindow& window, sf::Font& font)
 	pHead->pNext = new SLLNode{67, nullptr};
 	pHead->pNext->pNext = new SLLNode{18, nullptr};
 	pHead->pNext->pNext->pNext = new SLLNode{-1992, nullptr};
+	pSearch = pHead->pNext;
 }
 
 SLLVisEngine::~SLLVisEngine() {
@@ -22,6 +23,10 @@ SLLVisEngine::~SLLVisEngine() {
 
 void SLLVisEngine::increaseTime() {
 	time += 0.001; // (ONLY FOR TESTING, FOR NOW)
+	if (time > 1.f) {
+		time = 0.f;
+		animStepIndex++;
+	}
 }
 
 
@@ -50,9 +55,12 @@ void SLLVisEngine::initDrawables(std::vector<std::unique_ptr<sf::Drawable>>& dra
 		);
 
 		auto valueText = std::make_unique<sf::Text>(font, std::to_string(cur->val), valueFontSize);
+		sf::FloatRect localBounds = valueText->getLocalBounds();
+		valueText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
 		valueText->setFillColor(sf::Color::Black);
 		valueText->setPosition(startingPos 
 			+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+			+ nodeValueRectSize / 2.f
 		);
 
 		auto linkLine = std::make_unique<sf::VertexArray>(sf::PrimitiveType::Lines, 2);
@@ -93,9 +101,12 @@ void SLLVisEngine::initDrawables(std::vector<std::unique_ptr<sf::Drawable>>& dra
 	(*nullDiagonal)[1].color    = sf::Color::Black;
 
 	auto nullText = std::make_unique<sf::Text>(font, "NULL", valueFontSize);
+	sf::FloatRect localBounds = nullText->getLocalBounds();
+	nullText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
 	nullText->setFillColor(sf::Color::Black);
 	nullText->setPosition(startingPos 
 		+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+		+ nodeRectSize / 2.f
 	);
 
 	drawableList.push_back(std::move(bigNullBox));
