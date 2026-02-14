@@ -19,6 +19,7 @@ public:
 
 
 	SLLNode* pHead = nullptr;
+	// SLLNode* pHead = new SLLNode{36, nullptr};
 	SLLNode* pCur = nullptr;
 	int curIndex = -1;
 	SLLNode* pSearch = nullptr; // Hold the searched node

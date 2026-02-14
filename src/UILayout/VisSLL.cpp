@@ -9,69 +9,75 @@
 // Drawing GUI: The top-left of the window is (0, 0) coordinates
 // Display vis SLL screen, set up SFML drawables
 void Program::initVisSLLScreen() {
-	auto shape = std::make_unique<sf::CircleShape>(101.0f);
-	shape->setFillColor(sf::Color::Green);
-	auto rectangle = std::make_unique<sf::RectangleShape>(sf::Vector2f({NORMAL_WIDTH, NORMAL_HEIGHT}));
-	rectangle->setFillColor(sf::Color::Blue);
+	// auto shape = std::make_unique<sf::CircleShape>(101.0f);
+	// shape->setFillColor(sf::Color::Green);
+	// auto rectangle = std::make_unique<sf::RectangleShape>(sf::Vector2f({NORMAL_WIDTH, NORMAL_HEIGHT}));
+	// rectangle->setFillColor(sf::Color::Blue);
 
-	auto border = std::make_unique<sf::RectangleShape>(sf::Vector2f({NORMAL_WIDTH, NORMAL_HEIGHT}));
-	border->setOrigin({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f}); // origin at center
-	border->setPosition({0.f, 0.f}); // position at 0,0
-	border->setFillColor(sf::Color::Transparent);
-	border->setOutlineColor(sf::Color::Red);
-	border->setOutlineThickness(5.f);
+	// auto border = std::make_unique<sf::RectangleShape>(sf::Vector2f({NORMAL_WIDTH, NORMAL_HEIGHT}));
+	// border->setOrigin({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f}); // origin at center
+	// border->setPosition({0.f, 0.f}); // position at 0,0
+	// border->setFillColor(sf::Color::Transparent);
+	// border->setOutlineColor(sf::Color::Red);
+	// border->setOutlineThickness(5.f);
 
-	auto splitCircle = std::make_unique<sf::CircleShape>(60.f);
-	splitCircle->setFillColor(sf::Color::Yellow);
-	// set origin
-	splitCircle->setOrigin({60.f, 60.f}); 
-	// set position
-	splitCircle->setPosition({NORMAL_WIDTH / 2.f, 0.f});
+	// auto splitCircle = std::make_unique<sf::CircleShape>(60.f);
+	// splitCircle->setFillColor(sf::Color::Yellow);
+	// // set origin
+	// splitCircle->setOrigin({60.f, 60.f}); 
+	// // set position
+	// splitCircle->setPosition({NORMAL_WIDTH / 2.f, 0.f});
 
-	auto cornerBox = std::make_unique<sf::RectangleShape>(sf::Vector2f({100.f, 100.f}));
-	cornerBox->setFillColor(sf::Color::Green);
-	// set origin
-	cornerBox->setOrigin({50.f, 50.f});
-	// set position
-	cornerBox->setPosition({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f});
+	// auto cornerBox = std::make_unique<sf::RectangleShape>(sf::Vector2f({100.f, 100.f}));
+	// cornerBox->setFillColor(sf::Color::Green);
+	// // set origin
+	// cornerBox->setOrigin({50.f, 50.f});
+	// // set position
+	// cornerBox->setPosition({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f});
 
 
-	auto text = std::make_unique<sf::Text>(textFont, "Singly Linked List", 40);
-	text->setFillColor(sf::Color::Black);
+	// auto text = std::make_unique<sf::Text>(textFont, "Singly Linked List", 40);
+	// text->setFillColor(sf::Color::Black);
 
-	// Measure unscaled text
-	sf::FloatRect bounds = text->getLocalBounds();
+	// // Measure unscaled text
+	// sf::FloatRect bounds = text->getLocalBounds();
 
-	// Scale so the width matches your desired width
-	const float targetWidth = NORMAL_WIDTH * 0.625;
-	float scale = targetWidth / bounds.size.x;
-	text->setScale({scale, scale});
+	// // Scale so the width matches your desired width
+	// const float targetWidth = NORMAL_WIDTH * 0.625;
+	// float scale = targetWidth / bounds.size.x;
+	// text->setScale({scale, scale});
 
-	// Set origin to the visual center
-	text->setOrigin({
-		bounds.size.x / 2.f,
-		bounds.size.y / 2.f
-	});
-	// Position the center where you want it
-	sf::Vector2u window_size = window.getSize();
-	text->setPosition({0.f, -static_cast<float>(window_size.y) / 4});
+	// // Set origin to the visual center
+	// text->setOrigin({
+	// 	bounds.size.x / 2.f,
+	// 	bounds.size.y / 2.f
+	// });
+	// // Position the center where you want it
+	// sf::Vector2u window_size = window.getSize();
+	// text->setPosition({0.f, -static_cast<float>(window_size.y) / 4});
 
 
 	// Push back to vector
 	sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.clear();
-	sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(shape));
-	sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(rectangle));
-	sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(border));
-	sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(splitCircle));
-	sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(cornerBox));
-	sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(text));
+	// sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(shape));
+	// sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(rectangle));
+	// sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(border));
+	// sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(splitCircle));
+	// sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(cornerBox));
+	// sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(text));
 	// printf("VisSLL SFML init function called\n"); // DEBUG
+
+
 }
 
 
 
 void Program::displayVisSLLScreenSFML() {
-	initVisSLLScreen();
+	// initVisSLLScreen();
+	visEngine_SLL.initDrawables(
+		sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables, 
+		std::vector<SLLAnimStep>()
+	);
 	sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
 	// std::cout << sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.size() << std::endl;
 	// printf("VisSLL SFML function called\n"); // DEBUG

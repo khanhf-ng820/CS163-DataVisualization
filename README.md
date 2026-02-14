@@ -19,7 +19,7 @@ This project uses **CMake** as its build system.
 Download and make sure you have:
 - git (version 2.50.1 or higher)
 - [CMake](https://cmake.org/download/) (version 3.20 or higher)
-- A C++ compiler (GCC, Clang, MinGW-w64, or MSVC) that supports **C++17**
+- A C++ compiler (GCC, Clang, MinGW-w64, or MSVC) that ***MUST*** support **C++17**
 
 Make sure all of them are available in **PATH** in order to be used in the Terminal, and make sure you have Internet connection while following these building steps.
 

@@ -9,6 +9,7 @@
 #include <SFML/Window.hpp>
 
 #include "sfLayout/sfLayout.h"
+#include "SLL/SLLVisEngine.h"
 
 #include <iostream>
 #include <string>
@@ -104,6 +105,8 @@ private:
 
 	// SFML shapes to draw
 	std::map<ProgramState, std::unique_ptr<sfLayout>> sfDrawables;
+
+	SLLVisEngine visEngine_SLL;
 
 
 

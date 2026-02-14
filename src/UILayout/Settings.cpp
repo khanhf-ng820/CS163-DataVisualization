@@ -140,8 +140,8 @@ void Program::displaySettingsMenuScreenGUI() {
 	}
 	ImGui::Text("Window resolution: ");
 
-	const char* resolutionOptions[]                   = { "800×600", "1920×1080", "1366×768", "1440×900", "2560×1440", "1280×720", "1024×768" };
-	const std::vector<sf::Vector2u> resolutionVectors = { {800,600}, {1920,1080}, {1366,768}, {1440,900}, {2560,1440}, {1280,720}, {1024,768} };
+	const char* resolutionOptions[]                   = { "800×600", "1920×1080", "1366×768", "1440×900", "1280×720", "1024×768" }; // Removed 2560×1440
+	const std::vector<sf::Vector2u> resolutionVectors = { {800,600}, {1920,1080}, {1366,768}, {1440,900}, {1280,720}, {1024,768} };
 	static int current_resolution_item = 0;
 	// ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(173.f/255, 216.f/255, 230.f/255, 1.f));
 	if (ImGui::BeginCombo("##resolution_combo", resolutionOptions[current_resolution_item])) { // Pass the "current" item name as the preview

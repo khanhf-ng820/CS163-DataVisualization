@@ -9,6 +9,7 @@ Program::Program()
 	// , view(sf::FloatRect({0.f, 0.f}, {NORMAL_WIDTH, NORMAL_HEIGHT}))
 	, view(window.getDefaultView())
 	, textFont(fs::path(ASSET_DIR) / "Roboto_Mono/RobotoMono-VariableFont_wght.ttf")
+	, visEngine_SLL(window, textFont)
 {
 	window.requestFocus();
 	window.setFramerateLimit(FRAMERATE_LIMIT);

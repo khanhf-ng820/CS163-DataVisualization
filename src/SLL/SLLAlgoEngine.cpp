@@ -4,7 +4,9 @@
 
 
 
-SLLAlgoEngine::SLLAlgoEngine() {}
+SLLAlgoEngine::SLLAlgoEngine() {
+	
+}
 
 SLLAlgoEngine::~SLLAlgoEngine() {
 	// Clear the linked list
