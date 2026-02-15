@@ -15,6 +15,9 @@ Program::Program()
 	window.setFramerateLimit(FRAMERATE_LIMIT);
 	window.setMinimumSize(MINIMUM_WINDOW_SIZE);
 	// window.setMaximumSize(sf::Vector2u(1200, 900));
+	textFont.setSmooth(true);
+	// sf::ContextSettings settings;
+	// settings.antiAliasingLevel = 4; // Mức khử răng cưa (thường từ 2-16)
 
 	init_successful = ImGui::SFML::Init(window);
 	ImGui::StyleColorsDark();

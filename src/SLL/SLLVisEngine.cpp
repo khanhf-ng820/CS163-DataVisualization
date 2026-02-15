@@ -13,7 +13,7 @@ SLLVisEngine::SLLVisEngine(sf::RenderWindow& window, sf::Font& font)
 	pHead->pNext = new SLLNode{67, nullptr};
 	pHead->pNext->pNext = new SLLNode{18, nullptr};
 	pHead->pNext->pNext->pNext = new SLLNode{-1992, nullptr};
-	pSearch = pHead->pNext;
+	// pSearch = pHead->pNext;
 }
 
 SLLVisEngine::~SLLVisEngine() {
@@ -22,17 +22,29 @@ SLLVisEngine::~SLLVisEngine() {
 
 
 void SLLVisEngine::increaseTime() {
-	time += 0.005; // (ONLY FOR TESTING, FOR NOW)
-	// if (time > 1.f) {
-	// 	time = 0.f;
-	// 	animStepIndex++;
-	// }
+	time += dt; // (ONLY FOR TESTING, FOR NOW)
+}
+void SLLVisEngine::decreaseTime() {
+	time -= dt; // (ONLY FOR TESTING, FOR NOW)
+}
+void SLLVisEngine::prevStep() {
+	targetTime = time - 1;
+	targetTime = floor(targetTime);
+	targetTime = std::max(targetTime, 0.f);
+}
+void SLLVisEngine::nextStep() {
+	targetTime = time + 1;
+	targetTime = floor(targetTime);
+	targetTime = std::max(targetTime, 0.f);
 }
 
 
 void SLLVisEngine::resetParams() {
 	visCur = nullptr; // cur in visualization (not in code)
 	visCurIndex = 0; // cur index in visualization (not in code)
+
+	pSearch = nullptr;
+	pCurCreated = false;
 
 	animStepIndex = 0; // first step
 	oldAnimStepIndex = 0; // first step
@@ -41,17 +53,16 @@ void SLLVisEngine::resetParams() {
 
 
 
-void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::vector<SLLAnimStep> eventList) {
-	drawableList.clear();
-
-	// Iterate through linked list and draw nodes
+void SLLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList) {
+	// Display nodes: Iterate through linked list and draw nodes
 	int index = 0;
 	SLLNode* cur = pHead;
 	while (cur) {
 		auto bigNodeBox = std::make_unique<sf::RectangleShape>(nodeRectSize);
 		bigNodeBox->setFillColor(sf::Color::Transparent);
 		bigNodeBox->setOutlineColor(
-			(cur == visCur && visCur == pSearch && time >= 1) ? sf::Color::Green : sf::Color::Black
+			// (cur == visCur && visCur == pSearch && time >= 1) ? sf::Color::Green : sf::Color::Black
+			(cur == pSearch) ? sf::Color::Green : sf::Color::Black
 		);
 		bigNodeBox->setOutlineThickness(2.f);
 		bigNodeBox->setPosition(originPos 
@@ -61,7 +72,8 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 		auto smallNodeBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
 		smallNodeBox->setFillColor(sf::Color::Transparent);
 		smallNodeBox->setOutlineColor(
-			(cur == visCur && visCur == pSearch && time >= 1) ? sf::Color::Green : sf::Color::Black
+			// (cur == visCur && visCur == pSearch && time >= 1) ? sf::Color::Green : sf::Color::Black
+			(cur == pSearch) ? sf::Color::Green : sf::Color::Black
 		);
 		smallNodeBox->setOutlineThickness(2.f);
 		smallNodeBox->setPosition(originPos 
@@ -136,15 +148,28 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 	drawableList.push_back(std::move(bigNullBox));
 	drawableList.push_back(std::move(nullDiagonal));
 	drawableList.push_back(std::move(nullText));
+}
+
+
+
+void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList) {
+	drawableList.clear();
 
 
 	// If still mode, stop here
-	if (eventList.empty()) return;
+	if (eventList.empty()) {
+		// Display nodes: Iterate through linked list and draw nodes
+		addNodeDrawables(drawableList);
+		return;
+	}
 
 
 	// change visCur and visCurIndex
 	animStepIndex = std::min(static_cast<int>(floor(time)), static_cast<int>(eventList.size()) - 1);
+	time = std::min(std::max(time, 0.f), static_cast<float>(eventList.size()));
 	SLLAnimStep eventSLL = eventList[animStepIndex];
+	pSearch = eventSLL.pSearch; // Set pSearch in the event
+
 	if (animStepIndex > oldAnimStepIndex) {
 		if (eventList[oldAnimStepIndex].type == SLLAnimType::MOVE_CUR_FORWARD) {
 			visCurIndex++;
@@ -153,13 +178,24 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 		oldAnimStepIndex = animStepIndex;
 	}
 
+
+	// Display nodes: Iterate through linked list and draw nodes
+	addNodeDrawables(drawableList);
+
+
+	// Display description for algorithm visualization
+	auto descriptionText = std::make_unique<sf::Text>(font, eventSLL.text, valueFontSize);
+	descriptionText->setFillColor(sf::Color::Black);
+	descriptionText->setPosition(originPos - originPosDisplacement + descriptionTextPos);
+
 	// Display animation step
 	auto curBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
 	switch (eventSLL.type) {
 	case SLLAnimType::NONE:
 		curBox->setPosition(originPos
 			+ sf::Vector2f(0, 100)
-			+ static_cast<float>(visCurIndex) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+			// + static_cast<float>(visCurIndex) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+			+ static_cast<float>(eventSLL.curIndex) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 		);
 		break;
 	case SLLAnimType::CREATE_CUR:
@@ -168,13 +204,15 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 		
 		curBox->setPosition(originPos
 			+ sf::Vector2f(0, 100)
-			+ static_cast<float>(visCurIndex) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+			// + static_cast<float>(visCurIndex) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+			+ static_cast<float>(eventSLL.curIndex) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 		);
 		break;
 	case SLLAnimType::MOVE_CUR_FORWARD:
 		curBox->setPosition(originPos
 			+ sf::Vector2f(0, 100)
-			+ static_cast<float>(visCurIndex) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+			// + static_cast<float>(visCurIndex) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+			+ static_cast<float>(eventSLL.curIndex) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 			+ lerp(sf::Vector2f(0, 0), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), time - floor(time))
 		);
 		break;
@@ -183,6 +221,7 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 	curBox->setOutlineColor(sf::Color::Black);
 	curBox->setOutlineThickness(2.f);
 
+	drawableList.push_back(std::move(descriptionText));
 	drawableList.push_back(std::move(curBox));
 
 	std::cout << drawableList.size() << ' ' << time << " init done\n";

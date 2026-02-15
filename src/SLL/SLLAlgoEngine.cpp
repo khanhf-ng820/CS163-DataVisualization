@@ -30,25 +30,25 @@ void SLLAlgoEngine::clear() {
 
 
 std::vector<SLLAnimStep> SLLAlgoEngine::getEventsSearch(int x) {
-	pSearch = nullptr;
+	// pSearch = nullptr;
 	std::vector<SLLAnimStep> events;
 
-	events.push_back(SLLAnimStep(SLLAnimType::CREATE_CUR, "Created cur, cur points to head of linked list"));
+	events.push_back(SLLAnimStep(SLLAnimType::CREATE_CUR, "Created cur, cur points to head of linked list", pHead, 0, nullptr));
 	pCur = pHead;
 	curIndex = 0;
 
 	while (pCur) {
-		events.push_back(SLLAnimStep(SLLAnimType::NONE, "Checking node " + std::to_string(pCur->val) + " with " + std::to_string(x)));
+		events.push_back(SLLAnimStep(SLLAnimType::NONE, "Checking node " + std::to_string(pCur->val) + " with " + std::to_string(x), pCur, curIndex, nullptr));
 		if (pCur->val == x) {
-			events.push_back(SLLAnimStep(SLLAnimType::NONE, "Found node with value " + std::to_string(x)));
-			pSearch = pCur;
+			// pSearch = pCur;
+			events.push_back(SLLAnimStep(SLLAnimType::NONE, "Found node with value " + std::to_string(x), pCur, curIndex, pCur));
 			return events;
 		}
-		events.push_back(SLLAnimStep(SLLAnimType::MOVE_CUR_FORWARD, "Different value, move cur to next node"));
+		events.push_back(SLLAnimStep(SLLAnimType::MOVE_CUR_FORWARD, "Different value, move cur to next node", pCur, curIndex, nullptr));
 		pCur = pCur->pNext;
 		curIndex++;
 	}
 
-	events.push_back(SLLAnimStep(SLLAnimType::NONE, "Reached null node, stop."));
+	events.push_back(SLLAnimStep(SLLAnimType::NONE, "Reached null node, stop.", pCur, curIndex, nullptr));
 	return events;
 }

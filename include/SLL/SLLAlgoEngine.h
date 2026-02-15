@@ -6,10 +6,10 @@
 
 
 
-struct SLLNode {
-	int val;
-	SLLNode* pNext;
-};
+// struct SLLNode {
+// 	int val;
+// 	SLLNode* pNext;
+// };
 
 
 class SLLAlgoEngine {
@@ -31,6 +31,5 @@ public:
 	std::vector<SLLAnimStep> getEventsSearch(int x);
 
 
-	int valToSearch = 0;
-	std::string valToSearchStr = "";
+
 };

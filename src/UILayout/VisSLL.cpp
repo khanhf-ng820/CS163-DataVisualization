@@ -75,24 +75,37 @@ void Program::initVisSLLScreen() {
 void Program::displayVisSLLScreenSFML() {
 	switch (visEngine_SLL.visMode) {
 	case SLLVisMode::NONE:
+		visEngine_SLL.eventList = std::vector<SLLAnimStep>();
 		visEngine_SLL.createDrawables(
-			sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables, 
-			std::vector<SLLAnimStep>()
+			sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables
 		);
 		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
-		visEngine_SLL.increaseTime();
+		if (!visEngine_SLL.animPaused) visEngine_SLL.increaseTime();
 		break;
 	case SLLVisMode::SEARCH:
+		visEngine_SLL.eventList = visEngine_SLL.getEventsSearch(visEngine_SLL.valToSearch);
 		visEngine_SLL.createDrawables(
-			sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables, 
-			visEngine_SLL.getEventsSearch(visEngine_SLL.valToSearch)
+			sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables
 		);
 		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
-		visEngine_SLL.increaseTime();
+
+		// If not paused, just increase time
+		if (visEngine_SLL.animPaused) {
+			if (visEngine_SLL.time < visEngine_SLL.targetTime) {
+				visEngine_SLL.increaseTime();
+				visEngine_SLL.time = std::min(visEngine_SLL.time, visEngine_SLL.targetTime);
+			} else if (visEngine_SLL.time > visEngine_SLL.targetTime) {
+				visEngine_SLL.decreaseTime();
+				visEngine_SLL.time = std::max(visEngine_SLL.time, visEngine_SLL.targetTime);
+			}
+		} else {
+			visEngine_SLL.increaseTime();
+		}
 		break;
 	default:
 		break;
 	}
+
 
 	// initVisSLLScreen();
 	// std::cout << sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.size() << std::endl;
@@ -110,7 +123,7 @@ void Program::displayVisSLLScreenGUI() {
 	// Get the current window size
 	sf::Vector2u sfml_window_size = window.getSize();
 
-	ImGui::Begin("Singly Linked List",
+	ImGui::Begin("Singly Linked List Menu",
 		nullptr
 		// ImGuiWindowFlags_NoCollapse
 		// ImGuiWindowFlags_NoBackground
@@ -118,12 +131,37 @@ void Program::displayVisSLLScreenGUI() {
 	// ImGui::Button("Look at this pretty button"); // useless button
 	// char buf[25];
 	// ImGui::InputText("string", buf, IM_COUNTOF(buf));
+	ImGui::SliderFloat("Animation Speed", &visEngine_SLL.dt, 0.001f, 0.499f);
+
+	ImGui::BeginDisabled(!visEngine_SLL.animPaused);
+	if (ImGui::Button("Previous Step")) {
+		visEngine_SLL.prevStep();
+	}
+	ImGui::EndDisabled();
+	ImGui::SameLine();
+	if (ImGui::Button("Pause/Unpause")) {
+		visEngine_SLL.animPaused = !visEngine_SLL.animPaused;
+		visEngine_SLL.targetTime = visEngine_SLL.time;
+	}
+	ImGui::SameLine();
+	ImGui::BeginDisabled(!visEngine_SLL.animPaused);
+	if (ImGui::Button("Next Step")) {
+		visEngine_SLL.nextStep();
+	}
+	ImGui::EndDisabled();
+	if (visEngine_SLL.animPaused) {
+		ImGui::SameLine();
+		ImGui::Text("Paused");
+	}
+
+	ImGui::Separator();
 	ImGui::Text("Enter value to search:");
-	ImGui::InputInt("Value to search", &visEngine_SLL.valToSearch);
+	ImGui::InputInt("Value to search", &visEngine_SLL.valToSearchInput);
 	// float f;
 	// ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
 
 	if (ImGui::Button("Search")) {
+		visEngine_SLL.valToSearch = visEngine_SLL.valToSearchInput;
 		visEngine_SLL.visMode = SLLVisMode::SEARCH;
 		visEngine_SLL.resetParams();
 	}

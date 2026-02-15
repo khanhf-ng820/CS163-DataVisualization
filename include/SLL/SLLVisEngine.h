@@ -28,7 +28,10 @@ public:
 	~SLLVisEngine();
 
 	void resetParams();
-	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::vector<SLLAnimStep> eventList);
+	// Draw nodes: Iterate through linked list and draw nodes
+	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
+	// Draw nodes and links, depending on eventList
+	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
 	void displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout);
 
 
@@ -36,21 +39,33 @@ public:
 	sf::Font& font;
 
 	SLLVisMode visMode = SLLVisMode::NONE;
+	std::vector<SLLAnimStep> eventList;
 
 	SLLNode* visCur = nullptr; //  cur in visualization (not in code)
 	int visCurIndex = 0; // cur index in visualization (not in code)
 
+	int valToSearch = 0;
+	int valToSearchInput = 0;
+
+	// For Animation
 	int animStepIndex = 0; // first step
 	int oldAnimStepIndex = 0; // first step
 	float time = 0;
 	float dt = 0.005; // FOR TESTING ONLY
+	float targetTime = 0; // ONLY USE WHEN PAUSED
 
+	bool animPaused = false;
 	float dt_per_sec = 0.25f;
 	void increaseTime();
+	void decreaseTime();
+
+	void prevStep();
+	void nextStep();
 
 
 	static constexpr sf::Vector2f originPosDisplacement = {50, 50};
 	sf::Vector2f originPos;
+	static constexpr sf::Vector2f descriptionTextPos = {50, 10};
 	static constexpr sf::Vector2f nodeRectSize = {50, 30};
 	static constexpr sf::Vector2f nodeValueRectSize = {30, 30};
 	static constexpr float        linkArrowLength = 20;
