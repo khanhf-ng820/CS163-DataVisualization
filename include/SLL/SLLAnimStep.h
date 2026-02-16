@@ -18,6 +18,8 @@ enum class SLLAnimType : unsigned char {
 	CREATE_CUR, // Create cur pointer at head
 	MOVE_CUR_FORWARD, // Move cur to cur->pNext
 
+	UPDATE_CUR_VAL, // Update cur->val
+
 	CREATE_NEW_NODE, // Create a new node
 	LINK_NEW_NODE_TO_NEXT, // Link the new node to the next node (or nullptr)
 	LINK_PREV_TO_NEW_NODE, // Link the previous node to the new node

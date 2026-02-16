@@ -57,8 +57,8 @@ void SLLVisEngine::resetParams() {
 
 
 
-// NORMAL MODE
-void SLLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList) {
+// NORMAL | SEARCH | UPDATE MODE
+void SLLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, SLLAnimStep eventSLL) {
 	// Draw pHead
 	auto headBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
 	headBox->setFillColor(sf::Color::Transparent);
@@ -103,6 +103,9 @@ void SLLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 			+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 		);
 
+		// Text inside node (usually value of node)
+		std::string valueTextStr = (visMode == SLLVisMode::UPDATE && eventSLL.type != SLLAnimType::UPDATE_CUR_VAL)
+								 ? std::to_string(oldUpdateVal) : std::to_string(cur->val);
 		auto valueText = std::make_unique<sf::Text>(font, std::to_string(cur->val), valueFontSize);
 		sf::FloatRect localBounds = valueText->getLocalBounds();
 		valueText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
@@ -166,7 +169,7 @@ void SLLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 
 
 
-// INSERT MODE
+// INSERT MODE ONLY
 void SLLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, SLLAnimStep eventSLL) {
 	// Draw pHead
 	auto headBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
@@ -448,7 +451,7 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 	// If STILL mode, stop here
 	if (eventList.size() <= 1) {
 		// Display nodes: Iterate through linked list and draw nodes
-		addNodeDrawables(drawableList);
+		addNodeDrawables(drawableList, SLLAnimStep());
 		return;
 	}
 
@@ -479,7 +482,7 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 		idxInsert = eventSLL.idxInsert;
 		addNodeDrawablesInsert(drawableList, eventSLL);
 	} else {
-		addNodeDrawables(drawableList);
+		addNodeDrawables(drawableList, eventSLL);
 	}
 
 

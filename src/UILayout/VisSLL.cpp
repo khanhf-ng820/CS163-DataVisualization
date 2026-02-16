@@ -74,6 +74,7 @@ void Program::initVisSLLScreen() {
 
 void Program::displayVisSLLScreenSFML() {
 	switch (visEngine_SLL.visMode) {
+	// NONE MODE (STILL MODE)
 	case SLLVisMode::NONE:
 		visEngine_SLL.eventList = std::vector<SLLAnimStep>();
 		visEngine_SLL.createDrawables(
@@ -82,6 +83,7 @@ void Program::displayVisSLLScreenSFML() {
 		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
 		if (!visEngine_SLL.animPaused) visEngine_SLL.increaseTime();
 		break;
+	// SEARCH MODE
 	case SLLVisMode::SEARCH:
 		visEngine_SLL.eventList = visEngine_SLL.getEventsSearch(visEngine_SLL.valToSearch);
 		visEngine_SLL.createDrawables(
@@ -89,7 +91,7 @@ void Program::displayVisSLLScreenSFML() {
 		);
 		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
 
-		// If not paused, just increase time
+		// If not paused, just increase / decrease time
 		if (visEngine_SLL.animPaused) {
 			if (visEngine_SLL.time < visEngine_SLL.targetTime) {
 				visEngine_SLL.increaseTime();
@@ -102,6 +104,7 @@ void Program::displayVisSLLScreenSFML() {
 			visEngine_SLL.increaseTime();
 		}
 		break;
+	// INSERT BEGINNING MODE
 	case SLLVisMode::INSERT_BEG:
 		visEngine_SLL.eventList = visEngine_SLL.getEventsInsert(visEngine_SLL.valToInsert, visEngine_SLL.idxToInsert);
 		visEngine_SLL.createDrawables(
@@ -109,7 +112,7 @@ void Program::displayVisSLLScreenSFML() {
 		);
 		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
 
-		// If not paused, just increase time
+		// If not paused, just increase / decrease time
 		if (visEngine_SLL.animPaused) {
 			if (visEngine_SLL.time < visEngine_SLL.targetTime) {
 				visEngine_SLL.increaseTime();
@@ -122,6 +125,7 @@ void Program::displayVisSLLScreenSFML() {
 			visEngine_SLL.increaseTime();
 		}
 		break;
+	// INSERT END MODE
 	case SLLVisMode::INSERT_END:
 		visEngine_SLL.eventList = visEngine_SLL.getEventsInsert(visEngine_SLL.valToInsert, visEngine_SLL.idxToInsert);
 		visEngine_SLL.createDrawables(
@@ -129,7 +133,7 @@ void Program::displayVisSLLScreenSFML() {
 		);
 		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
 
-		// If not paused, just increase time
+		// If not paused, just increase / decrease time
 		if (visEngine_SLL.animPaused) {
 			if (visEngine_SLL.time < visEngine_SLL.targetTime) {
 				visEngine_SLL.increaseTime();
@@ -142,6 +146,7 @@ void Program::displayVisSLLScreenSFML() {
 			visEngine_SLL.increaseTime();
 		}
 		break;
+	// INSERT K-TH NODE MODE
 	case SLLVisMode::INSERT_K:
 		visEngine_SLL.eventList = visEngine_SLL.getEventsInsert(visEngine_SLL.valToInsert, visEngine_SLL.idxToInsert);
 		visEngine_SLL.createDrawables(
@@ -149,7 +154,28 @@ void Program::displayVisSLLScreenSFML() {
 		);
 		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
 
-		// If not paused, just increase time
+		// If not paused, just increase / decrease time
+		if (visEngine_SLL.animPaused) {
+			if (visEngine_SLL.time < visEngine_SLL.targetTime) {
+				visEngine_SLL.increaseTime();
+				visEngine_SLL.time = std::min(visEngine_SLL.time, visEngine_SLL.targetTime);
+			} else if (visEngine_SLL.time > visEngine_SLL.targetTime) {
+				visEngine_SLL.decreaseTime();
+				visEngine_SLL.time = std::max(visEngine_SLL.time, visEngine_SLL.targetTime);
+			}
+		} else {
+			visEngine_SLL.increaseTime();
+		}
+		break;
+	// UPDATE MODE
+	case SLLVisMode::UPDATE:
+		visEngine_SLL.eventList = visEngine_SLL.getEventsUpdate(visEngine_SLL.valToUpdate, visEngine_SLL.idxToUpdate);
+		visEngine_SLL.createDrawables(
+			sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
+
+		// If not paused, just increase / decrease time
 		if (visEngine_SLL.animPaused) {
 			if (visEngine_SLL.time < visEngine_SLL.targetTime) {
 				visEngine_SLL.increaseTime();
@@ -219,7 +245,7 @@ void Program::displayVisSLLScreenGUI() {
 
 	ImGui::Separator();
 
-	// -- SEARCH OPERATION
+	// -- SEARCH OPERATION --
 	ImGui::BeginDisabled(visEngine_SLL.animInProgress);
 	ImGui::Text("Enter value to search:");
 	ImGui::InputInt("Value to search", &visEngine_SLL.valToSearchInput);
@@ -230,12 +256,13 @@ void Program::displayVisSLLScreenGUI() {
 		visEngine_SLL.valToSearch = visEngine_SLL.valToSearchInput;
 		visEngine_SLL.visMode = SLLVisMode::SEARCH;
 		visEngine_SLL.resetParams();
+		visEngine_SLL.animPaused = false;
 	}
 	ImGui::EndDisabled();
 
 	ImGui::Separator();
 
-	// -- INSERT OPERATION
+	// -- INSERT OPERATION --
 	ImGui::BeginDisabled(visEngine_SLL.animInProgress);
 	ImGui::Text("Enter value to insert:");
 	ImGui::InputInt("Value to insert", &visEngine_SLL.valToInsertInput);
@@ -260,9 +287,39 @@ void Program::displayVisSLLScreenGUI() {
 			visEngine_SLL.visMode = SLLVisMode::INSERT_K;
 		}
 		visEngine_SLL.resetParams();
+		visEngine_SLL.animPaused = false;
 
 		visEngine_SLL.insert(visEngine_SLL.valToInsert, visEngine_SLL.idxToInsert);
-		printf("cool"); // DEBUG
+		printf("insert cool"); // DEBUG
+	}
+	ImGui::EndDisabled();
+	ImGui::EndDisabled();
+
+	ImGui::Separator();
+
+	// -- UPDATE OPERATION --
+	ImGui::BeginDisabled(visEngine_SLL.animInProgress);
+	ImGui::Text("Enter value to update:");
+	ImGui::InputInt("Value to update", &visEngine_SLL.valToUpdateInput);
+	ImGui::InputInt("Index to update", &visEngine_SLL.idxToUpdateInput);
+
+	idxOutOfRange = !(visEngine_SLL.idxToUpdateInput >= 0 && visEngine_SLL.idxToUpdateInput <= visEngine_SLL.size);
+	if (idxOutOfRange) {
+		if (visEngine_SLL.size > 0)
+			ImGui::Text("Index must be between 0 and %d.", visEngine_SLL.size);
+		else
+			ImGui::Text("Index must be 0.");
+	}
+	ImGui::BeginDisabled(idxOutOfRange);
+	if (ImGui::Button("Update")) {
+		visEngine_SLL.valToUpdate = visEngine_SLL.valToUpdateInput;
+		visEngine_SLL.idxToUpdate = visEngine_SLL.idxToUpdateInput;
+		visEngine_SLL.visMode = SLLVisMode::UPDATE;
+		visEngine_SLL.resetParams();
+		visEngine_SLL.animPaused = false;
+
+		visEngine_SLL.update(visEngine_SLL.valToUpdate, visEngine_SLL.idxToUpdate);
+		printf("update cool"); // DEBUG
 	}
 	ImGui::EndDisabled();
 	ImGui::EndDisabled();

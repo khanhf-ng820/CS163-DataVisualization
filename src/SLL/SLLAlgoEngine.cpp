@@ -69,6 +69,45 @@ std::vector<SLLAnimStep> SLLAlgoEngine::getEventsSearch(int x) {
 
 
 
+// -- UPDATING --
+void SLLAlgoEngine::update(int x, int idx) {
+	SLLNode* cur = pHead;
+	int curIdx = 0;
+	while (cur) {
+		if (curIdx == idx) {
+			oldUpdateVal = cur->val;
+			cur->val = x;
+			return;
+		}
+		cur = cur->pNext;
+		curIdx++;
+	}
+}
+
+std::vector<SLLAnimStep> SLLAlgoEngine::getEventsUpdate(int x, int idx) {
+	std::vector<SLLAnimStep> events;
+
+	events.push_back(SLLAnimStep(SLLAnimType::CREATE_CUR, "Created cur, cur points to head of linked list", pHead, 0));
+	pCur = pHead;
+	curIndex = 0;
+
+	while (pCur) {
+		if (curIndex == idx) {
+			events.push_back(SLLAnimStepSearch(SLLAnimType::NONE, "cur points to node at index " + std::to_string(idx), pCur, curIndex, pCur));
+			events.push_back(SLLAnimStep(SLLAnimType::UPDATE_CUR_VAL, "Update node value to " + std::to_string(x), pCur, curIndex));
+			return events;
+		}
+		events.push_back(SLLAnimStep(SLLAnimType::MOVE_CUR_FORWARD, "cur does not point to node at index " + std::to_string(idx) + ", move cur forward", pCur, curIndex));
+		pCur = pCur->pNext;
+		curIndex++;
+	}
+
+	events.push_back(SLLAnimStep(SLLAnimType::NONE, "Reached null node, stop.", pCur, curIndex));
+	return events;
+}
+
+
+
 // -- INSERTING --
 void SLLAlgoEngine::insert(int x, int idx) {
 	if (idx == 0) {
@@ -93,6 +132,7 @@ void SLLAlgoEngine::insert(int x, int idx) {
 		return;
 	}
 }
+
 
 std::vector<SLLAnimStep> SLLAlgoEngine::getEventsInsert(int x, int idx) {
 	std::vector<SLLAnimStep> events;

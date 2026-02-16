@@ -22,6 +22,7 @@ public:
 	// SLLNode* pHead = new SLLNode{36, nullptr};
 	SLLNode* pCur = nullptr;
 	int curIndex = 0;
+
 	SLLNode* pSearch = nullptr; // Hold the searched node
 
 	SLLNode* pInsert = nullptr; // Hold the inserted node
@@ -29,7 +30,9 @@ public:
 	bool insertLinkPrev = false; // Prev is linked to inserted node
 	bool insertLinkNext = false; // Inserted node is linked next
 
-	int size = 0;
+	int oldUpdateVal = -1; // Old value of a node before updating
+
+	int size = 0; // Size of linked list
 
 	bool pCurCreated = false;
 
@@ -41,4 +44,6 @@ public:
 	std::vector<SLLAnimStep> getEventsSearch(int x);
 	void insert(int x, int idx);
 	std::vector<SLLAnimStep> getEventsInsert(int x, int idx);
+	void update(int x, int idx);
+	std::vector<SLLAnimStep> getEventsUpdate(int x, int idx);
 };

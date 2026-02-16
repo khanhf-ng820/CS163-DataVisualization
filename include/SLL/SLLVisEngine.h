@@ -16,10 +16,10 @@ static constexpr float EPSILON = 1e-6;
 enum class SLLVisMode {
 	NONE, // Currently visualizing nothing
 	SEARCH,
-	// INSERT,
 	INSERT_BEG,
 	INSERT_END,
-	INSERT_K
+	INSERT_K,
+	UPDATE
 };
 
 
@@ -32,7 +32,7 @@ public:
 
 	void resetParams();
 	// Draw nodes: Iterate through linked list and draw nodes
-	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
+	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, SLLAnimStep eventSLL);
 	// INSERT MODE
 	void addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, SLLAnimStep eventSLL);
 	// Draw nodes and links, depending on eventList
@@ -56,6 +56,10 @@ public:
 	int valToInsertInput = 0;
 	int idxToInsert = 0;
 	int idxToInsertInput = 0;
+	int valToUpdate = 0;      // Updating value
+	int valToUpdateInput = 0;
+	int idxToUpdate = 0;
+	int idxToUpdateInput = 0;
 
 	// For Animation
 	int animStepIndex = 0; // first step
