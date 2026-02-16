@@ -247,11 +247,36 @@ void Program::displayChooseDSMenuScreenGUI() {
 	ImGui::SameLine();
 	ImGui::RadioButton("Randomized data", &dataInitOption, DATA_INIT_RANDOMIZED); // Value 1
 	ImGui::SameLine();
-	ImGui::RadioButton("Data from \".txt\" file", &dataInitOption, DATA_INIT_FROM_FILE); // Value 2
+	ImGui::RadioButton("Enter custom data", &dataInitOption, DATA_INIT_CUSTOM); // Value 2
+	ImGui::SameLine();
+	ImGui::RadioButton("Data from \".txt\" file", &dataInitOption, DATA_INIT_FROM_FILE); // Value 3
 
-	if (dataInitOption == DATA_INIT_FROM_FILE) {
+	if (dataInitOption == DATA_INIT_CUSTOM) {
+		switch (chosenDSType) {
+		case DSType::SINGLY_LINKED_LIST:
+			ImGui::InputTextMultiline("##CustomDataSLL", customDataSLLbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			break;
+		case DSType::HASH_TABLE_LINEAR:
+			ImGui::InputTextMultiline("##CustomDataHash", customDataHashbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			break;
+		case DSType::AVL_TREE:
+			ImGui::InputTextMultiline("##CustomDataAVL", customDataAVLbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			break;
+		case DSType::TRIE_TREE:
+			ImGui::InputTextMultiline("##CustomDataTrie", customDataTriebuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			break;
+		case DSType::MST_GRAPH:
+			ImGui::InputTextMultiline("##CustomDataMST", customDataMSTbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			break;
+		case DSType::DIJKSTRA_GRAPH:
+			ImGui::InputTextMultiline("##CustomDataDijkstra", customDataDijkstrabuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			break;
+		default:
+			break;
+		}
+	} else if (dataInitOption == DATA_INIT_FROM_FILE) {
 		std::string dataFileName = getDataFileName(DSVectors[current_DS_item]);
-		
+
 		// Change ItemSpacing temporarily
 		ImVec2 originalItemSpacing = stylePtr->ItemSpacing;
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, originalItemSpacing.y));

@@ -83,35 +83,36 @@ void Program::displayMainMenuScreenGUI() {
 	// Get the current window size
 	sf::Vector2u sfml_window_size = window.getSize();
 
-	ImGui::Begin("Hello, world!",
-		nullptr
-		// ImGuiWindowFlags_NoCollapse
-		// ImGuiWindowFlags_NoBackground
-	);
-	ImGui::Button("Look at this pretty button");
-	// char buf[25];
-	// ImGui::InputText("string", buf, IM_COUNTOF(buf));
-	ImGui::InputText("string", buf, 25);
-	// float f;
-	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+	// DEMO WINDOW (FOR TESTING)
+	// ImGui::Begin("Hello, world!",
+	// 	nullptr
+	// 	// ImGuiWindowFlags_NoCollapse
+	// 	// ImGuiWindowFlags_NoBackground
+	// );
+	// ImGui::Button("Look at this pretty button");
+	// // char buf[25];
+	// // ImGui::InputText("string", buf, IM_COUNTOF(buf));
+	// ImGui::InputText("string", buf, 25);
+	// // float f;
+	// ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
 
-	const char* items[] = { "Option 1", "Option 2", "Option 3", "Option 4" };
-	static int current_item = 0;
-	if (ImGui::BeginCombo("##mycombo", items[current_item])) { // Pass the "current" item name as the preview
-		for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
-			bool is_selected = (current_item == n);
-			if (ImGui::Selectable(items[n], is_selected)) {
-				current_item = n;
-			}
+	// const char* items[] = { "Option 1", "Option 2", "Option 3", "Option 4" };
+	// static int current_item = 0;
+	// if (ImGui::BeginCombo("##mycombo", items[current_item])) { // Pass the "current" item name as the preview
+	// 	for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
+	// 		bool is_selected = (current_item == n);
+	// 		if (ImGui::Selectable(items[n], is_selected)) {
+	// 			current_item = n;
+	// 		}
 
-			// Set the initial focus when opening the combo (scrolling + keyboard navigation)
-			if (is_selected) {
-				ImGui::SetItemDefaultFocus();
-			}
-		}
-		ImGui::EndCombo();
-	}
-	ImGui::End();
+	// 		// Set the initial focus when opening the combo (scrolling + keyboard navigation)
+	// 		if (is_selected) {
+	// 			ImGui::SetItemDefaultFocus();
+	// 		}
+	// 	}
+	// 	ImGui::EndCombo();
+	// }
+	// ImGui::End();
 
 
 	sf::Vector2u btnSize, btnPosition;

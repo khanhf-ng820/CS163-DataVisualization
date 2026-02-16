@@ -20,6 +20,7 @@ enum class DSType {
 enum DataInitOption {
 	DATA_INIT_EMPTY,
 	DATA_INIT_RANDOMIZED,
+	DATA_INIT_CUSTOM,
 	DATA_INIT_FROM_FILE,
 	DATA_INIT_DEFAULT // Error value, must avoid
 };

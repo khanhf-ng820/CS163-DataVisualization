@@ -24,12 +24,21 @@ public:
 	int curIndex = 0;
 	SLLNode* pSearch = nullptr; // Hold the searched node
 
+	SLLNode* pInsert = nullptr; // Hold the inserted node
+	int idxInsert = -1;
+	bool insertLinkPrev = false; // Prev is linked to inserted node
+	bool insertLinkNext = false; // Inserted node is linked next
+
+	int size = 0;
+
 	bool pCurCreated = false;
 
 
 	void clear(); // Clear the linked list
+	SLLNode* ithNode(int i);
+
+
 	std::vector<SLLAnimStep> getEventsSearch(int x);
-
-
-
+	void insert(int x, int idx);
+	std::vector<SLLAnimStep> getEventsInsert(int x, int idx);
 };

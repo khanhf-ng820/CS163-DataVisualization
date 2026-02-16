@@ -14,6 +14,7 @@
 enum class SLLVisMode {
 	NONE, // Currently visualizing nothing
 	SEARCH,
+	// INSERT,
 	INSERT_BEG,
 	INSERT_END,
 	INSERT_K
@@ -30,6 +31,8 @@ public:
 	void resetParams();
 	// Draw nodes: Iterate through linked list and draw nodes
 	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
+	// INSERT MODE
+	void addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, SLLAnimStep eventSLL);
 	// Draw nodes and links, depending on eventList
 	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
 	void displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout);
@@ -44,18 +47,24 @@ public:
 	SLLNode* visCur = nullptr; //  cur in visualization (not in code)
 	int visCurIndex = 0; // cur index in visualization (not in code)
 
-	int valToSearch = 0;
+	// For Input
+	int valToSearch = 0;      // Searching
 	int valToSearchInput = 0;
+	int valToInsert = 0;      // Inserting
+	int valToInsertInput = 0;
+	int idxToInsert = 0;
+	int idxToInsertInput = 0;
 
 	// For Animation
 	int animStepIndex = 0; // first step
 	int oldAnimStepIndex = 0; // first step
 	float time = 0;
-	float dt = 0.005; // FOR TESTING ONLY
+	float dt = 0.005;
 	float targetTime = 0; // ONLY USE WHEN PAUSED
 
 	bool animPaused = false;
-	float dt_per_sec = 0.25f;
+	bool animInProgress = false;
+	float dt_per_sec = 0.25f; // FOR TESTING ONLY
 	void increaseTime();
 	void decreaseTime();
 
@@ -63,13 +72,16 @@ public:
 	void nextStep();
 
 
-	static constexpr sf::Vector2f originPosDisplacement = {50, 50};
+	static constexpr sf::Vector2f originPosDisplacement = {75, 50};
+	static constexpr sf::Vector2f headPosDisplacement = {-50, 0};
 	sf::Vector2f originPos;
 	static constexpr sf::Vector2f descriptionTextPos = {50, 10};
 	static constexpr sf::Vector2f nodeRectSize = {50, 30};
 	static constexpr sf::Vector2f nodeValueRectSize = {30, 30};
+	static constexpr float        nodeLayerSpacing = 20 + 30; // 30 is nodeRectSize.y
 	static constexpr float        linkArrowLength = 20;
 	static constexpr int          valueFontSize = 10;
+	static constexpr int          descriptionFontSize = 15;
 	static constexpr float        arrowHeadLength = 7.5;
 
 private:

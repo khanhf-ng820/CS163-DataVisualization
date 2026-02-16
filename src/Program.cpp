@@ -9,6 +9,7 @@ Program::Program()
 	// , view(sf::FloatRect({0.f, 0.f}, {NORMAL_WIDTH, NORMAL_HEIGHT}))
 	, view(window.getDefaultView())
 	, textFont(fs::path(ASSET_DIR) / "Roboto_Mono/RobotoMono-VariableFont_wght.ttf")
+	, rng(std::random_device()())
 	, visEngine_SLL(window, textFont)
 {
 	window.requestFocus();
@@ -49,6 +50,17 @@ Program::Program()
 	sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN] = std::make_unique<sfLayout>(&window);
 
 	resizeView();
+}
+
+Program::~Program() {
+	// Delete everything on the heap
+	delete[] buf;
+	delete[] customDataSLLbuf;
+	delete[] customDataHashbuf;
+	delete[] customDataAVLbuf;
+	delete[] customDataTriebuf;
+	delete[] customDataMSTbuf;
+	delete[] customDataDijkstrabuf;
 }
 
 
@@ -237,10 +249,6 @@ void Program::mainLoop() {
 	default:
 		break;
 	};
-
-
-	// Delete everything on the heap
-	delete[] buf;
 }
 
 

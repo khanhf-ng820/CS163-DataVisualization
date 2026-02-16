@@ -16,6 +16,8 @@
 #include <vector>
 #include <map>
 #include <filesystem>
+#include <random>
+#include <chrono>
 
 namespace fs = std::filesystem;
 
@@ -44,6 +46,7 @@ struct ScaleInfo {
 class Program {
 public:
 	Program();
+	~Program();
 	// Main loop of program
 	void mainLoop();
 	// Function to update View based on new window size
@@ -95,6 +98,9 @@ private:
 	ImGuiIO* ioPtr;
 	ImGuiStyle* stylePtr;
 
+	// RNG
+	std::mt19937 rng;
+
 	bool init_successful = true;
 	bool draggingCanvas = false; // If mouse is dragging canvas
 	bool allowDragCanvas = false; // Allow dragging canvas (remember to set false)
@@ -110,8 +116,17 @@ private:
 
 
 
+	constexpr static size_t CUSTOM_DATA_BUF_SIZE = 1028;
+
 	char* buf = new char[25];
+	char* customDataSLLbuf = new char[CUSTOM_DATA_BUF_SIZE];
+	char* customDataHashbuf = new char[CUSTOM_DATA_BUF_SIZE];
+	char* customDataAVLbuf = new char[CUSTOM_DATA_BUF_SIZE];
+	char* customDataTriebuf = new char[CUSTOM_DATA_BUF_SIZE];
+	char* customDataMSTbuf = new char[CUSTOM_DATA_BUF_SIZE];
+	char* customDataDijkstrabuf = new char[CUSTOM_DATA_BUF_SIZE];
 	float f = 0.36;
+
 	// sf::CircleShape shape;
 	// sf::RectangleShape rectangle;
 	// sf::RectangleShape border;

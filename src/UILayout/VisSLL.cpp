@@ -102,6 +102,66 @@ void Program::displayVisSLLScreenSFML() {
 			visEngine_SLL.increaseTime();
 		}
 		break;
+	case SLLVisMode::INSERT_BEG:
+		visEngine_SLL.eventList = visEngine_SLL.getEventsInsert(visEngine_SLL.valToInsert, visEngine_SLL.idxToInsert);
+		visEngine_SLL.createDrawables(
+			sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
+
+		// If not paused, just increase time
+		if (visEngine_SLL.animPaused) {
+			if (visEngine_SLL.time < visEngine_SLL.targetTime) {
+				visEngine_SLL.increaseTime();
+				visEngine_SLL.time = std::min(visEngine_SLL.time, visEngine_SLL.targetTime);
+			} else if (visEngine_SLL.time > visEngine_SLL.targetTime) {
+				visEngine_SLL.decreaseTime();
+				visEngine_SLL.time = std::max(visEngine_SLL.time, visEngine_SLL.targetTime);
+			}
+		} else {
+			visEngine_SLL.increaseTime();
+		}
+		break;
+	case SLLVisMode::INSERT_END:
+		visEngine_SLL.eventList = visEngine_SLL.getEventsInsert(visEngine_SLL.valToInsert, visEngine_SLL.idxToInsert);
+		visEngine_SLL.createDrawables(
+			sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
+
+		// If not paused, just increase time
+		if (visEngine_SLL.animPaused) {
+			if (visEngine_SLL.time < visEngine_SLL.targetTime) {
+				visEngine_SLL.increaseTime();
+				visEngine_SLL.time = std::min(visEngine_SLL.time, visEngine_SLL.targetTime);
+			} else if (visEngine_SLL.time > visEngine_SLL.targetTime) {
+				visEngine_SLL.decreaseTime();
+				visEngine_SLL.time = std::max(visEngine_SLL.time, visEngine_SLL.targetTime);
+			}
+		} else {
+			visEngine_SLL.increaseTime();
+		}
+		break;
+	case SLLVisMode::INSERT_K:
+		visEngine_SLL.eventList = visEngine_SLL.getEventsInsert(visEngine_SLL.valToInsert, visEngine_SLL.idxToInsert);
+		visEngine_SLL.createDrawables(
+			sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
+
+		// If not paused, just increase time
+		if (visEngine_SLL.animPaused) {
+			if (visEngine_SLL.time < visEngine_SLL.targetTime) {
+				visEngine_SLL.increaseTime();
+				visEngine_SLL.time = std::min(visEngine_SLL.time, visEngine_SLL.targetTime);
+			} else if (visEngine_SLL.time > visEngine_SLL.targetTime) {
+				visEngine_SLL.decreaseTime();
+				visEngine_SLL.time = std::max(visEngine_SLL.time, visEngine_SLL.targetTime);
+			}
+		} else {
+			visEngine_SLL.increaseTime();
+		}
+		break;
 	default:
 		break;
 	}
@@ -128,9 +188,12 @@ void Program::displayVisSLLScreenGUI() {
 		// ImGuiWindowFlags_NoCollapse
 		// ImGuiWindowFlags_NoBackground
 	);
-	// ImGui::Button("Look at this pretty button"); // useless button
-	// char buf[25];
-	// ImGui::InputText("string", buf, IM_COUNTOF(buf));
+	// -- GO BACK BUTTON
+	if (ImGui::Button("Back to Main Menu")) {
+		programState = ProgramState::MAIN_MENU;
+		resizeView();
+	}
+	// -- SPEED/PAUSE/STEP MENU
 	ImGui::SliderFloat("Animation Speed", &visEngine_SLL.dt, 0.001f, 0.499f);
 
 	ImGui::BeginDisabled(!visEngine_SLL.animPaused);
@@ -155,6 +218,9 @@ void Program::displayVisSLLScreenGUI() {
 	}
 
 	ImGui::Separator();
+
+	// -- SEARCH OPERATION
+	ImGui::BeginDisabled(visEngine_SLL.animInProgress);
 	ImGui::Text("Enter value to search:");
 	ImGui::InputInt("Value to search", &visEngine_SLL.valToSearchInput);
 	// float f;
@@ -165,23 +231,60 @@ void Program::displayVisSLLScreenGUI() {
 		visEngine_SLL.visMode = SLLVisMode::SEARCH;
 		visEngine_SLL.resetParams();
 	}
+	ImGui::EndDisabled();
 
-	const char* items[] = { "Option 1", "Option 2", "Option 3", "Option 4" };
-	static int current_item = 0;
-	if (ImGui::BeginCombo("##mycombo", items[current_item])) { // Pass the "current" item name as the preview
-		for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
-			bool is_selected = (current_item == n);
-			if (ImGui::Selectable(items[n], is_selected)) {
-				current_item = n;
-			}
+	ImGui::Separator();
 
-			// Set the initial focus when opening the combo (scrolling + keyboard navigation)
-			if (is_selected) {
-				ImGui::SetItemDefaultFocus();
-			}
-		}
-		ImGui::EndCombo();
+	// -- INSERT OPERATION
+	ImGui::BeginDisabled(visEngine_SLL.animInProgress);
+	ImGui::Text("Enter value to insert:");
+	ImGui::InputInt("Value to insert", &visEngine_SLL.valToInsertInput);
+	ImGui::InputInt("Index to insert", &visEngine_SLL.idxToInsertInput);
+
+	bool idxOutOfRange = !(visEngine_SLL.idxToInsertInput >= 0 && visEngine_SLL.idxToInsertInput <= visEngine_SLL.size);
+	if (idxOutOfRange) {
+		if (visEngine_SLL.size > 0)
+			ImGui::Text("Index must be between 0 and %d.", visEngine_SLL.size);
+		else
+			ImGui::Text("Index must be 0.");
 	}
+	ImGui::BeginDisabled(idxOutOfRange);
+	if (ImGui::Button("Insert")) {
+		visEngine_SLL.valToInsert = visEngine_SLL.valToInsertInput;
+		visEngine_SLL.idxToInsert = visEngine_SLL.idxToInsertInput;
+		if (visEngine_SLL.idxToInsert == 0) {
+			visEngine_SLL.visMode = SLLVisMode::INSERT_BEG;
+		} else if (visEngine_SLL.idxToInsert == visEngine_SLL.size) {
+			visEngine_SLL.visMode = SLLVisMode::INSERT_END;
+		} else {
+			visEngine_SLL.visMode = SLLVisMode::INSERT_K;
+		}
+		visEngine_SLL.resetParams();
+
+		visEngine_SLL.insert(visEngine_SLL.valToInsert, visEngine_SLL.idxToInsert);
+		printf("cool"); // DEBUG
+	}
+	ImGui::EndDisabled();
+	ImGui::EndDisabled();
+
+	ImGui::Separator();
+
+	// const char* items[] = { "Option 1", "Option 2", "Option 3", "Option 4" };
+	// static int current_item = 0;
+	// if (ImGui::BeginCombo("##mycombo", items[current_item])) { // Pass the "current" item name as the preview
+	// 	for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
+	// 		bool is_selected = (current_item == n);
+	// 		if (ImGui::Selectable(items[n], is_selected)) {
+	// 			current_item = n;
+	// 		}
+
+	// 		// Set the initial focus when opening the combo (scrolling + keyboard navigation)
+	// 		if (is_selected) {
+	// 			ImGui::SetItemDefaultFocus();
+	// 		}
+	// 	}
+	// 	ImGui::EndCombo();
+	// }
 	ImGui::End();
 
 
