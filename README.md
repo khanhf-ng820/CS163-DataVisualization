@@ -70,9 +70,9 @@ mkdir build
 cd build
 
 # Generate build files
-# If you use the MinGW C++ compiler, do this:
+# --- If you use the MinGW C++ compiler, do this:
 cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -S .. -B .
-# Else, do this:
+# --- Else, do this:
 cmake -DCMAKE_BUILD_TYPE=Release -S .. -B .
 
 # Build the project

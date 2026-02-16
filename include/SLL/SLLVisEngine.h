@@ -11,6 +11,8 @@
 
 
 
+static constexpr float EPSILON = 1e-6;
+
 enum class SLLVisMode {
 	NONE, // Currently visualizing nothing
 	SEARCH,
@@ -82,8 +84,10 @@ public:
 	static constexpr float        linkArrowLength = 20;
 	static constexpr int          valueFontSize = 10;
 	static constexpr int          descriptionFontSize = 15;
-	static constexpr float        arrowHeadLength = 7.5;
+	static constexpr float        arrowHeadSideLen = 7.5;
 
 private:
 	sf::Vector2f lerp(sf::Vector2f v1, sf::Vector2f v2, float k) const;
+
+	void drawArrow(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f v1, sf::Vector2f v2) const;
 };

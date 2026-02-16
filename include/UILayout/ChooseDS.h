@@ -1,5 +1,6 @@
 #pragma once
 #include "Program.h"
+#include "utils.h"
 
 #define ALL_DS_TYPE_LIST { "Lists - Singly Linked List", "Hash Table - Linear Probing", "Trees - AVL Tree", "Trees - Trie", "Graphs - Minimum Spanning Tree", "Graphs - Shortest Path (Dijkstra\'s algorithm)" }
 
