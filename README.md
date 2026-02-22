@@ -7,7 +7,7 @@ This project uses **C++**, **CMake**, the **SFML** graphics library, and the **I
 This project contains visualizations for these data structures and algorithms:
 
 - Singly linked list
-- Hash table *(linear probing)*
+- Hash table *(Linear probing)*
 - **Trees:** AVL Tree, Trie *(26-ary tree)*
 - **Graphs:** Minimum Spanning Tree *(Prim's algorithm)*, Shortest Path *(Dijkstra's algorithm)*
 

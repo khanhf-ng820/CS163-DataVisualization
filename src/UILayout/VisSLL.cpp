@@ -347,10 +347,12 @@ void Program::displayVisSLLScreenGUI() {
 
 	idxOutOfRange = !(visEngine_SLL.idxToUpdateInput >= 0 && visEngine_SLL.idxToUpdateInput < visEngine_SLL.size);
 	if (idxOutOfRange) {
-		if (visEngine_SLL.size > 0)
+		if (visEngine_SLL.size > 1)
 			ImGui::Text("Index must be between 0 and %d.", visEngine_SLL.size);
-		else
+		else if (visEngine_SLL.size == 1)
 			ImGui::Text("Index must be 0.");
+		else
+			ImGui::Text("There are no nodes to remove.");
 	}
 	ImGui::BeginDisabled(idxOutOfRange);
 	if (ImGui::Button("Update")) {

@@ -150,7 +150,7 @@ std::vector<SLLAnimStep> SLLAlgoEngine::getEventsInsert(int x, int idx) {
 		events.back().insertLinkPrev = true;
 		events.back().insertLinkNext = true;
 		
-		events.push_back(SLLAnimStep(SLLAnimType::MOVE_NODES_INSERT_BEG, "Move nodes", nullptr, -1));
+		events.push_back(SLLAnimStep(SLLAnimType::MOVE_NODES_INSERT_BEG, "Move nodes (for visualization reasons)", nullptr, -1));
 		events.back().idxInsert = idx;
 		events.back().insertLinkPrev = true;
 		events.back().insertLinkNext = true;
@@ -176,16 +176,16 @@ std::vector<SLLAnimStep> SLLAlgoEngine::getEventsInsert(int x, int idx) {
 		events.back().idxInsert = idx;
 
 		// pInsert->pNext = pCur->pNext;
-		events.push_back(SLLAnimStep(SLLAnimType::LINK_NEW_NODE_TO_NEXT, "Link new node to the next of cur", pCur, curIndex));
+		events.push_back(SLLAnimStep(SLLAnimType::LINK_NEW_NODE_TO_NEXT, "Link the new node to the next node of cur", pCur, curIndex));
 		events.back().idxInsert = idx;
 		events.back().insertLinkNext = true;
 
 		// pCur->pNext = pInsert;
-		events.push_back(SLLAnimStep(SLLAnimType::LINK_PREV_TO_NEW_NODE, "Link cur to the new node", pCur, curIndex));
+		events.push_back(SLLAnimStep(SLLAnimType::LINK_PREV_TO_NEW_NODE, "Link the current node to the new node", pCur, curIndex));
 		events.back().idxInsert = idx;
 		events.back().insertLinkPrev = true;
 		events.back().insertLinkNext = true;
-		events.push_back(SLLAnimStep(SLLAnimType::MOVE_NODES_INSERT_K, "Move nodes", pCur, curIndex));
+		events.push_back(SLLAnimStep(SLLAnimType::MOVE_NODES_INSERT_K, "Move nodes (for visualization reasons)", pCur, curIndex));
 		events.back().idxInsert = idx;
 		events.back().insertLinkPrev = true;
 		events.back().insertLinkNext = true;
@@ -237,15 +237,15 @@ std::vector<SLLAnimStep> SLLAlgoEngine::getEventsRemove(int idx) {
 	if (idxRemove == -1) return events; // Empty list
 
 	if (idx == 0) {
-		events.push_back(SLLAnimStep(SLLAnimType::MOVE_NODES_REMOVE_BEG, "Move nodes", nullptr, -1));
+		events.push_back(SLLAnimStep(SLLAnimType::MOVE_NODES_REMOVE_BEG, "Move nodes (for visualization reasons)", nullptr, -1));
 		events.back().idxRemove = idx;
 
 		// Might edit comments soon
-		events.push_back(SLLAnimStep(SLLAnimType::CHANGE_LINK_OF_HEAD, "Change link of pHead", nullptr, -1));
+		events.push_back(SLLAnimStep(SLLAnimType::CHANGE_LINK_OF_HEAD, "Change link of the node that pHead points to", nullptr, -1));
 		events.back().idxRemove = idx;
 		events.back().removeChangeLink = true;
 
-		events.push_back(SLLAnimStep(SLLAnimType::REMOVE_NODE, "Remove the node", nullptr, -1));
+		events.push_back(SLLAnimStep(SLLAnimType::REMOVE_NODE, "Remove the desired node", nullptr, -1));
 		events.back().idxRemove = idx;
 		events.back().removeChangeLink = true;
 		events.back().removedNode = true;
@@ -267,15 +267,15 @@ std::vector<SLLAnimStep> SLLAlgoEngine::getEventsRemove(int idx) {
 			continue;
 		}
 
-		events.push_back(SLLAnimStep(SLLAnimType::MOVE_NODES_REMOVE_K, "Move nodes", pCur, curIndex));
+		events.push_back(SLLAnimStep(SLLAnimType::MOVE_NODES_REMOVE_K, "Move nodes (for visualization reasons)", pCur, curIndex));
 		events.back().idxRemove = idx;
 
 		// Might edit comments soon
-		events.push_back(SLLAnimStep(SLLAnimType::CHANGE_LINK_OF_CUR, "Change link of cur", pCur, curIndex));
+		events.push_back(SLLAnimStep(SLLAnimType::CHANGE_LINK_OF_CUR, "Change the link of the node that cur points to", pCur, curIndex));
 		events.back().idxRemove = idx;
 		events.back().removeChangeLink = true;
 
-		events.push_back(SLLAnimStep(SLLAnimType::REMOVE_NODE, "Remove the node", pCur, curIndex));
+		events.push_back(SLLAnimStep(SLLAnimType::REMOVE_NODE, "Remove the desired node", pCur, curIndex));
 		events.back().idxRemove = idx;
 		events.back().removeChangeLink = true;
 		events.back().removedNode = true;
