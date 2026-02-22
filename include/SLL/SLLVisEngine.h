@@ -14,12 +14,14 @@
 static constexpr float EPSILON = 1e-6;
 
 enum class SLLVisMode {
-	NONE, // Currently visualizing nothing
+	NONE, // Currently visualizing no actions
 	SEARCH,
 	INSERT_BEG,
 	INSERT_END,
 	INSERT_K,
-	UPDATE
+	UPDATE,
+	REMOVE_BEG,
+	REMOVE_K
 };
 
 
@@ -35,6 +37,8 @@ public:
 	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, SLLAnimStep eventSLL);
 	// INSERT MODE
 	void addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, SLLAnimStep eventSLL);
+	// REMOVE MODE
+	void addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, SLLAnimStep eventSLL);
 	// Draw nodes and links, depending on eventList
 	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
 	void displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout);
@@ -60,6 +64,8 @@ public:
 	int valToUpdateInput = 0;
 	int idxToUpdate = 0;
 	int idxToUpdateInput = 0;
+	int idxToRemove = 0;      // Remove node
+	int idxToRemoveInput = 0;
 
 	// For Animation
 	int animStepIndex = 0; // first step

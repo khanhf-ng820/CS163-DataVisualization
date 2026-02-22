@@ -25,7 +25,13 @@ enum class SLLAnimType : unsigned char {
 	LINK_PREV_TO_NEW_NODE, // Link the previous node to the new node
 	LINK_HEAD_TO_NEW_NODE, // Set pHead to the new node (INSERT_BEG MODE)
 	MOVE_NODES_INSERT_BEG, // Move the new node and nodes after it (INSERT_BEG MODE)
-	MOVE_NODES_INSERT_K // Move the new node and nodes after it (INSERT_K MODE)
+	MOVE_NODES_INSERT_K, // Move the new node and nodes after it (INSERT_K MODE)
+
+	MOVE_NODES_REMOVE_BEG,
+	MOVE_NODES_REMOVE_K,
+	CHANGE_LINK_OF_HEAD,
+	CHANGE_LINK_OF_CUR,
+	REMOVE_NODE
 };
 
 
@@ -50,9 +56,14 @@ public:
 
 	// FOR INSERT MODE ONLY
 	SLLNode* pInsert = nullptr; // Hold the inserted node
-	int idxInsert = 0;
+	int idxInsert = -1;
 	bool insertLinkPrev = false; // Prev is linked to inserted node
 	bool insertLinkNext = false; // Inserted node is linked next
+
+	// FOR REMOVE MODE ONLY
+	int idxRemove = -1; // idx of the removed node
+	bool removeChangeLink = false; // If cur->pNext is assigned cur->pNext->pNext
+	bool removedNode = false; // If the desired node is removed
 
 	std::string text = ""; // Text to display
 };

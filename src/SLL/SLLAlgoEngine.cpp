@@ -195,3 +195,91 @@ std::vector<SLLAnimStep> SLLAlgoEngine::getEventsInsert(int x, int idx) {
 	}
 	return events;
 }
+
+
+
+// -- REMOVING --
+void SLLAlgoEngine::remove(int idx) {
+	if (pHead == nullptr) { // Empty list
+		idxRemove = -1;
+		return;
+	}
+	if (idx == 0) { // Remove head
+		oldRemoveVal = pHead->val;
+		idxRemove = idx;
+		SLLNode* temp = pHead;
+		pHead = pHead->pNext;
+		delete temp;
+		size--;
+		return;
+	}
+	SLLNode* cur = pHead;
+	int curIdx = 0;
+	while (cur) {
+		if (curIdx != idx - 1) {
+			cur = cur->pNext;
+			curIdx++;
+			continue;
+		}
+		SLLNode* temp = cur->pNext;
+		cur->pNext = temp->pNext;
+		oldRemoveVal = temp->val;
+		idxRemove = idx;
+		delete temp;
+		size--;
+		return;
+	}
+}
+
+
+std::vector<SLLAnimStep> SLLAlgoEngine::getEventsRemove(int idx) {
+	std::vector<SLLAnimStep> events;
+	if (idxRemove == -1) return events; // Empty list
+
+	if (idx == 0) {
+		events.push_back(SLLAnimStep(SLLAnimType::MOVE_NODES_REMOVE_BEG, "Move nodes", nullptr, -1));
+		events.back().idxRemove = idx;
+
+		// Might edit comments soon
+		events.push_back(SLLAnimStep(SLLAnimType::CHANGE_LINK_OF_HEAD, "Change link of pHead", nullptr, -1));
+		events.back().idxRemove = idx;
+		events.back().removeChangeLink = true;
+
+		events.push_back(SLLAnimStep(SLLAnimType::REMOVE_NODE, "Remove the node", nullptr, -1));
+		events.back().idxRemove = idx;
+		events.back().removeChangeLink = true;
+		events.back().removedNode = true;
+
+		return events;
+	}
+
+	events.push_back(SLLAnimStep(SLLAnimType::CREATE_CUR, "Created cur, cur points to head of linked list", pHead, 0));
+	events.back().idxRemove = idx;
+	pCur = pHead;
+	curIndex = 0;
+
+	while (pCur) {
+		if (curIndex != idx - 1) {
+			events.push_back(SLLAnimStep(SLLAnimType::MOVE_CUR_FORWARD, "cur is not at index " + std::to_string(idx-1) + ", move cur forward", pCur, curIndex));
+			events.back().idxRemove = idx;
+			pCur = pCur->pNext;
+			curIndex++;
+			continue;
+		}
+
+		events.push_back(SLLAnimStep(SLLAnimType::MOVE_NODES_REMOVE_K, "Move nodes", pCur, curIndex));
+		events.back().idxRemove = idx;
+
+		// Might edit comments soon
+		events.push_back(SLLAnimStep(SLLAnimType::CHANGE_LINK_OF_CUR, "Change link of cur", pCur, curIndex));
+		events.back().idxRemove = idx;
+		events.back().removeChangeLink = true;
+
+		events.push_back(SLLAnimStep(SLLAnimType::REMOVE_NODE, "Remove the node", pCur, curIndex));
+		events.back().idxRemove = idx;
+		events.back().removeChangeLink = true;
+		events.back().removedNode = true;
+		break;
+	}
+	return events;
+}

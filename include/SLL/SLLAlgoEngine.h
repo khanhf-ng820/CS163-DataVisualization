@@ -32,6 +32,9 @@ public:
 
 	int oldUpdateVal = -1; // Old value of a node before updating
 
+	int oldRemoveVal = -1; // Old value of a node before removing
+	int idxRemove = -1; // Index of the removed node (-1 means can't remove)
+
 	int size = 0; // Size of linked list
 
 	bool pCurCreated = false;
@@ -46,4 +49,6 @@ public:
 	std::vector<SLLAnimStep> getEventsInsert(int x, int idx);
 	void update(int x, int idx);
 	std::vector<SLLAnimStep> getEventsUpdate(int x, int idx);
+	void remove(int idx);
+	std::vector<SLLAnimStep> getEventsRemove(int idx);
 };

@@ -48,6 +48,13 @@ void SLLVisEngine::resetParams() {
 	pInsert = nullptr;
 	pCurCreated = false;
 
+	insertLinkPrev = false;
+	insertLinkNext = false;
+	oldUpdateVal = -1;
+
+	oldRemoveVal = false;
+	idxRemove = -1;
+
 	animInProgress = false;
 
 	animStepIndex = 0; // first step
@@ -57,7 +64,7 @@ void SLLVisEngine::resetParams() {
 
 
 
-// NORMAL | SEARCH | UPDATE MODE
+// --- NORMAL | SEARCH | UPDATE MODE ---
 void SLLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, SLLAnimStep eventSLL) {
 	// Draw pHead
 	auto headBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
@@ -169,7 +176,7 @@ void SLLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 
 
 
-// INSERT MODE ONLY
+// --- INSERT MODE ONLY ---
 void SLLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, SLLAnimStep eventSLL) {
 	// Draw pHead
 	auto headBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
@@ -444,6 +451,274 @@ void SLLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 
 
 
+// --- REMOVE MODE ONLY ---
+void SLLVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, SLLAnimStep eventSLL) {
+	// Draw pHead
+	auto headBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
+	headBox->setFillColor(sf::Color::Transparent);
+	headBox->setOutlineColor(sf::Color::Black);
+	headBox->setOutlineThickness(2.f);
+	headBox->setPosition(originPos + headPosDisplacement);
+	auto pHeadText = std::make_unique<sf::Text>(font, "pHead", valueFontSize);
+	pHeadText->setFillColor(sf::Color::Black);
+	pHeadText->setPosition(originPos + headPosDisplacement);
+
+	drawableList.push_back(std::move(headBox));
+	drawableList.push_back(std::move(pHeadText));
+	// In CHANGE_LINK_OF_HEAD step and before:
+	if (!(eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD)) {
+		drawArrow(
+			drawableList,
+			originPos + headPosDisplacement + sf::Vector2f(nodeValueRectSize.x, nodeValueRectSize.y/2),
+			originPos + headPosDisplacement + sf::Vector2f(nodeValueRectSize.x + linkArrowLength, nodeValueRectSize.y/2)
+		);
+	} else if (eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD) {
+		// Link pHead to the pNext of pNext
+		drawArrow(
+			drawableList,
+			originPos + headPosDisplacement + sf::Vector2f(nodeValueRectSize.x, nodeValueRectSize.y/2),
+			originPos + headPosDisplacement + sf::Vector2f(nodeValueRectSize.x + linkArrowLength, nodeValueRectSize.y/2)
+			// + sf::Vector2f(0, nodeLayerSpacing)
+		);
+	} else {
+		// For REMOVE mode
+		drawArrow(
+			drawableList,
+			originPos + headPosDisplacement + sf::Vector2f(nodeValueRectSize.x, nodeValueRectSize.y/2),
+			originPos + headPosDisplacement + sf::Vector2f(nodeValueRectSize.x + linkArrowLength, nodeValueRectSize.y/2)
+			// For REMOVE mode
+			+ lerp(sf::Vector2f(), sf::Vector2f(0.f, nodeLayerSpacing), fract(time))
+		);
+	}
+
+	// Display nodes: Iterate through linked list and draw nodes
+	int index = 0;
+	SLLNode* cur = pHead;
+	if (cur == nullptr && index == idxRemove) index++;
+	while (cur) {
+		if (index == idxRemove) {
+			index++;
+			continue;
+		}
+
+		auto bigNodeBox = std::make_unique<sf::RectangleShape>(nodeRectSize);
+		bigNodeBox->setFillColor(sf::Color::Transparent);
+		bigNodeBox->setOutlineColor(
+			(cur == pSearch) ? sf::Color::Green : sf::Color::Black
+		);
+		bigNodeBox->setOutlineThickness(2.f);
+		bigNodeBox->setPosition(originPos 
+			+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+			// for REMOVE mode
+			+ ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) && index >= idxRemove ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time))
+				: ((eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD || eventSLL.type == SLLAnimType::REMOVE_NODE) && index >= idxRemove ? sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f) * -1.f : sf::Vector2f()))
+		);
+		
+		auto smallNodeBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
+		smallNodeBox->setFillColor(sf::Color::Transparent);
+		smallNodeBox->setOutlineColor(
+			(cur == pSearch) ? sf::Color::Green : sf::Color::Black
+		);
+		smallNodeBox->setOutlineThickness(2.f);
+		smallNodeBox->setPosition(originPos 
+			+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+			// for REMOVE mode
+			+ ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) && index >= idxRemove ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time))
+				: ((eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD || eventSLL.type == SLLAnimType::REMOVE_NODE) && index >= idxRemove ? sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f) * -1.f : sf::Vector2f()))
+		);
+
+		auto valueText = std::make_unique<sf::Text>(font, std::to_string(cur->val), valueFontSize);
+		sf::FloatRect localBounds = valueText->getLocalBounds();
+		valueText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
+		valueText->setFillColor(sf::Color::Black);
+		valueText->setPosition(originPos 
+			+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+			+ nodeValueRectSize / 2.f
+			// for REMOVE mode
+			+ ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) && index >= idxRemove ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time))
+				: ((eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD || eventSLL.type == SLLAnimType::REMOVE_NODE) && index >= idxRemove ? sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f) * -1.f : sf::Vector2f()))
+		);
+
+		sf::Vector2f arrowHeadPos = originPos
+			+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+			+ sf::Vector2f(nodeRectSize.x + linkArrowLength, nodeRectSize.y/2)
+			// for REMOVE mode
+			+ ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) && index >= idxRemove ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time))
+				: ((eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD || eventSLL.type == SLLAnimType::REMOVE_NODE) && index >= idxRemove ? sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f) * -1.f : sf::Vector2f()));
+
+
+		drawableList.push_back(std::move(bigNodeBox));
+		drawableList.push_back(std::move(smallNodeBox));
+		drawableList.push_back(std::move(valueText));
+
+		if (!(eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG)) {
+			drawArrow(drawableList,
+				originPos 
+				+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+				+ sf::Vector2f(nodeRectSize.x, nodeRectSize.y/2)
+				// for REMOVE mode
+				// + ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) && index >= idxRemove ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time)) : sf::Vector2f()),
+				+ ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) && index >= idxRemove ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time))
+					: ((eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD || eventSLL.type == SLLAnimType::REMOVE_NODE) && index >= idxRemove ? sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f) * -1.f : sf::Vector2f())),
+				arrowHeadPos
+			);
+		} else {
+			if (index != idxRemove - 1)
+				drawArrow(drawableList,
+					originPos 
+					+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+					+ sf::Vector2f(nodeRectSize.x, nodeRectSize.y/2)
+					// for REMOVE mode
+					// + ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) && index >= idxRemove ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time)) : sf::Vector2f()),
+					+ ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) && index >= idxRemove ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time))
+					: ((eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD || eventSLL.type == SLLAnimType::REMOVE_NODE) && index >= idxRemove ? sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f) * -1.f : sf::Vector2f())),
+					arrowHeadPos
+				);
+			else
+				drawArrow(drawableList,
+					originPos
+					+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+					+ sf::Vector2f(nodeRectSize.x, nodeRectSize.y/2),
+					arrowHeadPos
+					// for REMOVE mode
+					+ lerp(sf::Vector2f(), sf::Vector2f(0, nodeLayerSpacing), fract(time))
+					// + lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time))
+				);
+		}
+
+		cur = cur->pNext;
+		index++;
+
+		if (cur == nullptr && index == idxRemove) index++;
+	}
+	// Draw null node
+	auto bigNullBox = std::make_unique<sf::RectangleShape>(nodeRectSize);
+	bigNullBox->setFillColor(sf::Color::Transparent);
+	bigNullBox->setOutlineColor(sf::Color::Black);
+	bigNullBox->setOutlineThickness(2.f);
+	bigNullBox->setPosition(originPos 
+		+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+		// for REMOVE mode
+		// + ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time)) : sf::Vector2f())
+		+ ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time))
+		: ((eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD || eventSLL.type == SLLAnimType::REMOVE_NODE) ? sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f) * -1.f : sf::Vector2f()))
+	);
+
+	auto nullDiagonal = std::make_unique<sf::VertexArray>(sf::PrimitiveType::Lines, 2);
+	(*nullDiagonal)[0].position = originPos 
+		+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+		+ sf::Vector2f(nodeRectSize.x, 0.f)
+		// for REMOVE mode
+		// + ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time)) : sf::Vector2f());
+		+ ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time))
+		: ((eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD || eventSLL.type == SLLAnimType::REMOVE_NODE) ? sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f) * -1.f : sf::Vector2f()));
+	(*nullDiagonal)[0].color    = sf::Color::Black;
+	(*nullDiagonal)[1].position = originPos 
+		+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+		+ sf::Vector2f(0.f, nodeRectSize.y)
+		// for REMOVE mode
+		// + ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time)) : sf::Vector2f());
+		+ ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time))
+		: ((eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD || eventSLL.type == SLLAnimType::REMOVE_NODE) ? sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f) * -1.f : sf::Vector2f()));
+	(*nullDiagonal)[1].color    = sf::Color::Black;
+
+	auto nullText = std::make_unique<sf::Text>(font, "NULL", valueFontSize);
+	sf::FloatRect localBounds = nullText->getLocalBounds();
+	nullText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
+	nullText->setFillColor(sf::Color::Black);
+	nullText->setPosition(originPos 
+		+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+		+ nodeRectSize / 2.f
+		// for REMOVE mode
+		// + ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time)) : sf::Vector2f())
+		+ ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time))
+		: ((eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD || eventSLL.type == SLLAnimType::REMOVE_NODE) ? sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f) * -1.f : sf::Vector2f()))
+	);
+
+	drawableList.push_back(std::move(bigNullBox));
+	drawableList.push_back(std::move(nullDiagonal));
+	drawableList.push_back(std::move(nullText));
+
+	// -- DRAW REMOVED NODE --
+	if (eventSLL.type != SLLAnimType::REMOVE_NODE) {
+		auto bigRemoveBox = std::make_unique<sf::RectangleShape>(nodeRectSize);
+		bigRemoveBox->setFillColor(sf::Color::Transparent);
+		bigRemoveBox->setOutlineColor(sf::Color::Black);
+		bigRemoveBox->setOutlineThickness(2.f);
+		bigRemoveBox->setPosition(originPos 
+			+ static_cast<float>(idxRemove) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+			// + sf::Vector2f(0.f, nodeLayerSpacing)
+			// for REMOVE mode
+			+ ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) ? lerp(sf::Vector2f(), sf::Vector2f(0.f, nodeLayerSpacing), fract(time)) :
+				((eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD || eventSLL.type == SLLAnimType::REMOVE_NODE) ? sf::Vector2f(0.f, nodeLayerSpacing) : sf::Vector2f()))
+		);
+
+		auto smallRemoveBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
+		smallRemoveBox->setFillColor(sf::Color::Transparent);
+		smallRemoveBox->setOutlineColor(sf::Color::Black);
+		smallRemoveBox->setOutlineThickness(2.f);
+		smallRemoveBox->setPosition(originPos 
+			+ static_cast<float>(idxRemove) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+			// + sf::Vector2f(0.f, nodeLayerSpacing)
+			// for REMOVE mode
+			+ ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) ? lerp(sf::Vector2f(), sf::Vector2f(0.f, nodeLayerSpacing), fract(time)) :
+				((eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD || eventSLL.type == SLLAnimType::REMOVE_NODE) ? sf::Vector2f(0.f, nodeLayerSpacing) : sf::Vector2f()))
+		);
+
+		auto valueTextRemove = std::make_unique<sf::Text>(font, std::to_string(oldRemoveVal), valueFontSize);
+		sf::FloatRect localBounds = valueTextRemove->getLocalBounds();
+		valueTextRemove->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
+		valueTextRemove->setFillColor(sf::Color::Black);
+		valueTextRemove->setPosition(originPos 
+			+ static_cast<float>(idxRemove) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+			+ nodeValueRectSize / 2.f
+			// for REMOVE mode
+			+ ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) ? lerp(sf::Vector2f(), sf::Vector2f(0.f, nodeLayerSpacing), fract(time)) :
+				((eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD || eventSLL.type == SLLAnimType::REMOVE_NODE) ? sf::Vector2f(0.f, nodeLayerSpacing) : sf::Vector2f()))
+		);
+
+		if (eventSLL.type == SLLAnimType::CREATE_CUR || eventSLL.type == SLLAnimType::MOVE_CUR_FORWARD) {
+			drawArrow(drawableList,
+				originPos 
+				+ static_cast<float>(idxRemove) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+				+ sf::Vector2f(nodeRectSize.x, nodeRectSize.y/2),
+				originPos
+				+ static_cast<float>(idxRemove) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+				+ sf::Vector2f(nodeRectSize.x + linkArrowLength, nodeRectSize.y/2)
+			);
+		} else if (eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD) {
+			drawArrow(drawableList,
+				originPos 
+				+ static_cast<float>(idxRemove) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+				+ sf::Vector2f(nodeRectSize.x, nodeRectSize.y/2)
+				+ sf::Vector2f(0, nodeLayerSpacing),
+				originPos
+				+ static_cast<float>(idxRemove) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+				+ sf::Vector2f(nodeRectSize.x + linkArrowLength, nodeRectSize.y/2)
+				+ sf::Vector2f(- linkArrowLength - nodeRectSize.x/2, nodeRectSize.y/2)
+			);
+		} else if (eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) {
+			drawArrow(drawableList,
+				originPos 
+				+ static_cast<float>(idxRemove) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+				+ sf::Vector2f(nodeRectSize.x, nodeRectSize.y/2)
+				+ sf::Vector2f(0, nodeLayerSpacing)
+				+ lerp(sf::Vector2f(0.f, - nodeLayerSpacing), sf::Vector2f(), fract(time)),
+				originPos
+				+ static_cast<float>(idxRemove) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
+				+ sf::Vector2f(0, nodeRectSize.y/2)
+				+ lerp(sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), sf::Vector2f(), fract(time))
+			);
+		}
+
+		drawableList.push_back(std::move(bigRemoveBox));
+		drawableList.push_back(std::move(smallRemoveBox));
+		drawableList.push_back(std::move(valueTextRemove));
+	}
+}
+
+
+
 void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList) {
 	drawableList.clear();
 
@@ -481,6 +756,8 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 		pInsert = ithNode(eventSLL.idxInsert);
 		idxInsert = eventSLL.idxInsert;
 		addNodeDrawablesInsert(drawableList, eventSLL);
+	} else if (visMode == SLLVisMode::REMOVE_BEG || visMode == SLLVisMode::REMOVE_K) {
+		addNodeDrawablesRemove(drawableList, eventSLL);
 	} else {
 		addNodeDrawables(drawableList, eventSLL);
 	}

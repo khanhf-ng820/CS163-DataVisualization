@@ -2,14 +2,20 @@
 **Data Structure Visualization**, a solo project for CS163 - Data Structures course.
 
 <!-- This project uses **C++**, **CMake**, and the **raylib** graphics library. -->
-This project uses **C++**, **CMake**, the **SFML** graphics library, and the **Dear ImGui/ImGui-SFML** GUI libraries.
+This project uses **C++**, **CMake**, the **SFML** graphics library, and the **ImGui-SFML** GUI libraries.
 
 This project contains visualizations for these data structures and algorithms:
 
 - Singly linked list
 - Hash table *(linear probing)*
 - **Trees:** AVL Tree, Trie *(26-ary tree)*
-- **Graphs:** Minimum Spanning Tree *(Kruskal's algorithm)*, Shortest Path *(Dijkstra's algorithm)*
+- **Graphs:** Minimum Spanning Tree *(Prim's algorithm)*, Shortest Path *(Dijkstra's algorithm)*
+
+Technology stack:
+
+- **C++, CMake**
+- 2D Graphics: **SFML 3.0.2**
+- GUI: **ImGui-SFML**
 
 ## Building
 
@@ -48,7 +54,7 @@ sudo apt install \
 	libfreetype-dev
 ```
 
-### 2. Build the project
+### 2. Build the application
 
 **macOS** and **Linux:**
 ```bash

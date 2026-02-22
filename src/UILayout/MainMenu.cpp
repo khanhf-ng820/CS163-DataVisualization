@@ -58,11 +58,11 @@ void Program::initMainMenuScreen() {
 
 
 	// Push back to vector
-	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(shape));
-	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(rectangle));
+	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(shape));
+	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(rectangle));
 	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(border));
-	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(splitCircle));
-	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(cornerBox));
+	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(splitCircle));
+	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(cornerBox));
 	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(text));
 }
 

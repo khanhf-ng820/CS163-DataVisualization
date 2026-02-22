@@ -188,6 +188,48 @@ void Program::displayVisSLLScreenSFML() {
 			visEngine_SLL.increaseTime();
 		}
 		break;
+	// REMOVE BEGINNING MODE
+	case SLLVisMode::REMOVE_BEG:
+		visEngine_SLL.eventList = visEngine_SLL.getEventsRemove(visEngine_SLL.idxToRemove);
+		visEngine_SLL.createDrawables(
+			sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
+
+		// If not paused, just increase / decrease time
+		if (visEngine_SLL.animPaused) {
+			if (visEngine_SLL.time < visEngine_SLL.targetTime) {
+				visEngine_SLL.increaseTime();
+				visEngine_SLL.time = std::min(visEngine_SLL.time, visEngine_SLL.targetTime);
+			} else if (visEngine_SLL.time > visEngine_SLL.targetTime) {
+				visEngine_SLL.decreaseTime();
+				visEngine_SLL.time = std::max(visEngine_SLL.time, visEngine_SLL.targetTime);
+			}
+		} else {
+			visEngine_SLL.increaseTime();
+		}
+		break;
+	// REMOVE K-TH NODE MODE
+	case SLLVisMode::REMOVE_K:
+		visEngine_SLL.eventList = visEngine_SLL.getEventsRemove(visEngine_SLL.idxToRemove);
+		visEngine_SLL.createDrawables(
+			sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
+
+		// If not paused, just increase / decrease time
+		if (visEngine_SLL.animPaused) {
+			if (visEngine_SLL.time < visEngine_SLL.targetTime) {
+				visEngine_SLL.increaseTime();
+				visEngine_SLL.time = std::min(visEngine_SLL.time, visEngine_SLL.targetTime);
+			} else if (visEngine_SLL.time > visEngine_SLL.targetTime) {
+				visEngine_SLL.decreaseTime();
+				visEngine_SLL.time = std::max(visEngine_SLL.time, visEngine_SLL.targetTime);
+			}
+		} else {
+			visEngine_SLL.increaseTime();
+		}
+		break;
 	default:
 		break;
 	}
@@ -256,7 +298,7 @@ void Program::displayVisSLLScreenGUI() {
 		visEngine_SLL.valToSearch = visEngine_SLL.valToSearchInput;
 		visEngine_SLL.visMode = SLLVisMode::SEARCH;
 		visEngine_SLL.resetParams();
-		visEngine_SLL.animPaused = false;
+		visEngine_SLL.animPaused = false; // Auto un-pause
 	}
 	ImGui::EndDisabled();
 
@@ -287,7 +329,7 @@ void Program::displayVisSLLScreenGUI() {
 			visEngine_SLL.visMode = SLLVisMode::INSERT_K;
 		}
 		visEngine_SLL.resetParams();
-		visEngine_SLL.animPaused = false;
+		visEngine_SLL.animPaused = false; // Auto un-pause
 
 		visEngine_SLL.insert(visEngine_SLL.valToInsert, visEngine_SLL.idxToInsert);
 		printf("insert cool"); // DEBUG
@@ -303,7 +345,7 @@ void Program::displayVisSLLScreenGUI() {
 	ImGui::InputInt("Value to update", &visEngine_SLL.valToUpdateInput);
 	ImGui::InputInt("Index to update", &visEngine_SLL.idxToUpdateInput);
 
-	idxOutOfRange = !(visEngine_SLL.idxToUpdateInput >= 0 && visEngine_SLL.idxToUpdateInput <= visEngine_SLL.size);
+	idxOutOfRange = !(visEngine_SLL.idxToUpdateInput >= 0 && visEngine_SLL.idxToUpdateInput < visEngine_SLL.size);
 	if (idxOutOfRange) {
 		if (visEngine_SLL.size > 0)
 			ImGui::Text("Index must be between 0 and %d.", visEngine_SLL.size);
@@ -316,7 +358,7 @@ void Program::displayVisSLLScreenGUI() {
 		visEngine_SLL.idxToUpdate = visEngine_SLL.idxToUpdateInput;
 		visEngine_SLL.visMode = SLLVisMode::UPDATE;
 		visEngine_SLL.resetParams();
-		visEngine_SLL.animPaused = false;
+		visEngine_SLL.animPaused = false; // Auto un-pause
 
 		visEngine_SLL.update(visEngine_SLL.valToUpdate, visEngine_SLL.idxToUpdate);
 		printf("update cool"); // DEBUG
@@ -325,6 +367,38 @@ void Program::displayVisSLLScreenGUI() {
 	ImGui::EndDisabled();
 
 	ImGui::Separator();
+
+	// -- REMOVE OPERATION --
+	ImGui::BeginDisabled(visEngine_SLL.animInProgress);
+	ImGui::Text("Enter index of node to remove:");
+	ImGui::InputInt("Index to remove", &visEngine_SLL.idxToRemoveInput);
+
+	idxOutOfRange = !(visEngine_SLL.idxToRemoveInput >= 0 && visEngine_SLL.idxToRemoveInput < visEngine_SLL.size);
+	if (idxOutOfRange) {
+		if (visEngine_SLL.size > 1)
+			ImGui::Text("Index must be between 0 and %d.", visEngine_SLL.size);
+		else if (visEngine_SLL.size == 1)
+			ImGui::Text("Index must be 0.");
+		else
+			ImGui::Text("There are no nodes to remove.");
+	}
+	ImGui::BeginDisabled(idxOutOfRange);
+	if (ImGui::Button("Remove")) {
+		visEngine_SLL.idxToRemove = visEngine_SLL.idxToRemoveInput;
+		if (visEngine_SLL.idxToRemove == 0) {
+			visEngine_SLL.visMode = SLLVisMode::REMOVE_BEG;
+		} else {
+			visEngine_SLL.visMode = SLLVisMode::REMOVE_K;
+		}
+		visEngine_SLL.resetParams();
+		visEngine_SLL.animPaused = false; // Auto un-pause
+
+		visEngine_SLL.remove(visEngine_SLL.idxToRemove);
+		printf("remove cool"); // DEBUG
+	}
+	ImGui::EndDisabled();
+	ImGui::EndDisabled();
+
 
 	// const char* items[] = { "Option 1", "Option 2", "Option 3", "Option 4" };
 	// static int current_item = 0;
