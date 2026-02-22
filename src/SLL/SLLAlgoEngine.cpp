@@ -141,7 +141,7 @@ std::vector<SLLAnimStep> SLLAlgoEngine::getEventsInsert(int x, int idx) {
 		events.push_back(SLLAnimStepInsert(SLLAnimType::CREATE_NEW_NODE, "Created new node with value " + std::to_string(x), nullptr, -1, nullptr, idx));
 		events.back().idxInsert = idx;
 
-		events.push_back(SLLAnimStep(SLLAnimType::LINK_NEW_NODE_TO_NEXT, "Link new node to head of linked list", nullptr, -1));
+		events.push_back(SLLAnimStep(SLLAnimType::LINK_NEW_NODE_TO_NEXT, "Link the new node to head of linked list", nullptr, -1));
 		events.back().idxInsert = idx;
 		events.back().insertLinkNext = true;
 		

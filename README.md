@@ -11,11 +11,11 @@ This project contains visualizations for these data structures and algorithms:
 - **Trees:** AVL Tree, Trie *(26-ary tree)*
 - **Graphs:** Minimum Spanning Tree *(Prim's algorithm)*, Shortest Path *(Dijkstra's algorithm)*
 
-Technology stack:
+### Technology stack:
 
 - **C++, CMake**
 - 2D Graphics: **SFML 3.0.2**
-- GUI: **ImGui-SFML**
+- GUI: **ImGui-SFML 3.0**
 
 ## Building
 
