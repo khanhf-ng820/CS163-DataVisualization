@@ -8,17 +8,62 @@ SLLVisEngine::SLLVisEngine(sf::RenderWindow& window, sf::Font& font)
 	: window(window), font(font)
 	, originPos(originPosDisplacement - sf::Vector2f(window.getSize()) / 2.f)
 {
-	// Initialize linked list (ONLY FOR TESTING)
-	pHead = new SLLNode{36, nullptr};
-	pHead->pNext = new SLLNode{67, nullptr};
-	pHead->pNext->pNext = new SLLNode{18, nullptr};
-	pHead->pNext->pNext->pNext = new SLLNode{-1992, nullptr};
-	// pSearch = pHead->pNext;
-	size = 4;
+	// // Initialize linked list (ONLY FOR TESTING)
+	// pHead = new SLLNode{36, nullptr};
+	// pHead->pNext = new SLLNode{67, nullptr};
+	// pHead->pNext->pNext = new SLLNode{18, nullptr};
+	// pHead->pNext->pNext->pNext = new SLLNode{-1992, nullptr};
+	// // pSearch = pHead->pNext;
+	// size = 4;
+	pHead = nullptr;
+	size = 0;
+	// Initialize empty linked list
+}
+
+SLLVisEngine::SLLVisEngine(sf::RenderWindow& window, sf::Font& font, std::mt19937& rng)
+	: window(window), font(font)
+	, originPos(originPosDisplacement - sf::Vector2f(window.getSize()) / 2.f)
+{
+	std::uniform_int_distribution<int> distribution_size(6, 9);
+	size = distribution_size(rng);
+	std::uniform_int_distribution<int> distribution_node(-100, 100);
+	std::vector<int> values(size);
+	for (int i = 0; i < size; i++)
+		values[i] = distribution_node(rng);
+	initSLLvector(values);
+}
+
+SLLVisEngine::SLLVisEngine(sf::RenderWindow& window, sf::Font& font, std::vector<int> initData)
+	: window(window), font(font)
+	, originPos(originPosDisplacement - sf::Vector2f(window.getSize()) / 2.f)
+{
+	size = initData.size();
+	initSLLvector(initData);
 }
 
 SLLVisEngine::~SLLVisEngine() {
+	freeMem(); // Free memory
+}
+void SLLVisEngine::freeMem() {
 	clear();
+}
+
+void SLLVisEngine::initSLLData() {
+	pHead = nullptr;
+	size = 0;
+}
+void SLLVisEngine::initSLLData(std::mt19937& rng) {
+	std::uniform_int_distribution<int> distribution_size(6, 9);
+	size = distribution_size(rng); // Set size
+	std::uniform_int_distribution<int> distribution_node(-100, 100);
+	std::vector<int> values(size);
+	for (int i = 0; i < size; i++)
+		values[i] = distribution_node(rng);
+	initSLLvector(values);
+}
+void SLLVisEngine::initSLLData(std::vector<int> initData) {
+	size = initData.size();
+	initSLLvector(initData);
 }
 
 
@@ -831,6 +876,84 @@ void SLLVisEngine::displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout) {
 
 
 
+
+
+
+
+
+
+
+// CLEAR/RESET ALL PROPERTIES
+void SLLVisEngine::resetEngine() {
+	visMode = SLLVisMode::NONE;
+	eventList.clear();
+
+	visCur = nullptr; //  cur in visualization (not in code)
+	visCurIndex = 0; // cur index in visualization (not in code)
+	// For Input
+	valToSearch = 0;      // Searching
+	valToSearchInput = 0;
+	valToInsert = 0;      // Inserting
+	valToInsertInput = 0;
+	idxToInsert = 0;
+	idxToInsertInput = 0;
+	valToUpdate = 0;      // Updating value
+	valToUpdateInput = 0;
+	idxToUpdate = 0;
+	idxToUpdateInput = 0;
+	idxToRemove = 0;      // Remove node
+	idxToRemoveInput = 0;
+
+	// For Animation
+	animStepIndex = 0; // first step
+	oldAnimStepIndex = 0; // first step
+	time = 0;
+	dt = 0.005;
+	targetTime = 0; // ONLY USE WHEN PAUSED
+
+	animPaused = false;
+	animInProgress = false;
+
+	freeMem(); // - FREE MEMORY -
+
+	pHead = nullptr;
+	pCur = nullptr;
+	curIndex = 0;
+
+	pSearch = nullptr; // Hold the searched node
+
+	pInsert = nullptr; // Hold the inserted node
+	idxInsert = -1;
+	insertLinkPrev = false; // Prev is linked to inserted node
+	insertLinkNext = false; // Inserted node is linked next
+
+	oldUpdateVal = -1; // Old value of a node before updating
+
+	oldRemoveVal = -1; // Old value of a node before removing
+	idxRemove = -1; // Index of the removed node (-1 means can't remove)
+
+	size = 0; // Size of linked list
+
+	pCurCreated = false;
+}
+
+
+void SLLVisEngine::initSLLvector(std::vector<int> values) {
+	size = values.size();
+	pHead = nullptr;
+	SLLNode* cur = nullptr;
+	for (const auto& val : values) {
+		SLLNode* newNode = new SLLNode{val, nullptr};
+
+		if (pHead == nullptr) {
+			pHead = newNode;
+			cur = pHead;
+		} else {
+			cur->pNext = newNode;
+			cur = cur->pNext;
+		}
+	}
+}
 
 sf::Vector2f SLLVisEngine::lerp(sf::Vector2f v1, sf::Vector2f v2, float k) const {
 	return v1 + (v2 - v1) * k;

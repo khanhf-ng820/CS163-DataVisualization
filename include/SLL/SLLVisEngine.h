@@ -3,10 +3,12 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <cmath>
+#include <random>
 
+#include "sfLayout/sfLayout.h"
+#include "utils-readData.h"
 #include "SLL/SLLAnimStep.h"
 #include "SLL/SLLAlgoEngine.h"
-#include "sfLayout/sfLayout.h"
 
 
 
@@ -30,9 +32,17 @@ public:
 	// using SLLAlgoEngine::SLLAlgoEngine;
 	// SLLVisEngine();
 	SLLVisEngine(sf::RenderWindow& window, sf::Font& font);
+	SLLVisEngine(sf::RenderWindow& window, sf::Font& font, std::mt19937& rng);
+	SLLVisEngine(sf::RenderWindow& window, sf::Font& font, std::vector<int> initData);
 	~SLLVisEngine();
 
+	void freeMem();
 	void resetParams();
+	void resetEngine(); // CLEAR/RESET ALL PROPERTIES (ONLY USE WHEN INITIALIZING NEW SLL)
+	void initSLLData(); // Empty SLL
+	void initSLLData(std::mt19937& rng); // Randomized SLL
+	void initSLLData(std::vector<int> initData); // Specific data SLL
+
 	// Draw nodes: Iterate through linked list and draw nodes
 	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, SLLAnimStep eventSLL);
 	// INSERT MODE
@@ -76,7 +86,8 @@ public:
 
 	bool animPaused = false;
 	bool animInProgress = false;
-	float dt_per_sec = 0.25f; // FOR TESTING ONLY
+	constexpr static float dt_per_sec = 0.25f; // FOR TESTING ONLY
+
 	void increaseTime();
 	void decreaseTime();
 
@@ -97,7 +108,8 @@ public:
 	static constexpr float        arrowHeadSideLen = 7.5;
 
 private:
-	sf::Vector2f lerp(sf::Vector2f v1, sf::Vector2f v2, float k) const;
+	void initSLLvector(std::vector<int> values); // Init SLL from std::vector<int>
 
+	sf::Vector2f lerp(sf::Vector2f v1, sf::Vector2f v2, float k) const;
 	void drawArrow(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f v1, sf::Vector2f v2) const;
 };

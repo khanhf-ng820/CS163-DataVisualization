@@ -233,8 +233,10 @@ void Program::displayChooseDSMenuScreenGUI() {
 	// --- Selected DS type ---
 	DSType chosenDSType = strToDSType(DSVectors[current_DS_item]);
 
+
 	// ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
 	ImGui::Dummy(ImVec2(10, 10)); ImGui::Separator(); ImGui::Dummy(ImVec2(10, 10));
+
 
 	titleText = "Choose initial starting data:";
 	textSize = ImGui::CalcTextSize(titleText.c_str());
@@ -299,11 +301,15 @@ void Program::displayChooseDSMenuScreenGUI() {
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + Im_gui_window_size.x/2.f - btnSize.x/2.f);
 
 	if (ImGui::Button("Confirm", sf::Vector2f(btnSize))) {
-		printf("%s %d\n", DSVectors[current_DS_item].c_str(), dataInitOption);
+		printf("%s %d\n", DSVectors[current_DS_item].c_str(), dataInitOption); // DEBUG
+		// - Initialize data structures
+		// visEngine_SLL.freeMem(); // Free all memory
+
 		// Change program mode
 		switch (chosenDSType) {
 		case DSType::SINGLY_LINKED_LIST:
 			programState = ProgramState::VIS_SLL_SCREEN;
+			initSLL(dataInitOption);
 			break;
 		case DSType::HASH_TABLE_LINEAR:
 			programState = ProgramState::VIS_HASH_SCREEN;

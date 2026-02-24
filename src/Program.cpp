@@ -18,19 +18,19 @@ Program::Program()
 	// window.setMaximumSize(sf::Vector2u(1200, 900));
 	textFont.setSmooth(true);
 	// sf::ContextSettings settings;
-	// settings.antiAliasingLevel = 4; // Mức khử răng cưa (thường từ 2-16)
+	// settings.antiAliasingLevel = 4; // Anti aliasing (2 to 16)
 
 	init_successful = ImGui::SFML::Init(window);
-	ImGui::StyleColorsDark();
-	// ImGui::StyleColorsClassic();
+	ImGui::StyleColorsDark(); // Dark theme
+	// ImGui::StyleColorsClassic(); // Classic theme
 
-	// Styling ImGui windows
+	// -- Styling ImGui windows
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuiStyle& style = ImGui::GetStyle();
 	ioPtr = &io;
 	stylePtr = &style;
-	// Modify the window background color (RGB alpha)
+	// -- Modify the window background color (RGB alpha)
 	// style.Colors[ImGuiCol_WindowBg] = ImVec4(0.6f, 0.4f, 0.6f, 0.9f);
 	// style.Colors[ImGuiCol_WindowBg] = ImVec4(173.f/255, 216.f/255, 230.f/255, 0.6f);
 	// style.Colors[ImGuiCol_PopupBg] = ImVec4(173.f/255, 216.f/255, 230.f/255, 1.f);
@@ -38,7 +38,7 @@ Program::Program()
 	// Can adjust padding, rounding, borders,...
 	// io.FontGlobalScale = 2.0f;
 
-	// Initialize sfDrawables map to draw later
+	// -- Initialize sfDrawables map to draw later
 	sfDrawables[ProgramState::MAIN_MENU] = std::make_unique<sfLayout>(&window);
 	sfDrawables[ProgramState::SETTINGS_MENU] = std::make_unique<sfLayout>(&window);
 	sfDrawables[ProgramState::CHOOSE_DS_MENU] = std::make_unique<sfLayout>(&window);
@@ -49,6 +49,20 @@ Program::Program()
 	sfDrawables[ProgramState::VIS_MST_SCREEN] = std::make_unique<sfLayout>(&window);
 	sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN] = std::make_unique<sfLayout>(&window);
 
+	// -- Open data .txt files
+	fs::create_directories(SLL_DATA_FILEPATH.parent_path());
+	SLL_dataFile = std::ifstream(SLL_DATA_FILEPATH);
+	if (!SLL_dataFile) {
+		std::ofstream createFile(SLL_DATA_FILEPATH);
+		createFile.close();
+		printf("create file\n"); // DEBUG
+		// SLL_dataFile.open(SLL_DATA_FILEPATH, std::ios::in | std::ios::out);
+	} else {
+		printf("file exists\n"); // DEBUG
+	}
+
+
+	// Resize the sf::View
 	resizeView();
 }
 

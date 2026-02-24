@@ -8,10 +8,12 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
+#include "utils-readData.h"
 #include "sfLayout/sfLayout.h"
 #include "SLL/SLLVisEngine.h"
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <map>
@@ -116,20 +118,35 @@ private:
 
 
 
-	constexpr static size_t CUSTOM_DATA_BUF_SIZE = 1028;
+	constexpr static size_t CUSTOM_DATA_BUF_SIZE = 512;
 
 	char* buf = new char[25];
+	float f = 0.36;
 	char* customDataSLLbuf = new char[CUSTOM_DATA_BUF_SIZE];
 	char* customDataHashbuf = new char[CUSTOM_DATA_BUF_SIZE];
 	char* customDataAVLbuf = new char[CUSTOM_DATA_BUF_SIZE];
 	char* customDataTriebuf = new char[CUSTOM_DATA_BUF_SIZE];
 	char* customDataMSTbuf = new char[CUSTOM_DATA_BUF_SIZE];
 	char* customDataDijkstrabuf = new char[CUSTOM_DATA_BUF_SIZE];
-	float f = 0.36;
+
+	inline const static fs::path SLL_DATA_FILEPATH = std::string(DATA_DIR) + "/SLL.txt";
+	inline const static fs::path HASH_DATA_FILEPATH = std::string(DATA_DIR) + "/HashTable.txt";
+	inline const static fs::path AVL_DATA_FILEPATH = std::string(DATA_DIR) + "/AVL.txt";
+	inline const static fs::path TRIE_DATA_FILEPATH = std::string(DATA_DIR) + "/Trie.txt";
+	inline const static fs::path GRAPH_DATA_FILEPATH = std::string(DATA_DIR) + "/Graph.txt";
+	std::ifstream SLL_dataFile, hashTable_dataFile, AVL_dataFile, trie_dataFile, graph_dataFile;
 
 	// sf::CircleShape shape;
 	// sf::RectangleShape rectangle;
 	// sf::RectangleShape border;
 	// sf::CircleShape splitCircle;
 	// sf::RectangleShape cornerBox;
+
+
+	// Initialize data structures
+	void initSLL(const int dataInitOption);
+	void initHashTable(const int dataInitOption);
+	void initAVL(const int dataInitOption);
+	void initTrie(const int dataInitOption);
+	void initGraph(const int dataInitOption);
 };
