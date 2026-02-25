@@ -20,7 +20,7 @@ Program::Program()
 	// sf::ContextSettings settings;
 	// settings.antiAliasingLevel = 4; // Anti aliasing (2 to 16)
 
-	init_successful = ImGui::SFML::Init(window);
+	init_imgui_successful = ImGui::SFML::Init(window);
 	ImGui::StyleColorsDark(); // Dark theme
 	// ImGui::StyleColorsClassic(); // Classic theme
 
@@ -49,17 +49,12 @@ Program::Program()
 	sfDrawables[ProgramState::VIS_MST_SCREEN] = std::make_unique<sfLayout>(&window);
 	sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN] = std::make_unique<sfLayout>(&window);
 
-	// -- Open data .txt files
-	fs::create_directories(SLL_DATA_FILEPATH.parent_path());
-	SLL_dataFile = std::ifstream(SLL_DATA_FILEPATH);
-	if (!SLL_dataFile) {
-		std::ofstream createFile(SLL_DATA_FILEPATH);
-		createFile.close();
-		printf("create file\n"); // DEBUG
-		// SLL_dataFile.open(SLL_DATA_FILEPATH, std::ios::in | std::ios::out);
-	} else {
-		printf("file exists\n"); // DEBUG
-	}
+	// -- Create and Open data .txt files
+	createAndOpen(SLL_DATA_FILEPATH); // SLL
+	createAndOpen(HASH_DATA_FILEPATH); // HASH TABLE
+	createAndOpen(AVL_DATA_FILEPATH); // AVL
+	createAndOpen(TRIE_DATA_FILEPATH); // TRIE
+	createAndOpen(GRAPH_DATA_FILEPATH); // GRAPH
 
 
 	// Resize the sf::View
@@ -100,8 +95,8 @@ void Program::resizeView() {
 
 
 void Program::mainLoop() {
-	if (!init_successful) {
-		printf("Dear ImGui initialization unsuccessful!!!\n");
+	if (!init_imgui_successful) {
+		std::cout << "Dear ImGui initialization unsuccessful!!!" << std::endl;
 		return; // Initialization unsuccessful
 	}
 

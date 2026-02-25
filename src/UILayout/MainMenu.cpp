@@ -130,8 +130,8 @@ void Program::displayMainMenuScreenGUI() {
 	);
 
 	if (ImGui::Button("Start", btnSize)) { // clicked
-		printf("%s %f\nButton clicked!\n", buf, f);
-		printf("-- Data structure selection menu.\n");
+		std::cout << "Button clicked!" << buf << f << std::endl;
+		std::cout << "-- Data structure selection menu." << std::endl;
 		programState = ProgramState::CHOOSE_DS_MENU;
 	}
 	ImGui::End();
@@ -151,7 +151,7 @@ void Program::displayMainMenuScreenGUI() {
 	);
 
 	if (ImGui::Button("Settings", btnSize)) { // clicked
-		printf("-- Go to Settings menu.\n");
+		std::cout << "-- Go to Settings menu." << std::endl;
 		programState = ProgramState::SETTINGS_MENU;
 	}
 	ImGui::End();
@@ -171,7 +171,7 @@ void Program::displayMainMenuScreenGUI() {
 	);
 
 	if (ImGui::Button("Quit", btnSize)) { // clicked
-		printf("-- Program exited.\n");
+		std::cout << "-- Program exited." << std::endl;
 		window.close();
 	}
 	ImGui::End();

@@ -332,7 +332,7 @@ void Program::displayVisSLLScreenGUI() {
 		visEngine_SLL.animPaused = false; // Auto un-pause
 
 		visEngine_SLL.insert(visEngine_SLL.valToInsert, visEngine_SLL.idxToInsert);
-		printf("insert cool"); // DEBUG
+		std::cout << "insert cool" << std::endl; // DEBUG
 	}
 	ImGui::EndDisabled();
 	ImGui::EndDisabled();
@@ -363,7 +363,7 @@ void Program::displayVisSLLScreenGUI() {
 		visEngine_SLL.animPaused = false; // Auto un-pause
 
 		visEngine_SLL.update(visEngine_SLL.valToUpdate, visEngine_SLL.idxToUpdate);
-		printf("update cool"); // DEBUG
+		std::cout << "update cool" << std::endl; // DEBUG
 	}
 	ImGui::EndDisabled();
 	ImGui::EndDisabled();
@@ -396,7 +396,7 @@ void Program::displayVisSLLScreenGUI() {
 		visEngine_SLL.animPaused = false; // Auto un-pause
 
 		visEngine_SLL.remove(visEngine_SLL.idxToRemove);
-		printf("remove cool"); // DEBUG
+		std::cout << "remove cool" << std::endl; // DEBUG
 	}
 	ImGui::EndDisabled();
 	ImGui::EndDisabled();

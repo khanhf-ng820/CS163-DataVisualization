@@ -8,37 +8,9 @@ SLLVisEngine::SLLVisEngine(sf::RenderWindow& window, sf::Font& font)
 	: window(window), font(font)
 	, originPos(originPosDisplacement - sf::Vector2f(window.getSize()) / 2.f)
 {
-	// // Initialize linked list (ONLY FOR TESTING)
-	// pHead = new SLLNode{36, nullptr};
-	// pHead->pNext = new SLLNode{67, nullptr};
-	// pHead->pNext->pNext = new SLLNode{18, nullptr};
-	// pHead->pNext->pNext->pNext = new SLLNode{-1992, nullptr};
-	// // pSearch = pHead->pNext;
-	// size = 4;
+	// Initialize empty linked list
 	pHead = nullptr;
 	size = 0;
-	// Initialize empty linked list
-}
-
-SLLVisEngine::SLLVisEngine(sf::RenderWindow& window, sf::Font& font, std::mt19937& rng)
-	: window(window), font(font)
-	, originPos(originPosDisplacement - sf::Vector2f(window.getSize()) / 2.f)
-{
-	std::uniform_int_distribution<int> distribution_size(6, 9);
-	size = distribution_size(rng);
-	std::uniform_int_distribution<int> distribution_node(-100, 100);
-	std::vector<int> values(size);
-	for (int i = 0; i < size; i++)
-		values[i] = distribution_node(rng);
-	initSLLvector(values);
-}
-
-SLLVisEngine::SLLVisEngine(sf::RenderWindow& window, sf::Font& font, std::vector<int> initData)
-	: window(window), font(font)
-	, originPos(originPosDisplacement - sf::Vector2f(window.getSize()) / 2.f)
-{
-	size = initData.size();
-	initSLLvector(initData);
 }
 
 SLLVisEngine::~SLLVisEngine() {
@@ -884,6 +856,7 @@ void SLLVisEngine::displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout) {
 
 
 // CLEAR/RESET ALL PROPERTIES
+// --- ALWAYS REMEMBER TO UPDATE THIS FUNCTION!!! ---
 void SLLVisEngine::resetEngine() {
 	visMode = SLLVisMode::NONE;
 	eventList.clear();

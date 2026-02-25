@@ -195,7 +195,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 
 	if (ImGui::Button("Go back")) {
 		programState = ProgramState::MAIN_MENU;
-		printf("-- Go to main menu.\n");
+		std::cout << "-- Go to main menu." << std::endl;
 		resizeView();
 	}
 
@@ -253,25 +253,30 @@ void Program::displayChooseDSMenuScreenGUI() {
 	ImGui::SameLine();
 	ImGui::RadioButton("Data from \".txt\" file", &dataInitOption, DATA_INIT_FROM_FILE); // Value 3
 
+	bool invalidDataCustom = false; // To print error messages when invalid data
+
 	if (dataInitOption == DATA_INIT_CUSTOM) {
+		std::string dataString; // String of entered data
 		switch (chosenDSType) {
 		case DSType::SINGLY_LINKED_LIST:
-			ImGui::InputTextMultiline("##CustomDataSLL", customDataSLLbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			ImGui::InputTextMultiline("##CustomDataSLL", customDataSLLbuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
+			dataString = std::string(customDataSLLbuf);
+			invalidDataCustom = !validDataSLLString(dataString);
 			break;
 		case DSType::HASH_TABLE_LINEAR:
-			ImGui::InputTextMultiline("##CustomDataHash", customDataHashbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			ImGui::InputTextMultiline("##CustomDataHash", customDataHashbuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
 			break;
 		case DSType::AVL_TREE:
-			ImGui::InputTextMultiline("##CustomDataAVL", customDataAVLbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			ImGui::InputTextMultiline("##CustomDataAVL", customDataAVLbuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
 			break;
 		case DSType::TRIE_TREE:
-			ImGui::InputTextMultiline("##CustomDataTrie", customDataTriebuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			ImGui::InputTextMultiline("##CustomDataTrie", customDataTriebuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
 			break;
 		case DSType::MST_GRAPH:
-			ImGui::InputTextMultiline("##CustomDataMST", customDataMSTbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			ImGui::InputTextMultiline("##CustomDataMST", customDataMSTbuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
 			break;
 		case DSType::DIJKSTRA_GRAPH:
-			ImGui::InputTextMultiline("##CustomDataDijkstra", customDataDijkstrabuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			ImGui::InputTextMultiline("##CustomDataDijkstra", customDataDijkstrabuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
 			break;
 		default:
 			break;
@@ -300,16 +305,18 @@ void Program::displayChooseDSMenuScreenGUI() {
 	sf::Vector2u btnSize = {120, 40};
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + Im_gui_window_size.x/2.f - btnSize.x/2.f);
 
+	// Confirm button
+	ImGui::BeginDisabled(dataInitOption == DATA_INIT_CUSTOM && invalidDataCustom);
 	if (ImGui::Button("Confirm", sf::Vector2f(btnSize))) {
-		printf("%s %d\n", DSVectors[current_DS_item].c_str(), dataInitOption); // DEBUG
-		// - Initialize data structures
-		// visEngine_SLL.freeMem(); // Free all memory
+		std::cout << DSVectors[current_DS_item].c_str() <<" "<<  dataInitOption << std::endl; // DEBUG
 
 		// Change program mode
 		switch (chosenDSType) {
 		case DSType::SINGLY_LINKED_LIST:
-			programState = ProgramState::VIS_SLL_SCREEN;
-			initSLL(dataInitOption);
+			invalidDataFromFile = !initSLL(dataInitOption);
+			if (!invalidDataFromFile) {
+				programState = ProgramState::VIS_SLL_SCREEN;
+			}
 			break;
 		case DSType::HASH_TABLE_LINEAR:
 			programState = ProgramState::VIS_HASH_SCREEN;
@@ -329,6 +336,11 @@ void Program::displayChooseDSMenuScreenGUI() {
 		default:
 			break;
 		}
+	}
+	ImGui::EndDisabled();
+
+	if (dataInitOption == DATA_INIT_FROM_FILE && invalidDataFromFile) { // Print error message
+		ImGui::Text("Your data is invalid. Check your .txt file and try again.");
 	}
 
 	ImGui::End();

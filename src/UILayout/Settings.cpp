@@ -135,7 +135,7 @@ void Program::displaySettingsMenuScreenGUI() {
 
 	if (ImGui::Button("Go back")) {
 		programState = ProgramState::MAIN_MENU;
-		printf("-- Go to main menu.\n");
+		std::cout << "-- Go to main menu." << std::endl;
 		resizeView();
 	}
 	ImGui::Text("Window resolution: ");

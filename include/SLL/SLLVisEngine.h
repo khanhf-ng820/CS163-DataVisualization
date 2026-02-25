@@ -32,13 +32,11 @@ public:
 	// using SLLAlgoEngine::SLLAlgoEngine;
 	// SLLVisEngine();
 	SLLVisEngine(sf::RenderWindow& window, sf::Font& font);
-	SLLVisEngine(sf::RenderWindow& window, sf::Font& font, std::mt19937& rng);
-	SLLVisEngine(sf::RenderWindow& window, sf::Font& font, std::vector<int> initData);
 	~SLLVisEngine();
 
 	void freeMem();
 	void resetParams();
-	void resetEngine(); // CLEAR/RESET ALL PROPERTIES (ONLY USE WHEN INITIALIZING NEW SLL)
+	void resetEngine(); // CLEAR/RESET ALL PROPERTIES (REMEMBER TO UPDATE, ONLY USE WHEN INITIALIZING NEW SLL)
 	void initSLLData(); // Empty SLL
 	void initSLLData(std::mt19937& rng); // Randomized SLL
 	void initSLLData(std::vector<int> initData); // Specific data SLL

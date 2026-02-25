@@ -2,7 +2,7 @@
 **Data Structure Visualization**, a solo project for CS163 - Data Structures course.
 
 <!-- This project uses **C++**, **CMake**, and the **raylib** graphics library. -->
-This project uses **C++**, **CMake**, the **SFML** graphics library, and the **ImGui-SFML** GUI libraries.
+This project uses **C++**, **CMake**, the **SFML** graphics library, and the **ImGui-SFML** GUI library.
 
 This project contains visualizations for these data structures and algorithms:
 

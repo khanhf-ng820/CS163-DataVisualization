@@ -100,13 +100,17 @@ private:
 	ImGuiIO* ioPtr;
 	ImGuiStyle* stylePtr;
 
-	// RNG
+	// Random number generator
 	std::mt19937 rng;
 
-	bool init_successful = true;
+	bool init_imgui_successful = true;
 	bool draggingCanvas = false; // If mouse is dragging canvas
 	bool allowDragCanvas = false; // Allow dragging canvas (remember to set false)
 	sf::Vector2f lastWorldPos; // Position of last dragged view
+
+
+	// Initializing data structure from files
+	bool invalidDataFromFile = false; // To print error messages when invalid data
 
 
 	ProgramState programState = ProgramState::MAIN_MENU;
@@ -129,11 +133,12 @@ private:
 	char* customDataMSTbuf = new char[CUSTOM_DATA_BUF_SIZE];
 	char* customDataDijkstrabuf = new char[CUSTOM_DATA_BUF_SIZE];
 
-	inline const static fs::path SLL_DATA_FILEPATH = std::string(DATA_DIR) + "/SLL.txt";
-	inline const static fs::path HASH_DATA_FILEPATH = std::string(DATA_DIR) + "/HashTable.txt";
-	inline const static fs::path AVL_DATA_FILEPATH = std::string(DATA_DIR) + "/AVL.txt";
-	inline const static fs::path TRIE_DATA_FILEPATH = std::string(DATA_DIR) + "/Trie.txt";
-	inline const static fs::path GRAPH_DATA_FILEPATH = std::string(DATA_DIR) + "/Graph.txt";
+	inline const static fs::path SLL_DATA_FILEPATH = fs::path(DATA_DIR) / "SLL.txt";
+	inline const static fs::path HASH_DATA_FILEPATH = fs::path(DATA_DIR) / "HashTable.txt";
+	inline const static fs::path AVL_DATA_FILEPATH = fs::path(DATA_DIR) / "AVL.txt";
+	inline const static fs::path TRIE_DATA_FILEPATH = fs::path(DATA_DIR) / "Trie.txt";
+	inline const static fs::path GRAPH_DATA_FILEPATH = fs::path(DATA_DIR) / "Graph.txt";
+
 	std::ifstream SLL_dataFile, hashTable_dataFile, AVL_dataFile, trie_dataFile, graph_dataFile;
 
 	// sf::CircleShape shape;
@@ -143,10 +148,13 @@ private:
 	// sf::RectangleShape cornerBox;
 
 
-	// Initialize data structures
-	void initSLL(const int dataInitOption);
-	void initHashTable(const int dataInitOption);
-	void initAVL(const int dataInitOption);
-	void initTrie(const int dataInitOption);
-	void initGraph(const int dataInitOption);
+	// Open data structure .txt files
+	void createAndOpen(const fs::path dataFilePath);
+
+	// Initialize data structures (if returns false, don't go to visualization menu screen)
+	bool initSLL(const int dataInitOption);
+	bool initHashTable(const int dataInitOption);
+	bool initAVL(const int dataInitOption);
+	bool initTrie(const int dataInitOption);
+	bool initGraph(const int dataInitOption);
 };

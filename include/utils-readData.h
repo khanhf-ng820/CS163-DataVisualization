@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "utils.h"
+
 
 
 // --- Read SLL data ---
@@ -17,14 +19,16 @@ inline const bool validDataSLLFile(std::ifstream& ifile) {
 	while (ifile >> num) {
 		read = true; // Successfully read an int
 	}
+	bool isValid = read && ifile.eof();
 
 	ifile.clear(); // Cleanup
 	ifile.seekg(0, std::ios::beg);
-	return read && ifile.eof(); // Valid if reached EOF
+	return isValid; // Valid if reached EOF
 }
 
 inline const bool validDataSLLString(std::string& data) {
-	std::istringstream iss(data);
+	std::string trimmedData = trim(data);
+	std::istringstream iss(trimmedData);
 
 	int num;
 	bool read = false;
@@ -53,7 +57,8 @@ inline const std::vector<int> getDataSLLFile(std::ifstream& ifile) {
 inline const std::vector<int> getDataSLLString(std::string& data) {
 	if (!validDataSLLString(data)) return {};
 
-	std::istringstream iss(data);
+	std::string trimmedData = trim(data);
+	std::istringstream iss(trimmedData);
 	std::vector<int> vec;
 	int num;
 	while (iss >> num) {
