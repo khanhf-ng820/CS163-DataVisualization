@@ -7,7 +7,7 @@
 
 
 
-inline constexpr float fract(float f) { return f - floor(f); }
+inline const float fract(float f) { return f - floor(f); }
 
 
 
