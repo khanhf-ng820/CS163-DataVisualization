@@ -11,6 +11,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ImGui-SFML::ImGui-SFML)
 
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+
 target_compile_definitions(${PROJECT_NAME} PRIVATE ASSET_DIR="${CMAKE_CURRENT_LIST_DIR}/../assets")
 target_compile_definitions(${PROJECT_NAME} PRIVATE DATA_DIR="${CMAKE_CURRENT_LIST_DIR}/../data")
 
