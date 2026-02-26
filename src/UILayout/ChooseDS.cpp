@@ -339,7 +339,8 @@ void Program::displayChooseDSMenuScreenGUI() {
 	}
 	ImGui::EndDisabled();
 
-	if (dataInitOption == DATA_INIT_FROM_FILE && invalidDataFromFile) { // Print error message
+	// Print error message
+	if (dataInitOption == DATA_INIT_FROM_FILE && invalidDataFromFile) {
 		ImGui::Text("Your data is invalid. Check your .txt file and try again.");
 	}
 

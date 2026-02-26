@@ -2,7 +2,7 @@
 **Data Structure Visualization**, a solo project for CS163 - Data Structures course.
 
 <!-- This project uses **C++**, **CMake**, and the **raylib** graphics library. -->
-This project uses **C++**, **CMake**, the **SFML** graphics library, and the **ImGui-SFML** GUI library.
+This project uses **C++17**, **CMake**, the **SFML** graphics library, and the **ImGui-SFML** GUI library.
 
 This project contains visualizations for these data structures and algorithms:
 
@@ -12,7 +12,6 @@ This project contains visualizations for these data structures and algorithms:
 - **Graphs:** Minimum Spanning Tree *(Prim's algorithm)*, Shortest Path *(Dijkstra's algorithm)*
 
 ### Technology stack:
-
 - **C++, CMake**
 - 2D Graphics: **SFML 3.0.2**
 - GUI: **ImGui-SFML 3.0**
@@ -28,6 +27,9 @@ Download and make sure you have:
 - A C++ compiler (GCC, Clang, MinGW-w64, or MSVC) that ***MUST*** support **C++17**
 
 Make sure all of them are available in **PATH** in order to be used in the Terminal, and make sure you have Internet connection while following these building steps.
+
+#### Clone the repository:
+Open the Terminal (Command Prompt), and navigate to the directory where you want the repository to be in, using the `cd` command.
 
 Clone this repository using *git*:
 ```bash

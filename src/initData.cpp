@@ -34,30 +34,31 @@ bool Program::initSLL(const int dataInitOption) {
 	case DATA_INIT_CUSTOM: // Custom data as string
 		dataString = std::string(customDataSLLbuf);
 		validData = validDataSLLString(dataString);
+
 		if (!validData) {
-			// SHOULD NOT PRINT IN PRACTICE
-			std::cout << "Invalid data string. Something went wrong!!" <<std::endl; // Invalid data
+			// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+			std::cout << "Invalid data string. Something went wrong!!"<<std::endl; // Invalid data
 			visEngine_SLL.resetEngine(); // Free all memory, reset entire engine
 			visEngine_SLL.initSLLData();
 			return false;
-		} else {
-			visEngine_SLL.resetEngine(); // Free all memory, reset entire engine
-			visEngine_SLL.initSLLData(getDataSLLString(dataString));
 		}
+		visEngine_SLL.resetEngine(); // Free all memory, reset entire engine
+		visEngine_SLL.initSLLData(getDataSLLString(dataString));
 		return true;
 	case DATA_INIT_FROM_FILE: // Data from file
 		SLL_dataFile.open(SLL_DATA_FILEPATH); // Open data file
 		validData = validDataSLLFile(SLL_dataFile);
+
 		if (!validData) {
 			std::cout << "Invalid data file. Check the .txt data file and try again." << std::endl; // Invalid data
 			visEngine_SLL.resetEngine(); // Free all memory, reset entire engine
 			visEngine_SLL.initSLLData();
+			SLL_dataFile.close(); // Close the data file
 			return false;
-		} else {
-			visEngine_SLL.resetEngine(); // Free all memory, reset entire engine
-			visEngine_SLL.initSLLData(getDataSLLFile(SLL_dataFile));
 		}
-		SLL_dataFile.close();
+		visEngine_SLL.resetEngine(); // Free all memory, reset entire engine
+		visEngine_SLL.initSLLData(getDataSLLFile(SLL_dataFile));
+		SLL_dataFile.close(); // Close the data file
 		return true;
 	case DATA_INIT_EMPTY: // Empty data
 	default:

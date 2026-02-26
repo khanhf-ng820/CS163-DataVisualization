@@ -1,7 +1,10 @@
 #pragma once
+#include "imgui.h"
+#include "imgui-SFML.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
+
 #include <cmath>
 #include <random>
 
@@ -91,6 +94,7 @@ public:
 
 	void prevStep();
 	void nextStep();
+	void skipToFinalState();
 
 
 	static constexpr sf::Vector2f originPosDisplacement = {75, 50};
@@ -105,8 +109,13 @@ public:
 	static constexpr int          descriptionFontSize = 15;
 	static constexpr float        arrowHeadSideLen = 7.5;
 
+	static constexpr ImVec4       highlightCodeColor = {0.4f, 1.f, 0.f, 1.f};
+
 private:
 	void initSLLvector(std::vector<int> values); // Init SLL from std::vector<int>
+
+	// Create AND display ImGui window to highlight source code (pseudocode)
+	void drawHighlightCodeWindow(SLLAnimStep eventSLL);
 
 	sf::Vector2f lerp(sf::Vector2f v1, sf::Vector2f v2, float k) const;
 	void drawArrow(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f v1, sf::Vector2f v2) const;

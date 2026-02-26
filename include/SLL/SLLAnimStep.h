@@ -1,8 +1,10 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "utils.h"
+#include "SLL/SLLSourceCode.h"
 
 
 
@@ -40,6 +42,7 @@ public:
 	SLLAnimStep();
 	// SLLAnimStep(SLLAnimType type, std::string text);
 	SLLAnimStep(SLLAnimType type, std::string text, SLLNode* pCur, int curIndex);
+	SLLAnimStep(SLLAnimType type, std::string text, std::vector<int> highlightLineIndex, SLLNode* pCur, int curIndex);
 	~SLLAnimStep();
 	
 	SLLAnimType type = SLLAnimType::NONE;
@@ -65,26 +68,32 @@ public:
 	bool removeChangeLink = false; // If cur->pNext is assigned cur->pNext->pNext
 	bool removedNode = false; // If the desired node is removed
 
-	std::string text = ""; // Text to display
+	// Text to display
+	std::string text = "";
+
+	// Which row(s) of code to highlight
+	std::vector<int> highlightLineIndex = {};
 };
 
 
 // Other constructors
 // SEARCHING
-inline SLLAnimStep SLLAnimStepSearch(SLLAnimType type, std::string text, SLLNode* pCur, int curIndex, SLLNode* pSearch) {
+inline SLLAnimStep SLLAnimStepSearch(SLLAnimType type, std::string text, std::vector<int> highlightLineIndex, SLLNode* pCur, int curIndex, SLLNode* pSearch) {
 	SLLAnimStep step;
 	step.type = type;
 	step.text = text;
+	step.highlightLineIndex = highlightLineIndex;
 	step.pCur = pCur;
 	step.curIndex = curIndex;
 	step.pSearch = pSearch;
 	return step;
 }
 // INSERTING
-inline SLLAnimStep SLLAnimStepInsert(SLLAnimType type, std::string text, SLLNode* pCur, int curIndex, SLLNode* pInsert, int idxInsert) {
+inline SLLAnimStep SLLAnimStepInsert(SLLAnimType type, std::string text, std::vector<int> highlightLineIndex, SLLNode* pCur, int curIndex, SLLNode* pInsert, int idxInsert) {
 	SLLAnimStep step;
 	step.type = type;
 	step.text = text;
+	step.highlightLineIndex = highlightLineIndex;
 	step.pCur = pCur;
 	step.curIndex = curIndex;
 	step.pInsert = pInsert;

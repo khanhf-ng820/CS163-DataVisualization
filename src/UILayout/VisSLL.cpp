@@ -81,7 +81,8 @@ void Program::displayVisSLLScreenSFML() {
 			sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables
 		);
 		sfDrawables[ProgramState::VIS_SLL_SCREEN]->displayAll();
-		if (!visEngine_SLL.animPaused) visEngine_SLL.increaseTime();
+		if (!visEngine_SLL.animPaused)
+			visEngine_SLL.increaseTime();
 		break;
 	// SEARCH MODE
 	case SLLVisMode::SEARCH:
@@ -256,7 +257,7 @@ void Program::displayVisSLLScreenGUI() {
 		// ImGuiWindowFlags_NoCollapse
 		// ImGuiWindowFlags_NoBackground
 	);
-	// -- GO BACK BUTTON
+	// -- GO BACK TO MAIN MENU BUTTON
 	if (ImGui::Button("Back to Main Menu")) {
 		programState = ProgramState::MAIN_MENU;
 		resizeView();
@@ -280,8 +281,14 @@ void Program::displayVisSLLScreenGUI() {
 		visEngine_SLL.nextStep();
 	}
 	ImGui::EndDisabled();
+	ImGui::SameLine();
+	ImGui::BeginDisabled(!visEngine_SLL.animPaused);
+	if (ImGui::Button("Skip to Final")) {
+		visEngine_SLL.skipToFinalState();
+	}
+	ImGui::EndDisabled();
 	if (visEngine_SLL.animPaused) {
-		ImGui::SameLine();
+		// ImGui::SameLine();
 		ImGui::Text("Paused");
 	}
 

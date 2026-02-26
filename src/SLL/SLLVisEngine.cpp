@@ -55,6 +55,10 @@ void SLLVisEngine::nextStep() {
 	targetTime = floor(targetTime);
 	targetTime = std::max(targetTime, 0.f);
 }
+void SLLVisEngine::skipToFinalState() {
+	time = std::max(100000, static_cast<int>(eventList.size() + 1));
+	animPaused = false; // Auto un-pause
+}
 
 
 void SLLVisEngine::resetParams() {
@@ -734,6 +738,60 @@ void SLLVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawab
 
 
 
+// Create ImGui window to highlight source code (pseudocode)
+void SLLVisEngine::drawHighlightCodeWindow(SLLAnimStep eventSLL) {
+	ImGui::Begin("Pseudocode", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+
+	switch (visMode) {
+	case SLLVisMode::SEARCH:
+		for (int i = 0; i < SLL_CODE_SEARCH.size(); i++) {
+			if (vecContains(eventSLL.highlightLineIndex, i))
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", SLL_CODE_SEARCH[i].c_str());
+			if (vecContains(eventSLL.highlightLineIndex, i))
+				ImGui::PopStyleColor();
+		}
+		break;
+	case SLLVisMode::UPDATE:
+		for (int i = 0; i < SLL_CODE_UPDATE.size(); i++) {
+			if (vecContains(eventSLL.highlightLineIndex, i))
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", SLL_CODE_UPDATE[i].c_str());
+			if (vecContains(eventSLL.highlightLineIndex, i))
+				ImGui::PopStyleColor();
+		}
+		break;
+	case SLLVisMode::INSERT_BEG:
+	case SLLVisMode::INSERT_END:
+	case SLLVisMode::INSERT_K:
+		for (int i = 0; i < SLL_CODE_INSERT.size(); i++) {
+			if (vecContains(eventSLL.highlightLineIndex, i))
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", SLL_CODE_INSERT[i].c_str());
+			if (vecContains(eventSLL.highlightLineIndex, i))
+				ImGui::PopStyleColor();
+		}
+		break;
+	case SLLVisMode::REMOVE_BEG:
+	case SLLVisMode::REMOVE_K:
+		for (int i = 0; i < SLL_CODE_REMOVE.size(); i++) {
+			if (vecContains(eventSLL.highlightLineIndex, i))
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", SLL_CODE_REMOVE[i].c_str());
+			if (vecContains(eventSLL.highlightLineIndex, i))
+				ImGui::PopStyleColor();
+		}
+		break;
+	default:
+		ImGui::Text("(Nothing to visualize.)");
+	}
+
+	ImGui::End();
+}
+
+
+
+// Draw nodes and links, depending on eventList
 void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList) {
 	drawableList.clear();
 
@@ -771,11 +829,14 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 		pInsert = ithNode(eventSLL.idxInsert);
 		idxInsert = eventSLL.idxInsert;
 		addNodeDrawablesInsert(drawableList, eventSLL);
+		drawHighlightCodeWindow(eventSLL);
 	} else if (visMode == SLLVisMode::REMOVE_BEG || visMode == SLLVisMode::REMOVE_K) {
-		// REMOVE MODE
+	// REMOVE MODE
 		addNodeDrawablesRemove(drawableList, eventSLL);
+		drawHighlightCodeWindow(eventSLL);
 	} else {
 		addNodeDrawables(drawableList, eventSLL);
+		drawHighlightCodeWindow(eventSLL);
 	}
 
 

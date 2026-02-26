@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 #include <string>
+#include <vector>
 #include <algorithm>
 #include <cctype>
 
@@ -22,4 +23,10 @@ inline const std::string trim(const std::string& str) {
         return "";
 
     return std::string(start, end);
+}
+
+
+
+inline const bool vecContains(std::vector<int> vec, int str) {
+    return std::find(vec.begin(), vec.end(), str) != vec.end();
 }

@@ -11,4 +11,11 @@ SLLAnimStep::SLLAnimStep(SLLAnimType type, std::string text, SLLNode* pCur, int 
 	// , pSearch(pSearch)
 {}
 
+SLLAnimStep::SLLAnimStep(SLLAnimType type, std::string text, 
+					   	 std::vector<int> highlightLineIndex, SLLNode* pCur, int curIndex)
+	: type(type), text(text)
+	, pCur(pCur), curIndex(curIndex)
+	, highlightLineIndex(highlightLineIndex)
+{}
+
 SLLAnimStep::~SLLAnimStep() {}
