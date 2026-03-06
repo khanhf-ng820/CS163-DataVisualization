@@ -178,6 +178,14 @@ void Program::mainLoop() {
 				if (mb->button == sf::Mouse::Button::Left)
 					draggingCanvas = false;
 			}
+			// Zoom when mouse is scrolling
+			if (const auto* scroll = event->getIf<sf::Event::MouseWheelScrolled>()) {
+				if (scroll->wheel == sf::Mouse::Wheel::Vertical) {
+					double zoomFactor = (scroll->delta > 0) ? 1/SCALING_FACTOR : SCALING_FACTOR;
+					view.zoom(zoomFactor);
+					window.setView(view);
+				}
+			}
 		}
 
 		// If mouse is dragging canvas

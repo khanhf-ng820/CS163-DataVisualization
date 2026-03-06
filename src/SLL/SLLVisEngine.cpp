@@ -813,7 +813,7 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 	// Set parameters
 	pSearch = eventSLL.pSearch; // Set pSearch in the event
 	// Less safe: animInProgress = (time != static_cast<float>(eventList.size()) - 0.0005f);
-	animInProgress = (abs(time - (static_cast<float>(eventList.size()) - 0.0005f)) > EPSILON);
+	animInProgress = (abs(time - (static_cast<float>(eventList.size()) - 0.0005f)) > EPSILON_TIME);
 
 	if (animStepIndex > oldAnimStepIndex) {
 		if (eventList[oldAnimStepIndex].type == SLLAnimType::MOVE_CUR_FORWARD) {
@@ -1003,26 +1003,26 @@ void SLLVisEngine::drawArrow(std::vector<std::unique_ptr<sf::Drawable>>& drawabl
 	float px = -uy, py = ux;
 	float height = sqrt(3.0) / 2 * arrowHeadSideLen;
 	float baseCenterX = v2.x - height * ux;
-    float baseCenterY = v2.y - height * uy;
-    float leftX  = baseCenterX + (arrowHeadSideLen / 2) * px;
-    float leftY  = baseCenterY + (arrowHeadSideLen / 2) * py;
-    float rightX = baseCenterX - (arrowHeadSideLen / 2) * px;
-    float rightY = baseCenterY - (arrowHeadSideLen / 2) * py;
+	float baseCenterY = v2.y - height * uy;
+	float leftX  = baseCenterX + (arrowHeadSideLen / 2) * px;
+	float leftY  = baseCenterY + (arrowHeadSideLen / 2) * py;
+	float rightX = baseCenterX - (arrowHeadSideLen / 2) * px;
+	float rightY = baseCenterY - (arrowHeadSideLen / 2) * py;
 
-    auto arrowBody = std::make_unique<sf::VertexArray>(sf::PrimitiveType::Lines, 2);
-    (*arrowBody)[0].position = v1;
-    (*arrowBody)[0].color = sf::Color::Black;
-    (*arrowBody)[1].position = v2;
-    (*arrowBody)[1].color = sf::Color::Black;
+	auto arrowBody = std::make_unique<sf::VertexArray>(sf::PrimitiveType::Lines, 2);
+	(*arrowBody)[0].position = v1;
+	(*arrowBody)[0].color = sf::Color::Black;
+	(*arrowBody)[1].position = v2;
+	(*arrowBody)[1].color = sf::Color::Black;
 
-    auto arrowHead = std::make_unique<sf::VertexArray>(sf::PrimitiveType::Triangles, 3);
-    (*arrowHead)[0].position = v2;
-    (*arrowHead)[0].color = sf::Color::Black;
-    (*arrowHead)[1].position = sf::Vector2f(leftX, leftY);
-    (*arrowHead)[1].color = sf::Color::Black;
-    (*arrowHead)[2].position = sf::Vector2f(rightX, rightY);
-    (*arrowHead)[2].color = sf::Color::Black;
+	auto arrowHead = std::make_unique<sf::VertexArray>(sf::PrimitiveType::Triangles, 3);
+	(*arrowHead)[0].position = v2;
+	(*arrowHead)[0].color = sf::Color::Black;
+	(*arrowHead)[1].position = sf::Vector2f(leftX, leftY);
+	(*arrowHead)[1].color = sf::Color::Black;
+	(*arrowHead)[2].position = sf::Vector2f(rightX, rightY);
+	(*arrowHead)[2].color = sf::Color::Black;
 
-    drawableList.push_back(std::move(arrowBody));
-    drawableList.push_back(std::move(arrowHead));
+	drawableList.push_back(std::move(arrowBody));
+	drawableList.push_back(std::move(arrowHead));
 }

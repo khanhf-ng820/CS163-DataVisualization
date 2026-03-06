@@ -121,6 +121,7 @@ private:
 	const float NORMAL_HEIGHT = 600.0f;
 	const unsigned int FRAMERATE_LIMIT = 60;
 	const sf::Vector2u MINIMUM_WINDOW_SIZE = {800U, 600U};
+	const double SCALING_FACTOR = 1.1;
 
 	sf::RenderWindow window;
 	sf::Clock deltaClock;

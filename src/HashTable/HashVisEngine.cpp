@@ -8,8 +8,8 @@ HashVisEngine::HashVisEngine(sf::RenderWindow* window, sf::Font* font)
 	: tableSize(5), windowPtr(window), fontPtr(font)
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {
-	table.reserve(tableSize);
 	// *** FOR TESTING ONLY, WILL DELETE LATER ***
+	table.reserve(tableSize);
 	for (int i = 0; i < tableSize; i++)
 		table[i] = TableSlot(i, -i);
 }
@@ -106,7 +106,7 @@ void HashVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 	// Set parameters
 	searchSlotIdx = eventHash.searchSlotIdx; // Set searchSlotIdx in the event
 	// Less safe: animInProgress = (time != static_cast<float>(eventList.size()) - 0.0005f);
-	animInProgress = (abs(time - (static_cast<float>(eventList.size()) - 0.0005f)) > EPSILON);
+	animInProgress = (abs(time - (static_cast<float>(eventList.size()) - 0.0005f)) > EPSILON_TIME);
 
 	if (animStepIndex > oldAnimStepIndex) {
 		// if (eventList[oldAnimStepIndex].type == HashAnimType::MOVE_CUR_FORWARD) {

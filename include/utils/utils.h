@@ -8,7 +8,7 @@
 
 
 
-static inline constexpr float EPSILON = 1e-6;
+static inline constexpr float EPSILON_TIME = 1e-6;
 
 
 inline const float fract(float f) { return f - floor(f); }

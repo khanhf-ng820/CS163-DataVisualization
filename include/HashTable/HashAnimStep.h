@@ -13,9 +13,9 @@ enum class HashAnimType : unsigned char {
 	NONE,
 	HIGHLIGHT_SLOT,
 	HIGHLIGHT_FOUND_SLOT, // Includes highlighting INSERTED slot
-	SET_KEY_VALUE, // Includes highlighting slot
-	// UPDATE_VALUE, // Includes highlighting slot
-	SET_DELETED // Includes highlighting slot
+	SET_KEY_VALUE,        // Includes highlighting slot
+	// UPDATE_VALUE,      // Includes highlighting slot
+	SET_DELETED           // Includes highlighting slot
 };
 
 
