@@ -9,14 +9,13 @@
 #include <random>
 
 #include "sfLayout/sfLayout.h"
-#include "utils-readData.h"
+#include "utils/utils-readData.h"
 #include "SLL/SLLAnimStep.h"
 #include "SLL/SLLAlgoEngine.h"
 
 
 
 
-static constexpr float EPSILON = 1e-6;
 
 enum class SLLVisMode {
 	NONE, // Currently visualizing no actions

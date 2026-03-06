@@ -14,7 +14,7 @@ SLLVisEngine::SLLVisEngine(sf::RenderWindow& window, sf::Font& font)
 }
 
 SLLVisEngine::~SLLVisEngine() {
-	freeMem(); // Free memory
+	freeMem(); // Free all memory
 }
 void SLLVisEngine::freeMem() {
 	clear();
@@ -119,7 +119,7 @@ void SLLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 		bigNodeBox->setPosition(originPos 
 			+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 		);
-		
+
 		auto smallNodeBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
 		smallNodeBox->setFillColor(sf::Color::Transparent);
 		smallNodeBox->setOutlineColor(
@@ -784,6 +784,7 @@ void SLLVisEngine::drawHighlightCodeWindow(SLLAnimStep eventSLL) {
 		break;
 	default:
 		ImGui::Text("(Nothing to visualize.)");
+		break;
 	}
 
 	ImGui::End();
@@ -841,7 +842,7 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 
 
 	// Display description for algorithm visualization
-	auto descriptionText = std::make_unique<sf::Text>(font, eventSLL.text, descriptionFontSize);
+	auto descriptionText = std::make_unique<sf::Text>(font, eventSLL.desc, descriptionFontSize);
 	descriptionText->setFillColor(sf::Color::Black);
 	descriptionText->setPosition(originPos - originPosDisplacement + descriptionTextPos);
 

@@ -11,14 +11,15 @@ Program::Program()
 	, textFont(fs::path(ASSET_DIR) / "Roboto_Mono/RobotoMono-VariableFont_wght.ttf")
 	, rng(std::random_device()())
 	, visEngine_SLL(window, textFont)
+	, visEngine_Hash(&window, &textFont)
 {
 	window.requestFocus();
 	window.setFramerateLimit(FRAMERATE_LIMIT);
 	window.setMinimumSize(MINIMUM_WINDOW_SIZE);
 	// window.setMaximumSize(sf::Vector2u(1200, 900));
 	textFont.setSmooth(true);
-	// sf::ContextSettings settings;
-	// settings.antiAliasingLevel = 4; // Anti aliasing (2 to 16)
+	sf::ContextSettings settings;
+	settings.antiAliasingLevel = 8; // Anti aliasing (2 to 16)
 
 	init_imgui_successful = ImGui::SFML::Init(window);
 	ImGui::StyleColorsDark(); // Dark theme
@@ -121,6 +122,21 @@ void Program::mainLoop() {
 	case ProgramState::VIS_SLL_SCREEN:
 		initVisSLLScreen();
 		break;
+	case ProgramState::VIS_HASH_SCREEN:
+		initVisHashScreen();
+		break;
+	case ProgramState::VIS_AVL_SCREEN:
+		initVisAVLScreen();
+		break;
+	case ProgramState::VIS_TRIE_SCREEN:
+		initVisTrieScreen();
+		break;
+	case ProgramState::VIS_MST_SCREEN:
+		initVisMSTScreen();
+		break;
+	case ProgramState::VIS_DIJKSTRA_SCREEN:
+		initVisDijkstraScreen();
+		break;
 	default:
 		break;
 	};
@@ -196,6 +212,21 @@ void Program::mainLoop() {
 		case ProgramState::VIS_SLL_SCREEN:
 			displayVisSLLScreenGUI();
 			break;
+		case ProgramState::VIS_HASH_SCREEN:
+			displayVisHashScreenGUI();
+			break;
+		case ProgramState::VIS_AVL_SCREEN:
+			displayVisAVLScreenGUI();
+			break;
+		case ProgramState::VIS_TRIE_SCREEN:
+			displayVisTrieScreenGUI();
+			break;
+		case ProgramState::VIS_MST_SCREEN:
+			displayVisMSTScreenGUI();
+			break;
+		case ProgramState::VIS_DIJKSTRA_SCREEN:
+			displayVisDijkstraScreenGUI();
+			break;
 		default:
 			break;
 		};
@@ -223,6 +254,21 @@ void Program::mainLoop() {
 			break;
 		case ProgramState::VIS_SLL_SCREEN:
 			displayVisSLLScreenSFML();
+			break;
+		case ProgramState::VIS_HASH_SCREEN:
+			displayVisHashScreenSFML();
+			break;
+		case ProgramState::VIS_AVL_SCREEN:
+			displayVisAVLScreenSFML();
+			break;
+		case ProgramState::VIS_TRIE_SCREEN:
+			displayVisTrieScreenSFML();
+			break;
+		case ProgramState::VIS_MST_SCREEN:
+			displayVisMSTScreenSFML();
+			break;
+		case ProgramState::VIS_DIJKSTRA_SCREEN:
+			displayVisDijkstraScreenSFML();
 			break;
 		default:
 			break;
@@ -254,6 +300,21 @@ void Program::mainLoop() {
 		break;
 	case ProgramState::VIS_SLL_SCREEN:
 		finishVisSLLScreen();
+		break;
+	case ProgramState::VIS_HASH_SCREEN:
+		finishVisHashScreen();
+		break;
+	case ProgramState::VIS_AVL_SCREEN:
+		finishVisAVLScreen();
+		break;
+	case ProgramState::VIS_TRIE_SCREEN:
+		finishVisTrieScreen();
+		break;
+	case ProgramState::VIS_MST_SCREEN:
+		finishVisMSTScreen();
+		break;
+	case ProgramState::VIS_DIJKSTRA_SCREEN:
+		finishVisDijkstraScreen();
 		break;
 	default:
 		break;

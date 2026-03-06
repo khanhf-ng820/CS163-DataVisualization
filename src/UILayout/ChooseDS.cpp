@@ -255,6 +255,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 
 	bool invalidDataCustom = false; // To print error messages when invalid data
 
+	// --- MUST FINISH ALL 6 ---
 	if (dataInitOption == DATA_INIT_CUSTOM) {
 		std::string dataString; // String of entered data
 		switch (chosenDSType) {
@@ -311,6 +312,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 		std::cout << DSVectors[current_DS_item].c_str() <<" "<<  dataInitOption << std::endl; // DEBUG
 
 		// Change program mode
+		// --- MUST FINISH ALL 6 ---
 		switch (chosenDSType) {
 		case DSType::SINGLY_LINKED_LIST:
 			invalidDataFromFile = !initSLL(dataInitOption);

@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "utils.h"
+#include "utils/utils.h"
 #include "SLL/SLLSourceCode.h"
 
 
@@ -40,9 +40,9 @@ enum class SLLAnimType : unsigned char {
 class SLLAnimStep {
 public:
 	SLLAnimStep();
-	// SLLAnimStep(SLLAnimType type, std::string text);
-	SLLAnimStep(SLLAnimType type, std::string text, SLLNode* pCur, int curIndex);
-	SLLAnimStep(SLLAnimType type, std::string text, std::vector<int> highlightLineIndex, SLLNode* pCur, int curIndex);
+	// SLLAnimStep(SLLAnimType type, std::string desc);
+	SLLAnimStep(SLLAnimType type, std::string desc, SLLNode* pCur, int curIndex);
+	SLLAnimStep(SLLAnimType type, std::string desc, std::vector<int> highlightLineIndex, SLLNode* pCur, int curIndex);
 	~SLLAnimStep();
 	
 	SLLAnimType type = SLLAnimType::NONE;
@@ -68,8 +68,8 @@ public:
 	bool removeChangeLink = false; // If cur->pNext is assigned cur->pNext->pNext
 	bool removedNode = false; // If the desired node is removed
 
-	// Text to display
-	std::string text = "";
+	// Description text to display
+	std::string desc = "";
 
 	// Which row(s) of code to highlight
 	std::vector<int> highlightLineIndex = {};
@@ -78,10 +78,10 @@ public:
 
 // Other constructors
 // SEARCHING
-inline SLLAnimStep SLLAnimStepSearch(SLLAnimType type, std::string text, std::vector<int> highlightLineIndex, SLLNode* pCur, int curIndex, SLLNode* pSearch) {
+inline SLLAnimStep SLLAnimStepSearch(SLLAnimType type, std::string desc, std::vector<int> highlightLineIndex, SLLNode* pCur, int curIndex, SLLNode* pSearch) {
 	SLLAnimStep step;
 	step.type = type;
-	step.text = text;
+	step.desc = desc;
 	step.highlightLineIndex = highlightLineIndex;
 	step.pCur = pCur;
 	step.curIndex = curIndex;
@@ -89,10 +89,10 @@ inline SLLAnimStep SLLAnimStepSearch(SLLAnimType type, std::string text, std::ve
 	return step;
 }
 // INSERTING
-inline SLLAnimStep SLLAnimStepInsert(SLLAnimType type, std::string text, std::vector<int> highlightLineIndex, SLLNode* pCur, int curIndex, SLLNode* pInsert, int idxInsert) {
+inline SLLAnimStep SLLAnimStepInsert(SLLAnimType type, std::string desc, std::vector<int> highlightLineIndex, SLLNode* pCur, int curIndex, SLLNode* pInsert, int idxInsert) {
 	SLLAnimStep step;
 	step.type = type;
-	step.text = text;
+	step.desc = desc;
 	step.highlightLineIndex = highlightLineIndex;
 	step.pCur = pCur;
 	step.curIndex = curIndex;

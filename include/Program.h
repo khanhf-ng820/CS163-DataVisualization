@@ -8,9 +8,10 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
-#include "utils-readData.h"
+#include "utils/utils-readData.h"
 #include "sfLayout/sfLayout.h"
 #include "SLL/SLLVisEngine.h"
+#include "HashTable/HashVisEngine.h"
 
 #include <iostream>
 #include <fstream>
@@ -78,6 +79,36 @@ public:
 	void displayVisSLLScreenGUI();
 	void finishVisSLLScreen();
 
+	// Display Hash Table visualization screen
+	void initVisHashScreen();
+	void displayVisHashScreenSFML();
+	void displayVisHashScreenGUI();
+	void finishVisHashScreen();
+
+	// Display AVL visualization screen
+	void initVisAVLScreen() {};
+	void displayVisAVLScreenSFML() {};
+	void displayVisAVLScreenGUI() {};
+	void finishVisAVLScreen() {};
+
+	// Display Trie visualization screen
+	void initVisTrieScreen() {};
+	void displayVisTrieScreenSFML() {};
+	void displayVisTrieScreenGUI() {};
+	void finishVisTrieScreen() {};
+
+	// Display MST visualization screen
+	void initVisMSTScreen() {};
+	void displayVisMSTScreenSFML() {};
+	void displayVisMSTScreenGUI() {};
+	void finishVisMSTScreen() {};
+
+	// Display Dijkstra visualization screen
+	void initVisDijkstraScreen() {};
+	void displayVisDijkstraScreenSFML() {};
+	void displayVisDijkstraScreenGUI() {};
+	void finishVisDijkstraScreen() {};
+
 
 
 private:
@@ -118,7 +149,8 @@ private:
 	// SFML shapes to draw
 	std::map<ProgramState, std::unique_ptr<sfLayout>> sfDrawables;
 
-	SLLVisEngine visEngine_SLL;
+	SLLVisEngine visEngine_SLL; // Engine for visualizing SLL
+	HashVisEngine visEngine_Hash; // Engine for visualizing Hash Table
 
 
 
@@ -141,11 +173,6 @@ private:
 
 	std::ifstream SLL_dataFile, hashTable_dataFile, AVL_dataFile, trie_dataFile, graph_dataFile;
 
-	// sf::CircleShape shape;
-	// sf::RectangleShape rectangle;
-	// sf::RectangleShape border;
-	// sf::CircleShape splitCircle;
-	// sf::RectangleShape cornerBox;
 
 
 	// Open data structure .txt files

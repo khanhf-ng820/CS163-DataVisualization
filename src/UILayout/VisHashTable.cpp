@@ -1,0 +1,317 @@
+#include "UILayout/VisHashTable.h"
+
+
+
+
+
+// REMEMBER:
+// Drawing SFML: The center of the window is now (0, 0) coordinates
+// Drawing GUI: The top-left of the window is (0, 0) coordinates
+// Clear SFML drawables
+void Program::initVisHashScreen() {
+	// Push back to vector
+	sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables.clear();
+	// printf("VisHash SFML init function called\n"); // DEBUG
+}
+
+
+
+// Display vis Hash Table screen, set up SFML drawables
+void Program::displayVisHashScreenSFML() {
+	switch (visEngine_Hash.visMode) {
+	// ----- NO MODE (STILL MODE) -----
+	case HashVisMode::NONE:
+		visEngine_Hash.eventList = std::vector<HashAnimStep>();
+		visEngine_Hash.createDrawables(
+			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
+		if (!visEngine_Hash.animPaused)
+			visEngine_Hash.increaseTime();
+		break;
+	// ----- SEARCH MODE -----
+	case HashVisMode::SEARCH:
+		visEngine_Hash.eventList = visEngine_Hash.getEventsSearch(visEngine_Hash.keyToSearch);
+		visEngine_Hash.createDrawables(
+			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
+
+		// If not paused, just increase / decrease time
+		if (visEngine_Hash.animPaused) {
+			if (visEngine_Hash.time < visEngine_Hash.targetTime) {
+				visEngine_Hash.increaseTime();
+				visEngine_Hash.time = std::min(visEngine_Hash.time, visEngine_Hash.targetTime);
+			} else if (visEngine_Hash.time > visEngine_Hash.targetTime) {
+				visEngine_Hash.decreaseTime();
+				visEngine_Hash.time = std::max(visEngine_Hash.time, visEngine_Hash.targetTime);
+			}
+		} else {
+			visEngine_Hash.increaseTime();
+		}
+		break;
+	// // ----- INSERT MODE -----
+	// case HashVisMode::INSERT:
+	// 	visEngine_Hash.eventList = visEngine_Hash.getEventsInsert(visEngine_Hash.valToInsert, visEngine_Hash.idxToInsert);
+	// 	visEngine_Hash.createDrawables(
+	// 		sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
+	// 	);
+	// 	sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
+
+	// 	// If not paused, just increase / decrease time
+	// 	if (visEngine_Hash.animPaused) {
+	// 		if (visEngine_Hash.time < visEngine_Hash.targetTime) {
+	// 			visEngine_Hash.increaseTime();
+	// 			visEngine_Hash.time = std::min(visEngine_Hash.time, visEngine_Hash.targetTime);
+	// 		} else if (visEngine_Hash.time > visEngine_Hash.targetTime) {
+	// 			visEngine_Hash.decreaseTime();
+	// 			visEngine_Hash.time = std::max(visEngine_Hash.time, visEngine_Hash.targetTime);
+	// 		}
+	// 	} else {
+	// 		visEngine_Hash.increaseTime();
+	// 	}
+	// 	break;
+	// // ----- UPDATE MODE -----
+	// case HashVisMode::UPDATE:
+	// 	visEngine_Hash.eventList = visEngine_Hash.getEventsUpdate(visEngine_Hash.valToUpdate, visEngine_Hash.idxToUpdate);
+	// 	visEngine_Hash.createDrawables(
+	// 		sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
+	// 	);
+	// 	sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
+
+	// 	// If not paused, just increase / decrease time
+	// 	if (visEngine_Hash.animPaused) {
+	// 		if (visEngine_Hash.time < visEngine_Hash.targetTime) {
+	// 			visEngine_Hash.increaseTime();
+	// 			visEngine_Hash.time = std::min(visEngine_Hash.time, visEngine_Hash.targetTime);
+	// 		} else if (visEngine_Hash.time > visEngine_Hash.targetTime) {
+	// 			visEngine_Hash.decreaseTime();
+	// 			visEngine_Hash.time = std::max(visEngine_Hash.time, visEngine_Hash.targetTime);
+	// 		}
+	// 	} else {
+	// 		visEngine_Hash.increaseTime();
+	// 	}
+	// 	break;
+	// // ----- DELETE MODE -----
+	// case HashVisMode::DELETE:
+	// 	visEngine_Hash.eventList = visEngine_Hash.getEventsDelete(visEngine_Hash.idxToRemove);
+	// 	visEngine_Hash.createDrawables(
+	// 		sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
+	// 	);
+	// 	sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
+
+	// 	// If not paused, just increase / decrease time
+	// 	if (visEngine_Hash.animPaused) {
+	// 		if (visEngine_Hash.time < visEngine_Hash.targetTime) {
+	// 			visEngine_Hash.increaseTime();
+	// 			visEngine_Hash.time = std::min(visEngine_Hash.time, visEngine_Hash.targetTime);
+	// 		} else if (visEngine_Hash.time > visEngine_Hash.targetTime) {
+	// 			visEngine_Hash.decreaseTime();
+	// 			visEngine_Hash.time = std::max(visEngine_Hash.time, visEngine_Hash.targetTime);
+	// 		}
+	// 	} else {
+	// 		visEngine_Hash.increaseTime();
+	// 	}
+	// 	break;
+	default:
+		break;
+	}
+
+
+	// std::cout << sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables.size() << std::endl;
+	// printf("VisHashTable SFML function called\n"); // DEBUG
+}
+
+
+
+void Program::displayVisHashScreenGUI() {
+	allowDragCanvas = true;
+
+	// Show the demo window
+	// ImGui::ShowDemoWindow();
+
+	// Get the current window size
+	sf::Vector2u sfml_window_size = window.getSize();
+
+	ImGui::Begin("Hash Table Menu",
+		nullptr
+		// ImGuiWindowFlags_NoCollapse
+		// ImGuiWindowFlags_NoBackground
+	);
+	// -- GO BACK TO MAIN MENU BUTTON
+	if (ImGui::Button("Back to Main Menu")) {
+		programState = ProgramState::MAIN_MENU;
+		resizeView();
+	}
+	// -- SPEED/PAUSE/STEP MENU
+	ImGui::SliderFloat("Animation Speed", &visEngine_Hash.dt, 0.001f, 0.499f);
+
+	ImGui::BeginDisabled(!visEngine_Hash.animPaused);
+	if (ImGui::Button("Previous Step")) {
+		visEngine_Hash.prevStep();
+	}
+	ImGui::EndDisabled();
+	ImGui::SameLine();
+	if (ImGui::Button("Pause/Unpause")) {
+		visEngine_Hash.animPaused = !visEngine_Hash.animPaused;
+		visEngine_Hash.targetTime = visEngine_Hash.time;
+	}
+	ImGui::SameLine();
+	ImGui::BeginDisabled(!visEngine_Hash.animPaused);
+	if (ImGui::Button("Next Step")) {
+		visEngine_Hash.nextStep();
+	}
+	ImGui::EndDisabled();
+	ImGui::SameLine();
+	ImGui::BeginDisabled(!visEngine_Hash.animPaused);
+	if (ImGui::Button("Skip to Final")) {
+		visEngine_Hash.skipToFinalState();
+	}
+	ImGui::EndDisabled();
+	if (visEngine_Hash.animPaused) {
+		// ImGui::SameLine();
+		ImGui::Text("Paused");
+	}
+
+	ImGui::Separator();
+
+	// -- SEARCH OPERATION --
+	ImGui::BeginDisabled(visEngine_Hash.animInProgress);
+	ImGui::Text("Enter value to search:");
+	ImGui::InputInt("Value to search", &visEngine_Hash.keyToSearchInput);
+	// float f;
+	// ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+
+	if (ImGui::Button("Search")) {
+		visEngine_Hash.keyToSearch = visEngine_Hash.keyToSearchInput;
+		visEngine_Hash.visMode = HashVisMode::SEARCH;
+		visEngine_Hash.resetParams();
+		visEngine_Hash.animPaused = false; // Auto un-pause
+	}
+	ImGui::EndDisabled();
+
+	ImGui::Separator();
+
+	// // -- INSERT OPERATION --
+	// ImGui::BeginDisabled(visEngine_Hash.animInProgress);
+	// ImGui::Text("Enter value to insert:");
+	// ImGui::InputInt("Value to insert", &visEngine_Hash.valToInsertInput);
+	// ImGui::InputInt("Index to insert", &visEngine_Hash.idxToInsertInput);
+
+	// bool idxOutOfRange = !(visEngine_Hash.idxToInsertInput >= 0 && visEngine_Hash.idxToInsertInput <= visEngine_Hash.size);
+	// if (idxOutOfRange) {
+	// 	if (visEngine_Hash.size > 0)
+	// 		ImGui::Text("Index must be between 0 and %d.", visEngine_Hash.size);
+	// 	else
+	// 		ImGui::Text("Index must be 0.");
+	// }
+	// ImGui::BeginDisabled(idxOutOfRange);
+	// if (ImGui::Button("Insert")) {
+	// 	visEngine_Hash.valToInsert = visEngine_Hash.valToInsertInput;
+	// 	visEngine_Hash.idxToInsert = visEngine_Hash.idxToInsertInput;
+	// 	if (visEngine_Hash.idxToInsert == 0) {
+	// 		visEngine_Hash.visMode = HashVisMode::INSERT_BEG;
+	// 	} else if (visEngine_Hash.idxToInsert == visEngine_Hash.size) {
+	// 		visEngine_Hash.visMode = HashVisMode::INSERT_END;
+	// 	} else {
+	// 		visEngine_Hash.visMode = HashVisMode::INSERT_K;
+	// 	}
+	// 	visEngine_Hash.resetParams();
+	// 	visEngine_Hash.animPaused = false; // Auto un-pause
+
+	// 	visEngine_Hash.insert(visEngine_Hash.valToInsert, visEngine_Hash.idxToInsert);
+	// 	std::cout << "insert cool" << std::endl; // DEBUG
+	// }
+	// ImGui::EndDisabled();
+	// ImGui::EndDisabled();
+
+	// ImGui::Separator();
+
+	// // -- UPDATE OPERATION --
+	// ImGui::BeginDisabled(visEngine_Hash.animInProgress);
+	// ImGui::Text("Enter value to update:");
+	// ImGui::InputInt("Value to update", &visEngine_Hash.valToUpdateInput);
+	// ImGui::InputInt("Index to update", &visEngine_Hash.idxToUpdateInput);
+
+	// idxOutOfRange = !(visEngine_Hash.idxToUpdateInput >= 0 && visEngine_Hash.idxToUpdateInput < visEngine_Hash.size);
+	// if (idxOutOfRange) {
+	// 	if (visEngine_Hash.size > 1)
+	// 		ImGui::Text("Index must be between 0 and %d.", visEngine_Hash.size);
+	// 	else if (visEngine_Hash.size == 1)
+	// 		ImGui::Text("Index must be 0.");
+	// 	else
+	// 		ImGui::Text("There are no nodes to remove.");
+	// }
+	// ImGui::BeginDisabled(idxOutOfRange);
+	// if (ImGui::Button("Update")) {
+	// 	visEngine_Hash.valToUpdate = visEngine_Hash.valToUpdateInput;
+	// 	visEngine_Hash.idxToUpdate = visEngine_Hash.idxToUpdateInput;
+	// 	visEngine_Hash.visMode = HashVisMode::UPDATE;
+	// 	visEngine_Hash.resetParams();
+	// 	visEngine_Hash.animPaused = false; // Auto un-pause
+
+	// 	visEngine_Hash.update(visEngine_Hash.valToUpdate, visEngine_Hash.idxToUpdate);
+	// 	std::cout << "update cool" << std::endl; // DEBUG
+	// }
+	// ImGui::EndDisabled();
+	// ImGui::EndDisabled();
+
+	// ImGui::Separator();
+
+	// // -- REMOVE OPERATION --
+	// ImGui::BeginDisabled(visEngine_Hash.animInProgress);
+	// ImGui::Text("Enter index of node to remove:");
+	// ImGui::InputInt("Index to remove", &visEngine_Hash.idxToRemoveInput);
+
+	// idxOutOfRange = !(visEngine_Hash.idxToRemoveInput >= 0 && visEngine_Hash.idxToRemoveInput < visEngine_Hash.size);
+	// if (idxOutOfRange) {
+	// 	if (visEngine_Hash.size > 1)
+	// 		ImGui::Text("Index must be between 0 and %d.", visEngine_Hash.size);
+	// 	else if (visEngine_Hash.size == 1)
+	// 		ImGui::Text("Index must be 0.");
+	// 	else
+	// 		ImGui::Text("There are no nodes to remove.");
+	// }
+	// ImGui::BeginDisabled(idxOutOfRange);
+	// if (ImGui::Button("Remove")) {
+	// 	visEngine_Hash.idxToRemove = visEngine_Hash.idxToRemoveInput;
+	// 	if (visEngine_Hash.idxToRemove == 0) {
+	// 		visEngine_Hash.visMode = HashVisMode::REMOVE_BEG;
+	// 	} else {
+	// 		visEngine_Hash.visMode = HashVisMode::REMOVE_K;
+	// 	}
+	// 	visEngine_Hash.resetParams();
+	// 	visEngine_Hash.animPaused = false; // Auto un-pause
+
+	// 	visEngine_Hash.remove(visEngine_Hash.idxToRemove);
+	// 	std::cout << "remove cool" << std::endl; // DEBUG
+	// }
+	// ImGui::EndDisabled();
+	// ImGui::EndDisabled();
+
+
+
+	// const char* items[] = { "Option 1", "Option 2", "Option 3", "Option 4" };
+	// static int current_item = 0;
+	// if (ImGui::BeginCombo("##mycombo", items[current_item])) { // Pass the "current" item name as the preview
+	// 	for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
+	// 		bool is_selected = (current_item == n);
+	// 		if (ImGui::Selectable(items[n], is_selected)) {
+	// 			current_item = n;
+	// 		}
+
+	// 		// Set the initial focus when opening the combo (scrolling + keyboard navigation)
+	// 		if (is_selected) {
+	// 			ImGui::SetItemDefaultFocus();
+	// 		}
+	// 	}
+	// 	ImGui::EndCombo();
+	// }
+	ImGui::End();
+}
+
+
+
+void Program::finishVisHashScreen() {
+
+}

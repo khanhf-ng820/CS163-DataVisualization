@@ -11,10 +11,10 @@
 // -- SEARCH --
 inline const std::vector<std::string> SLL_CODE_SEARCH = {
 	"index = 0, cur = pHead", // 0
-	"while (cur != NULLPTR)",
-	"    if (cur->val == searchValue)",
+	"while (cur != NULLPTR):",
+	"    if (cur->val == searchValue):",
 	"        return index",
-	"    else",
+	"    else:",
 	"        index++, cur = cur->pNext",
 	"return NULLPTR"
 };
@@ -23,26 +23,26 @@ inline const std::vector<std::string> SLL_CODE_SEARCH = {
 // -- UPDATE --
 inline const std::vector<std::string> SLL_CODE_UPDATE = {
 	"index = 0, cur = pHead", // 0
-	"while (cur != NULLPTR)",
-	"    if (index == updateIndex)",
+	"while (cur != NULLPTR):",
+	"    if (index == updateIndex):",
 	"        cur->val = updateValue",
 	"        return",
-	"    else",
+	"    else:",
 	"        index++, cur = cur->pNext"
 };
 
 
 // -- INSERT --
 inline const std::vector<std::string> SLL_CODE_INSERT = {
-	"if (insertIndex == 0)", // 0
+	"if (insertIndex == 0):", // 0
 	"    node = new Node",
 	"    node->val = insertValue",
 	"    node->pNext = pHead",
 	"    pHead = node",
 	"    return",
 	"index = 0, cur = pHead", // 6
-	"while (cur != NULLPTR)", // 7
-	"    if (index == insertIndex - 1)",
+	"while (cur != NULLPTR):", // 7
+	"    if (index == insertIndex - 1):",
 	"        node = new Node",
 	"        node->val = insertValue",
 	"        node->pNext = cur->pNext",
@@ -54,14 +54,14 @@ inline const std::vector<std::string> SLL_CODE_INSERT = {
 
 // -- REMOVE --
 inline const std::vector<std::string> SLL_CODE_REMOVE = {
-	"if (insertIndex == 0)", // 0
+	"if (insertIndex == 0):", // 0
 	"    temp = pHead",
 	"    pHead = pHead->pNext",
 	"    delete temp",
 	"    return",
 	"index = 0, cur = pHead", // 5
-	"while (cur != NULLPTR)", // 6
-	"    if (index == insertIndex - 1)",
+	"while (cur != NULLPTR):", // 6
+	"    if (index == insertIndex - 1):",
 	"        temp = cur->pNext",
 	"        cur->pNext = temp->pNext",
 	"        delete temp",
