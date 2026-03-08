@@ -31,7 +31,7 @@ public:
 
 
 	// FOR ANIMATION
-	int curIndex = -1; // Index of slot currently animating/highlighting
+	int curIndex = -1; // Index of slot currently highlighted
 
 	int searchSlotIdx = -1; // Index of slot currently animating
 

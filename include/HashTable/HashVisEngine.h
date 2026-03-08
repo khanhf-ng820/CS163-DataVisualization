@@ -114,16 +114,17 @@ public:
 	static constexpr float        slotIdxTextSpacing = 20;
 	static constexpr float        slotLayerSpacing = 40;
 	static constexpr int          valueFontSize = 10;
-	static constexpr int          keyFontSize = 10;
-	static constexpr int          indexFontSize = 8;
+	static constexpr int          keyFontSize = 15;
+	static constexpr int          indexFontSize = 12;
 	static constexpr int          descriptionFontSize = 15;
 
-	static constexpr sf::Color    normalSlotColor      = sf::Color::Black;
-	static constexpr sf::Color    normalSlotValueColor = sf::Color::Black;
-	static constexpr sf::Color    normalSlotKeyColor   = sf::Color::Blue;
-	static constexpr sf::Color    normalSlotIndexColor = sf::Color::Blue;
-	static constexpr sf::Color    highlightSlotColor   = sf::Color::Red;
-	static constexpr ImVec4       highlightCodeColor   = {0.4f, 1.f, 0.f, 1.f};
+	static constexpr sf::Color    normalSlotColor         = sf::Color::Black;
+	static constexpr sf::Color    normalSlotValueColor    = sf::Color::Black;
+	static constexpr sf::Color    normalSlotKeyColor      = sf::Color::Blue;
+	static constexpr sf::Color    normalSlotIndexColor    = sf::Color::Blue;
+	static constexpr sf::Color    highlightSlotColor      = sf::Color::Red;
+	static constexpr sf::Color    highlightFoundSlotColor = sf::Color::Green;
+	static constexpr ImVec4       highlightCodeColor      = {0.4f, 1.f, 0.f, 1.f};
 
 private:
 	int hashFunc(int key);
@@ -133,5 +134,8 @@ private:
 
 	sf::Vector2f lerp(sf::Vector2f v1, sf::Vector2f v2, float k) const;
 	// void drawSlot(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, int slotIndex, int key, int value, sf::Vector2f pos) const;
+	// Draw a slot
 	void drawSlot(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, int slotIndex, int key, sf::Vector2f pos) const;
+	// Draw highlight border around a slot
+	void drawHighlightBorder(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, int slotIndex, int key, sf::Vector2f pos, bool isFoundSlot) const;
 };

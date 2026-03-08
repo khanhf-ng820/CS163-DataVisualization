@@ -80,6 +80,11 @@ void HashVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>&
 		sf::Vector2f slotPos = originPos + sf::Vector2f(idx * slotKeyRectSize.x, 0);
 		drawSlot(drawableList, idx, table[idx].key, slotPos);
 	}
+	for (int idx = 0; idx < tableSize; idx++) {
+		sf::Vector2f slotPos = originPos + sf::Vector2f(idx * slotKeyRectSize.x, 0);
+		if (idx == eventHash.curIndex)
+			drawHighlightBorder(drawableList, idx, table[idx].key, slotPos, (eventHash.type == HashAnimType::HIGHLIGHT_FOUND_SLOT));
+	}
 }
 
 
@@ -117,23 +122,23 @@ void HashVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 	}
 
 
-	/*
-	// INSERT MODE
-	if (visMode == HashVisMode::INSERT_BEG || visMode == HashVisMode::INSERT_END || visMode == HashVisMode::INSERT_K) {
-		// Display nodes: Iterate through linked list and draw nodes
-		pInsert = ithNode(eventHash.idxInsert);
-		idxInsert = eventHash.idxInsert;
-		addNodeDrawablesInsert(drawableList, eventHash);
-		drawHighlightCodeWindow(eventHash);
-	} else if (visMode == HashVisMode::REMOVE_BEG || visMode == HashVisMode::REMOVE_K) {
-	// REMOVE MODE
-		addNodeDrawablesRemove(drawableList, eventHash);
-		drawHighlightCodeWindow(eventHash);
-	} else {
+	
+	// // INSERT MODE
+	// if (visMode == HashVisMode::INSERT_BEG || visMode == HashVisMode::INSERT_END || visMode == HashVisMode::INSERT_K) {
+	// 	// Display nodes: Iterate through linked list and draw nodes
+	// 	pInsert = ithNode(eventHash.idxInsert);
+	// 	idxInsert = eventHash.idxInsert;
+	// 	addNodeDrawablesInsert(drawableList, eventHash);
+	// 	drawHighlightCodeWindow(eventHash);
+	// } else if (visMode == HashVisMode::REMOVE_BEG || visMode == HashVisMode::REMOVE_K) {
+	// // REMOVE MODE
+	// 	addNodeDrawablesRemove(drawableList, eventHash);
+	// 	drawHighlightCodeWindow(eventHash);
+	// } else {
 		addNodeDrawables(drawableList, eventHash);
-		drawHighlightCodeWindow(eventHash);
-	}
-	*/
+	// 	drawHighlightCodeWindow(eventHash);
+	// }
+
 
 
 	// Display description for algorithm visualization
@@ -204,6 +209,7 @@ void HashVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 
 
 
+// ///// ALGORITHMS /////
 std::vector<HashAnimStep> HashVisEngine::getEventsSearch(int key) {
 	std::vector<HashAnimStep> events;
 
@@ -214,11 +220,12 @@ std::vector<HashAnimStep> HashVisEngine::getEventsSearch(int key) {
 	int hashResult = hashFunc(key);
 	int moveSlotSteps = 0;
 	for (int i = hashResult; moveSlotSteps < tableSize; i++, i %= tableSize, moveSlotSteps++) {
-		description = "Checking slot of index " + std::to_string(i);
+		description = "Checking key of slot of index " + std::to_string(i);
 		events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {}, i));
 		
 		if (table[i].key == key) {
-			description = "Found slot: key " + std::to_string(key) + ", value " + std::to_string(table[i].key);
+			// description = "Found slot: key " + std::to_string(key) + ", value " + std::to_string(table[i].key);
+			description = "Found slot: key " + std::to_string(key) + ", index " + std::to_string(i);
 			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_FOUND_SLOT, description, {}, i));
 			return events;
 		}
@@ -289,4 +296,14 @@ void HashVisEngine::drawSlot(std::vector<std::unique_ptr<sf::Drawable>>& drawabl
 	drawableList.push_back(std::move(keyRect));
 	drawableList.push_back(std::move(keyText));
 	drawableList.push_back(std::move(indexText));
+}
+
+
+void HashVisEngine::drawHighlightBorder(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, int slotIndex, int key, sf::Vector2f topLeftPos, bool isFoundSlot) const {
+	auto highlightBorder = std::make_unique<sf::RectangleShape>(slotKeyRectSize);
+	highlightBorder->setFillColor(sf::Color::Transparent);
+	highlightBorder->setOutlineColor(isFoundSlot ? highlightFoundSlotColor : highlightSlotColor);
+	highlightBorder->setOutlineThickness(5.f);
+	highlightBorder->setPosition(topLeftPos);
+	drawableList.push_back(std::move(highlightBorder));
 }

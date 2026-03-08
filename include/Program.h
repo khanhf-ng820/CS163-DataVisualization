@@ -121,11 +121,13 @@ private:
 	const float NORMAL_HEIGHT = 600.0f;
 	const unsigned int FRAMERATE_LIMIT = 60;
 	const sf::Vector2u MINIMUM_WINDOW_SIZE = {800U, 600U};
-	const double SCALING_FACTOR = 1.1;
+	const float SCALING_FACTOR = 1.1; // When zooming
 
+	// SFML global vars
 	sf::RenderWindow window;
 	sf::Clock deltaClock;
 	sf::View view; // The app's view
+	sf::ContextSettings settings;
 	sf::Font textFont;
 
 	// ImGui global vars

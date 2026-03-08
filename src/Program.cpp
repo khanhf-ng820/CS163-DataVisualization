@@ -18,7 +18,6 @@ Program::Program()
 	window.setMinimumSize(MINIMUM_WINDOW_SIZE);
 	// window.setMaximumSize(sf::Vector2u(1200, 900));
 	textFont.setSmooth(true);
-	sf::ContextSettings settings;
 	settings.antiAliasingLevel = 8; // Anti aliasing (2 to 16)
 
 	init_imgui_successful = ImGui::SFML::Init(window);
@@ -181,7 +180,7 @@ void Program::mainLoop() {
 			// Zoom when mouse is scrolling
 			if (const auto* scroll = event->getIf<sf::Event::MouseWheelScrolled>()) {
 				if (scroll->wheel == sf::Mouse::Wheel::Vertical) {
-					double zoomFactor = (scroll->delta > 0) ? 1/SCALING_FACTOR : SCALING_FACTOR;
+					float zoomFactor = (scroll->delta > 0) ? 1/SCALING_FACTOR : SCALING_FACTOR;
 					view.zoom(zoomFactor);
 					window.setView(view);
 				}

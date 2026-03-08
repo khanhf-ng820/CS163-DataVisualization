@@ -139,8 +139,13 @@ void Program::displayVisHashScreenGUI() {
 		// ImGuiWindowFlags_NoBackground
 	);
 	// -- GO BACK TO MAIN MENU BUTTON
-	if (ImGui::Button("Back to Main Menu")) {
+	if (ImGui::Button("<- Back to Main Menu")) {
 		programState = ProgramState::MAIN_MENU;
+		resizeView();
+	}
+	ImGui::SameLine();
+	// - RESET VIEW BUTTON
+	if (ImGui::Button("Reset View")) {
 		resizeView();
 	}
 	// -- SPEED/PAUSE/STEP MENU
