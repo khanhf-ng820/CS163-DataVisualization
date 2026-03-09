@@ -13,7 +13,7 @@ enum class HashAnimType : unsigned char {
 	NONE,
 	HIGHLIGHT_SLOT,
 	HIGHLIGHT_FOUND_SLOT, // Includes highlighting INSERTED slot
-	SET_KEY_VALUE,        // Includes highlighting slot
+	SET_KEY_TO_SLOT,        // Includes highlighting slot
 	// UPDATE_VALUE,      // Includes highlighting slot
 	SET_DELETED           // Includes highlighting slot
 };
@@ -35,6 +35,8 @@ public:
 
 	int searchSlotIdx = -1; // Index of slot currently animating
 
+	int insertSlotIdx = -1; // Index of inserted slot
+	int oldKeySlot = -1; // Old key of slot before changes
 	int insertKey = -1; // Key to assign/insert to the slot
 	// int insertVal = -1; // Value to assign/insert to the slot
 

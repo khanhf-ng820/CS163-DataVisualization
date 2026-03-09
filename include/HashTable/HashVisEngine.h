@@ -62,6 +62,8 @@ public:
 
 	int searchSlotIdx = -1; // Index of slot currently animating
 
+	int insertSlotIdx = -1; // Index of inserted slot
+	int oldKeySlot = -1; // Old key of slot before changes
 	int insertKey = -1; // Key to assign/insert to the slot
 	// int insertVal = -1; // Value to assign/insert to the slot
 
@@ -75,6 +77,10 @@ public:
 	// For Input
 	int keyToSearch = 0;      // Searching
 	int keyToSearchInput = 0;
+
+	int keyToInsert = 0;      // Inserting
+	int keyToInsertInput = 0;
+
 
 	// For Animating steps
 	int animStepIndex = 0;
@@ -95,12 +101,12 @@ public:
 	void skipToFinalState();
 
 
-
+	// Algorithms
 	std::vector<HashAnimStep> getEventsSearch(int key);
-	// void insert(int key, int val);
-	// std::vector<HashAnimStep> getEventsInsert(int key, int val);
-	// void update(int key, int newVal);
-	// std::vector<HashAnimStep> getEventsUpdate(int key, int newVal);
+	void insert(int key);
+	std::vector<HashAnimStep> getEventsInsert(int key);
+	// void update(int key, int newKey);
+	// std::vector<HashAnimStep> getEventsUpdate(int key, int newKey);
 	// void delete(int key);
 	// std::vector<HashAnimStep> getEventsDelete(int key);
 
@@ -135,7 +141,7 @@ private:
 	sf::Vector2f lerp(sf::Vector2f v1, sf::Vector2f v2, float k) const;
 	// void drawSlot(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, int slotIndex, int key, int value, sf::Vector2f pos) const;
 	// Draw a slot
-	void drawSlot(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, int slotIndex, int key, sf::Vector2f pos) const;
+	void drawSlot(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, int slotIndex, int key, bool empty, bool deleted, sf::Vector2f pos) const;
 	// Draw highlight border around a slot
 	void drawHighlightBorder(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, int slotIndex, int key, sf::Vector2f pos, bool isFoundSlot) const;
 };

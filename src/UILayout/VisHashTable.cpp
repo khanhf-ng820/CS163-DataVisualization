@@ -50,27 +50,27 @@ void Program::displayVisHashScreenSFML() {
 			visEngine_Hash.increaseTime();
 		}
 		break;
-	// // ----- INSERT MODE -----
-	// case HashVisMode::INSERT:
-	// 	visEngine_Hash.eventList = visEngine_Hash.getEventsInsert(visEngine_Hash.valToInsert, visEngine_Hash.idxToInsert);
-	// 	visEngine_Hash.createDrawables(
-	// 		sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
-	// 	);
-	// 	sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
+	// ----- INSERT MODE -----
+	case HashVisMode::INSERT:
+		visEngine_Hash.eventList = visEngine_Hash.getEventsInsert(visEngine_Hash.keyToInsert);
+		visEngine_Hash.createDrawables(
+			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
 
-	// 	// If not paused, just increase / decrease time
-	// 	if (visEngine_Hash.animPaused) {
-	// 		if (visEngine_Hash.time < visEngine_Hash.targetTime) {
-	// 			visEngine_Hash.increaseTime();
-	// 			visEngine_Hash.time = std::min(visEngine_Hash.time, visEngine_Hash.targetTime);
-	// 		} else if (visEngine_Hash.time > visEngine_Hash.targetTime) {
-	// 			visEngine_Hash.decreaseTime();
-	// 			visEngine_Hash.time = std::max(visEngine_Hash.time, visEngine_Hash.targetTime);
-	// 		}
-	// 	} else {
-	// 		visEngine_Hash.increaseTime();
-	// 	}
-	// 	break;
+		// If not paused, just increase / decrease time
+		if (visEngine_Hash.animPaused) {
+			if (visEngine_Hash.time < visEngine_Hash.targetTime) {
+				visEngine_Hash.increaseTime();
+				visEngine_Hash.time = std::min(visEngine_Hash.time, visEngine_Hash.targetTime);
+			} else if (visEngine_Hash.time > visEngine_Hash.targetTime) {
+				visEngine_Hash.decreaseTime();
+				visEngine_Hash.time = std::max(visEngine_Hash.time, visEngine_Hash.targetTime);
+			}
+		} else {
+			visEngine_Hash.increaseTime();
+		}
+		break;
 	// // ----- UPDATE MODE -----
 	// case HashVisMode::UPDATE:
 	// 	visEngine_Hash.eventList = visEngine_Hash.getEventsUpdate(visEngine_Hash.valToUpdate, visEngine_Hash.idxToUpdate);
@@ -197,40 +197,24 @@ void Program::displayVisHashScreenGUI() {
 
 	ImGui::Separator();
 
-	// // -- INSERT OPERATION --
-	// ImGui::BeginDisabled(visEngine_Hash.animInProgress);
-	// ImGui::Text("Enter value to insert:");
-	// ImGui::InputInt("Value to insert", &visEngine_Hash.valToInsertInput);
-	// ImGui::InputInt("Index to insert", &visEngine_Hash.idxToInsertInput);
+	// -- INSERT OPERATION --
+	ImGui::BeginDisabled(visEngine_Hash.animInProgress);
+	ImGui::Text("Enter value to insert:");
+	ImGui::InputInt("Key to insert", &visEngine_Hash.keyToInsertInput);
 
-	// bool idxOutOfRange = !(visEngine_Hash.idxToInsertInput >= 0 && visEngine_Hash.idxToInsertInput <= visEngine_Hash.size);
-	// if (idxOutOfRange) {
-	// 	if (visEngine_Hash.size > 0)
-	// 		ImGui::Text("Index must be between 0 and %d.", visEngine_Hash.size);
-	// 	else
-	// 		ImGui::Text("Index must be 0.");
-	// }
-	// ImGui::BeginDisabled(idxOutOfRange);
-	// if (ImGui::Button("Insert")) {
-	// 	visEngine_Hash.valToInsert = visEngine_Hash.valToInsertInput;
-	// 	visEngine_Hash.idxToInsert = visEngine_Hash.idxToInsertInput;
-	// 	if (visEngine_Hash.idxToInsert == 0) {
-	// 		visEngine_Hash.visMode = HashVisMode::INSERT_BEG;
-	// 	} else if (visEngine_Hash.idxToInsert == visEngine_Hash.size) {
-	// 		visEngine_Hash.visMode = HashVisMode::INSERT_END;
-	// 	} else {
-	// 		visEngine_Hash.visMode = HashVisMode::INSERT_K;
-	// 	}
-	// 	visEngine_Hash.resetParams();
-	// 	visEngine_Hash.animPaused = false; // Auto un-pause
+	if (ImGui::Button("Insert")) {
+		visEngine_Hash.keyToInsert = visEngine_Hash.keyToInsertInput;
+		visEngine_Hash.visMode = HashVisMode::INSERT;
 
-	// 	visEngine_Hash.insert(visEngine_Hash.valToInsert, visEngine_Hash.idxToInsert);
-	// 	std::cout << "insert cool" << std::endl; // DEBUG
-	// }
-	// ImGui::EndDisabled();
-	// ImGui::EndDisabled();
+		visEngine_Hash.resetParams();
+		visEngine_Hash.animPaused = false; // Auto un-pause
 
-	// ImGui::Separator();
+		visEngine_Hash.insert(visEngine_Hash.keyToInsert);
+		std::cout << "insert hash table cool" << std::endl; // DEBUG
+	}
+	ImGui::EndDisabled();
+
+	ImGui::Separator();
 
 	// // -- UPDATE OPERATION --
 	// ImGui::BeginDisabled(visEngine_Hash.animInProgress);
