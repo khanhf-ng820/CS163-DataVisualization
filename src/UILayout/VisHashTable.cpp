@@ -92,27 +92,27 @@ void Program::displayVisHashScreenSFML() {
 	// 		visEngine_Hash.increaseTime();
 	// 	}
 	// 	break;
-	// // ----- DELETE MODE -----
-	// case HashVisMode::DELETE:
-	// 	visEngine_Hash.eventList = visEngine_Hash.getEventsDelete(visEngine_Hash.idxToRemove);
-	// 	visEngine_Hash.createDrawables(
-	// 		sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
-	// 	);
-	// 	sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
+	// ----- REMOVE MODE -----
+	case HashVisMode::REMOVE:
+		visEngine_Hash.eventList = visEngine_Hash.getEventsRemove(visEngine_Hash.keyToRemove);
+		visEngine_Hash.createDrawables(
+			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
 
-	// 	// If not paused, just increase / decrease time
-	// 	if (visEngine_Hash.animPaused) {
-	// 		if (visEngine_Hash.time < visEngine_Hash.targetTime) {
-	// 			visEngine_Hash.increaseTime();
-	// 			visEngine_Hash.time = std::min(visEngine_Hash.time, visEngine_Hash.targetTime);
-	// 		} else if (visEngine_Hash.time > visEngine_Hash.targetTime) {
-	// 			visEngine_Hash.decreaseTime();
-	// 			visEngine_Hash.time = std::max(visEngine_Hash.time, visEngine_Hash.targetTime);
-	// 		}
-	// 	} else {
-	// 		visEngine_Hash.increaseTime();
-	// 	}
-	// 	break;
+		// If not paused, just increase / decrease time
+		if (visEngine_Hash.animPaused) {
+			if (visEngine_Hash.time < visEngine_Hash.targetTime) {
+				visEngine_Hash.increaseTime();
+				visEngine_Hash.time = std::min(visEngine_Hash.time, visEngine_Hash.targetTime);
+			} else if (visEngine_Hash.time > visEngine_Hash.targetTime) {
+				visEngine_Hash.decreaseTime();
+				visEngine_Hash.time = std::max(visEngine_Hash.time, visEngine_Hash.targetTime);
+			}
+		} else {
+			visEngine_Hash.increaseTime();
+		}
+		break;
 	default:
 		break;
 	}
@@ -182,8 +182,8 @@ void Program::displayVisHashScreenGUI() {
 
 	// -- SEARCH OPERATION --
 	ImGui::BeginDisabled(visEngine_Hash.animInProgress);
-	ImGui::Text("Enter value to search:");
-	ImGui::InputInt("Value to search", &visEngine_Hash.keyToSearchInput);
+	ImGui::Text("Enter key of slot to search:");
+	ImGui::InputInt("Key to search", &visEngine_Hash.keyToSearchInput);
 	// float f;
 	// ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
 
@@ -199,7 +199,7 @@ void Program::displayVisHashScreenGUI() {
 
 	// -- INSERT OPERATION --
 	ImGui::BeginDisabled(visEngine_Hash.animInProgress);
-	ImGui::Text("Enter value to insert:");
+	ImGui::Text("Enter key to insert:");
 	ImGui::InputInt("Key to insert", &visEngine_Hash.keyToInsertInput);
 
 	if (ImGui::Button("Insert")) {
@@ -247,36 +247,22 @@ void Program::displayVisHashScreenGUI() {
 
 	// ImGui::Separator();
 
-	// // -- REMOVE OPERATION --
-	// ImGui::BeginDisabled(visEngine_Hash.animInProgress);
-	// ImGui::Text("Enter index of node to remove:");
-	// ImGui::InputInt("Index to remove", &visEngine_Hash.idxToRemoveInput);
+	// -- REMOVE OPERATION --
+	ImGui::BeginDisabled(visEngine_Hash.animInProgress);
+	ImGui::Text("Enter key of slot to remove:");
+	ImGui::InputInt("Key to remove", &visEngine_Hash.keyToRemoveInput);
 
-	// idxOutOfRange = !(visEngine_Hash.idxToRemoveInput >= 0 && visEngine_Hash.idxToRemoveInput < visEngine_Hash.size);
-	// if (idxOutOfRange) {
-	// 	if (visEngine_Hash.size > 1)
-	// 		ImGui::Text("Index must be between 0 and %d.", visEngine_Hash.size);
-	// 	else if (visEngine_Hash.size == 1)
-	// 		ImGui::Text("Index must be 0.");
-	// 	else
-	// 		ImGui::Text("There are no nodes to remove.");
-	// }
-	// ImGui::BeginDisabled(idxOutOfRange);
-	// if (ImGui::Button("Remove")) {
-	// 	visEngine_Hash.idxToRemove = visEngine_Hash.idxToRemoveInput;
-	// 	if (visEngine_Hash.idxToRemove == 0) {
-	// 		visEngine_Hash.visMode = HashVisMode::REMOVE_BEG;
-	// 	} else {
-	// 		visEngine_Hash.visMode = HashVisMode::REMOVE_K;
-	// 	}
-	// 	visEngine_Hash.resetParams();
-	// 	visEngine_Hash.animPaused = false; // Auto un-pause
+	if (ImGui::Button("Remove")) {
+		visEngine_Hash.keyToRemove = visEngine_Hash.keyToRemoveInput;
+		visEngine_Hash.visMode = HashVisMode::REMOVE;
 
-	// 	visEngine_Hash.remove(visEngine_Hash.idxToRemove);
-	// 	std::cout << "remove cool" << std::endl; // DEBUG
-	// }
-	// ImGui::EndDisabled();
-	// ImGui::EndDisabled();
+		visEngine_Hash.resetParams();
+		visEngine_Hash.animPaused = false; // Auto un-pause
+
+		visEngine_Hash.remove(visEngine_Hash.keyToRemove);
+		std::cout << "remove hash table cool" << std::endl; // DEBUG
+	}
+	ImGui::EndDisabled();
 
 
 

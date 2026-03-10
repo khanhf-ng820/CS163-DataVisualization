@@ -13,3 +13,9 @@ TableSlot::TableSlot(int index)
 TableSlot::TableSlot(int index, int key)
 	: index(index), key(key), empty(false)
 {}
+
+
+
+bool TableSlot::hasKey(int keyVal) {
+	return key == keyVal && !empty && !deleted;
+}

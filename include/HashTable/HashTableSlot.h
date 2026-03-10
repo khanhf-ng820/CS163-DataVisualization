@@ -17,6 +17,9 @@ public:
 	explicit TableSlot(int index);
 	TableSlot(int index, int key);
 
+	// Methods
+	bool hasKey(int keyVal);
+
 	// Hash table properties
 	int index = -1;
 	int key   = -1;

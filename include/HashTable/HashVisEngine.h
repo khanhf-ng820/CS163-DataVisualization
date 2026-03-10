@@ -19,9 +19,9 @@
 enum class HashVisMode {
 	NONE,
 	SEARCH,
-	UPDATE,
-	DELETE,
-	INSERT
+	INSERT,
+	REMOVE,
+	UPDATE
 };
 
 
@@ -38,8 +38,8 @@ public:
 	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, HashAnimStep eventHash);
 	// INSERT MODE
 	void addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, HashAnimStep eventHash);
-	// DELETE MODE
-	void addNodeDrawablesDelete(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, HashAnimStep eventHash);
+	// REMOVE MODE
+	void addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, HashAnimStep eventHash);
 	// Draw nodes and links, depending on eventList
 	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
 	void displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout);
@@ -57,29 +57,35 @@ public:
 	int tableSize = 0; // Size of hash table
 
 
-	// For Visualization
+	// Parameters for Visualization
 	int curIndex = -1; // Index of slot currently animating
 
 	int searchSlotIdx = -1; // Index of slot currently animating
 
-	int insertSlotIdx = -1; // Index of inserted slot
 	int oldKeySlot = -1; // Old key of slot before changes
+	bool isOldSlotDeleted = false; // Did old slot before changes have deletion marker?
+
+	int insertSlotIdx = -1; // Index of inserted slot
 	int insertKey = -1; // Key to assign/insert to the slot
 	// int insertVal = -1; // Value to assign/insert to the slot
 
-	int deleteKey = -1; // Key to delete from the slot
-	// int deleteVal = -1; // Value to delete from the slot
+	int removeSlotIdx = -1; // Index of slot to remove
+	int removeStoppingSlotIdx = -1; // Index of slot to stop at after failing to remove
+	// int removeVal = -1; // Value to remove from the slot
 
 	int highlightSlotIdx = -1; // Index of highlighted slot
 	int foundSlotIdx = -1; // Index of found slot when searching/updating
 
 
-	// For Input
+	// Parameters for Input in ImGui
 	int keyToSearch = 0;      // Searching
 	int keyToSearchInput = 0;
 
 	int keyToInsert = 0;      // Inserting
 	int keyToInsertInput = 0;
+
+	int keyToRemove = 0;      // Removing
+	int keyToRemoveInput = 0;
 
 
 	// For Animating steps
@@ -105,10 +111,10 @@ public:
 	std::vector<HashAnimStep> getEventsSearch(int key);
 	void insert(int key);
 	std::vector<HashAnimStep> getEventsInsert(int key);
+	void remove(int key);
+	std::vector<HashAnimStep> getEventsRemove(int key);
 	// void update(int key, int newKey);
 	// std::vector<HashAnimStep> getEventsUpdate(int key, int newKey);
-	// void delete(int key);
-	// std::vector<HashAnimStep> getEventsDelete(int key);
 
 
 
