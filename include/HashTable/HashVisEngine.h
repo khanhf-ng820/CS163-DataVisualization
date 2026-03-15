@@ -10,6 +10,7 @@
 #include "sfLayout/sfLayout.h"
 #include "utils/utils-readData.h"
 #include "utils/utils.h"
+#include "AnimPlayer/AnimPlayer.h"
 #include "HashTable/HashAnimStep.h"
 
 
@@ -25,7 +26,7 @@ enum class HashVisMode {
 };
 
 
-class HashVisEngine {
+class HashVisEngine : public AnimPlayer {
 public:
 	HashVisEngine(sf::RenderWindow* window, sf::Font* font); // Empty, size 0 hash table
 	HashVisEngine(int tableSize, int tableModulo, sf::RenderWindow* window, sf::Font* font); // Empty hash table
@@ -104,23 +105,8 @@ public:
 	int newKeyToUpdateInput = 0;
 
 
-	// For Animating steps
-	int animStepIndex = 0;
-	int oldAnimStepIndex = 0;
-	float time = 0;
-	float dt = 0.005;
-	float targetTime = 0; // ONLY USE WHEN PAUSED
-
-	bool animPaused = false;
-	bool animInProgress = false;
-	constexpr static float dt_per_sec = 0.25f; // FOR TESTING ONLY
-
-	void increaseTime();
-	void decreaseTime();
-
-	void prevStep();
-	void nextStep();
-	void skipToFinalState();
+	// Methods and properties for animating steps
+	// (Already included in AnimPlayer class)
 
 
 	// Algorithms
