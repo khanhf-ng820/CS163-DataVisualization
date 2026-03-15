@@ -28,9 +28,10 @@ enum class HashVisMode {
 class HashVisEngine {
 public:
 	HashVisEngine(sf::RenderWindow* window, sf::Font* font); // Empty, size 0 hash table
-	HashVisEngine(int tableSize, sf::RenderWindow* window, sf::Font* font); // Empty hash table
-	HashVisEngine(std::vector<int> values, sf::RenderWindow* window, sf::Font* font); // Custom hash table
+	HashVisEngine(int tableSize, int tableModulo, sf::RenderWindow* window, sf::Font* font); // Empty hash table
+	HashVisEngine(std::vector<int> values, int tableModulo, sf::RenderWindow* window, sf::Font* font); // Custom hash table
 
+	// Reset all properties to get ready for visualize new action
 	void resetParams();
 
 
@@ -40,6 +41,8 @@ public:
 	void addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, HashAnimStep eventHash);
 	// REMOVE MODE
 	void addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, HashAnimStep eventHash);
+	// UPDATE MODE
+	void addNodeDrawablesUpdate(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, HashAnimStep eventHash);
 	// Draw nodes and links, depending on eventList
 	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
 	void displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout);
@@ -52,40 +55,53 @@ public:
 	std::vector<HashAnimStep> eventList;
 
 
-	// Table
+	// ///// Table
 	std::vector<TableSlot> table;
 	int tableSize = 0; // Size of hash table
+	int tableModulo = 11; // Modulo for hash function
 
 
-	// Parameters for Visualization
+	// ///// Parameters for Visualization
 	int curIndex = -1; // Index of slot currently animating
 
+	// For SEARCH MODE
 	int searchSlotIdx = -1; // Index of slot currently animating
 
 	int oldKeySlot = -1; // Old key of slot before changes
 	bool isOldSlotDeleted = false; // Did old slot before changes have deletion marker?
 
+	// For INSERT MODE
 	int insertSlotIdx = -1; // Index of inserted slot
 	int insertKey = -1; // Key to assign/insert to the slot
 	// int insertVal = -1; // Value to assign/insert to the slot
 
+	// For REMOVE MODE
 	int removeSlotIdx = -1; // Index of slot to remove
 	int removeStoppingSlotIdx = -1; // Index of slot to stop at after failing to remove
 	// int removeVal = -1; // Value to remove from the slot
+
+	// For UPDATE MODE
+	TableSlot oldSlotRemoval; // Old slot before removal
+	TableSlot oldSlotInsert; // Old slot before insertion
 
 	int highlightSlotIdx = -1; // Index of highlighted slot
 	int foundSlotIdx = -1; // Index of found slot when searching/updating
 
 
-	// Parameters for Input in ImGui
-	int keyToSearch = 0;      // Searching
+	// ///// Parameters for Input in ImGui
+	int keyToSearch = -1;      // Searching
 	int keyToSearchInput = 0;
 
-	int keyToInsert = 0;      // Inserting
+	int keyToInsert = -1;      // Inserting
 	int keyToInsertInput = 0;
 
-	int keyToRemove = 0;      // Removing
+	int keyToRemove = -1;      // Removing
 	int keyToRemoveInput = 0;
+
+	int oldKeyToUpdate = -1;      // Updating
+	int oldKeyToUpdateInput = 0;
+	int newKeyToUpdate = -1;
+	int newKeyToUpdateInput = 0;
 
 
 	// For Animating steps
@@ -113,9 +129,13 @@ public:
 	std::vector<HashAnimStep> getEventsInsert(int key);
 	void remove(int key);
 	std::vector<HashAnimStep> getEventsRemove(int key);
-	// void update(int key, int newKey);
-	// std::vector<HashAnimStep> getEventsUpdate(int key, int newKey);
+	void update(int key, int newKey);
+	std::vector<HashAnimStep> getEventsUpdate(int key, int newKey);
 
+
+	// Helper methods
+	bool containsKey(int key);
+	bool isFull();
 
 
 	static constexpr sf::Vector2f originPosDisplacement = {75, 50};
@@ -144,10 +164,12 @@ private:
 	// Create AND display ImGui window to highlight source code (pseudocode)
 	void drawHighlightCodeWindow(HashAnimStep eventHash);
 
+	std::string hashDescriptionString(int key);
 	sf::Vector2f lerp(sf::Vector2f v1, sf::Vector2f v2, float k) const;
 	// void drawSlot(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, int slotIndex, int key, int value, sf::Vector2f pos) const;
 	// Draw a slot
-	void drawSlot(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, int slotIndex, int key, bool empty, bool deleted, sf::Vector2f pos) const;
+	void drawSlot(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, int slotIndex, int key, bool empty, bool deleted, sf::Vector2f topLeftPos) const;
+	void drawSlot(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, TableSlot& slot, sf::Vector2f topLeftPos) const;
 	// Draw highlight border around a slot
 	void drawHighlightBorder(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, int slotIndex, int key, sf::Vector2f pos, bool isFoundSlot) const;
 };

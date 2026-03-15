@@ -71,30 +71,30 @@ void Program::displayVisHashScreenSFML() {
 			visEngine_Hash.increaseTime();
 		}
 		break;
-	// // ----- UPDATE MODE -----
-	// case HashVisMode::UPDATE:
-	// 	visEngine_Hash.eventList = visEngine_Hash.getEventsUpdate(visEngine_Hash.valToUpdate, visEngine_Hash.idxToUpdate);
-	// 	visEngine_Hash.createDrawables(
-	// 		sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
-	// 	);
-	// 	sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
-
-	// 	// If not paused, just increase / decrease time
-	// 	if (visEngine_Hash.animPaused) {
-	// 		if (visEngine_Hash.time < visEngine_Hash.targetTime) {
-	// 			visEngine_Hash.increaseTime();
-	// 			visEngine_Hash.time = std::min(visEngine_Hash.time, visEngine_Hash.targetTime);
-	// 		} else if (visEngine_Hash.time > visEngine_Hash.targetTime) {
-	// 			visEngine_Hash.decreaseTime();
-	// 			visEngine_Hash.time = std::max(visEngine_Hash.time, visEngine_Hash.targetTime);
-	// 		}
-	// 	} else {
-	// 		visEngine_Hash.increaseTime();
-	// 	}
-	// 	break;
 	// ----- REMOVE MODE -----
 	case HashVisMode::REMOVE:
 		visEngine_Hash.eventList = visEngine_Hash.getEventsRemove(visEngine_Hash.keyToRemove);
+		visEngine_Hash.createDrawables(
+			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
+
+		// If not paused, just increase / decrease time
+		if (visEngine_Hash.animPaused) {
+			if (visEngine_Hash.time < visEngine_Hash.targetTime) {
+				visEngine_Hash.increaseTime();
+				visEngine_Hash.time = std::min(visEngine_Hash.time, visEngine_Hash.targetTime);
+			} else if (visEngine_Hash.time > visEngine_Hash.targetTime) {
+				visEngine_Hash.decreaseTime();
+				visEngine_Hash.time = std::max(visEngine_Hash.time, visEngine_Hash.targetTime);
+			}
+		} else {
+			visEngine_Hash.increaseTime();
+		}
+		break;
+	// ----- UPDATE MODE -----
+	case HashVisMode::UPDATE:
+		visEngine_Hash.eventList = visEngine_Hash.getEventsUpdate(visEngine_Hash.oldKeyToUpdate, visEngine_Hash.newKeyToUpdate);
 		visEngine_Hash.createDrawables(
 			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
 		);
@@ -180,6 +180,7 @@ void Program::displayVisHashScreenGUI() {
 
 	ImGui::Separator();
 
+
 	// -- SEARCH OPERATION --
 	ImGui::BeginDisabled(visEngine_Hash.animInProgress);
 	ImGui::Text("Enter key of slot to search:");
@@ -196,6 +197,7 @@ void Program::displayVisHashScreenGUI() {
 	ImGui::EndDisabled();
 
 	ImGui::Separator();
+
 
 	// -- INSERT OPERATION --
 	ImGui::BeginDisabled(visEngine_Hash.animInProgress);
@@ -216,36 +218,6 @@ void Program::displayVisHashScreenGUI() {
 
 	ImGui::Separator();
 
-	// // -- UPDATE OPERATION --
-	// ImGui::BeginDisabled(visEngine_Hash.animInProgress);
-	// ImGui::Text("Enter value to update:");
-	// ImGui::InputInt("Value to update", &visEngine_Hash.valToUpdateInput);
-	// ImGui::InputInt("Index to update", &visEngine_Hash.idxToUpdateInput);
-
-	// idxOutOfRange = !(visEngine_Hash.idxToUpdateInput >= 0 && visEngine_Hash.idxToUpdateInput < visEngine_Hash.size);
-	// if (idxOutOfRange) {
-	// 	if (visEngine_Hash.size > 1)
-	// 		ImGui::Text("Index must be between 0 and %d.", visEngine_Hash.size);
-	// 	else if (visEngine_Hash.size == 1)
-	// 		ImGui::Text("Index must be 0.");
-	// 	else
-	// 		ImGui::Text("There are no nodes to remove.");
-	// }
-	// ImGui::BeginDisabled(idxOutOfRange);
-	// if (ImGui::Button("Update")) {
-	// 	visEngine_Hash.valToUpdate = visEngine_Hash.valToUpdateInput;
-	// 	visEngine_Hash.idxToUpdate = visEngine_Hash.idxToUpdateInput;
-	// 	visEngine_Hash.visMode = HashVisMode::UPDATE;
-	// 	visEngine_Hash.resetParams();
-	// 	visEngine_Hash.animPaused = false; // Auto un-pause
-
-	// 	visEngine_Hash.update(visEngine_Hash.valToUpdate, visEngine_Hash.idxToUpdate);
-	// 	std::cout << "update cool" << std::endl; // DEBUG
-	// }
-	// ImGui::EndDisabled();
-	// ImGui::EndDisabled();
-
-	// ImGui::Separator();
 
 	// -- REMOVE OPERATION --
 	ImGui::BeginDisabled(visEngine_Hash.animInProgress);
@@ -262,6 +234,32 @@ void Program::displayVisHashScreenGUI() {
 		visEngine_Hash.remove(visEngine_Hash.keyToRemove);
 		std::cout << "remove hash table cool" << std::endl; // DEBUG
 	}
+	ImGui::EndDisabled();
+
+	ImGui::Separator();
+
+
+	// -- UPDATE OPERATION --
+	ImGui::BeginDisabled(visEngine_Hash.animInProgress);
+	ImGui::Text("Enter keys to update:");
+	ImGui::InputInt("Old key", &visEngine_Hash.oldKeyToUpdateInput);
+	ImGui::InputInt("New key", &visEngine_Hash.newKeyToUpdateInput);
+
+	bool updatable = visEngine_Hash.containsKey(visEngine_Hash.oldKeyToUpdateInput)
+				 && !visEngine_Hash.isFull();
+	ImGui::BeginDisabled(!updatable);
+	if (ImGui::Button("Update")) {
+		visEngine_Hash.oldKeyToUpdate = visEngine_Hash.oldKeyToUpdateInput;
+		visEngine_Hash.newKeyToUpdate = visEngine_Hash.newKeyToUpdateInput;
+		visEngine_Hash.visMode = HashVisMode::UPDATE;
+
+		visEngine_Hash.resetParams();
+		visEngine_Hash.animPaused = false; // Auto un-pause
+
+		visEngine_Hash.update(visEngine_Hash.oldKeyToUpdate, visEngine_Hash.newKeyToUpdate);
+		std::cout << "update hash table cool" << std::endl; // DEBUG
+	}
+	ImGui::EndDisabled();
 	ImGui::EndDisabled();
 
 

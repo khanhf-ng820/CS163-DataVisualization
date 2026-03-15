@@ -42,12 +42,15 @@ void Program::initMainMenuScreen() {
 	// Measure unscaled text
 	sf::FloatRect bounds = text->getLocalBounds();
 
-	// Scale so the width matches your desired width
+	// Scale so the width matches the desired width
 	const float targetWidth = NORMAL_WIDTH * 0.625;
 	float scale = targetWidth / bounds.size.x;
-	text->setScale({scale, scale});
+	// text->setScale({scale, scale});
+	// text->setScale({round(scale), round(scale)});
+	text->setCharacterSize(round(scale * 40));
 
 	// Set origin to the visual center
+	bounds = text->getLocalBounds();
 	text->setOrigin({
 		bounds.size.x / 2.f,
 		bounds.size.y / 2.f
@@ -55,6 +58,7 @@ void Program::initMainMenuScreen() {
 	// Position the center where you want it
 	sf::Vector2u window_size = window.getSize();
 	text->setPosition({0.f, -static_cast<float>(window_size.y) / 4});
+	text->setPosition(round(text->getPosition()));
 
 
 	// Push back to vector

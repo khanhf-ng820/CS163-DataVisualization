@@ -1,4 +1,11 @@
 #pragma once
+#include "imgui.h"
+#include "imgui-SFML.h"
+#include "imgui_internal.h"
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
+#include <SFML/Window.hpp>
+
 #include <cmath>
 #include <string>
 #include <vector>
@@ -12,6 +19,10 @@ static inline constexpr float EPSILON_TIME = 1e-6;
 
 
 inline const float fract(float f) { return f - floor(f); }
+
+inline const sf::Vector2f round(sf::Vector2f vec) {
+	return sf::Vector2f(round(vec.x), round(vec.y));
+}
 
 
 

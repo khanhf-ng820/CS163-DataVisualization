@@ -9,6 +9,7 @@ Program::Program()
 	// , view(sf::FloatRect({0.f, 0.f}, {NORMAL_WIDTH, NORMAL_HEIGHT}))
 	, view(window.getDefaultView())
 	, textFont(fs::path(ASSET_DIR) / "Roboto_Mono/RobotoMono-VariableFont_wght.ttf")
+	// , textFont(fs::path(ASSET_DIR) / "Roboto/Roboto-VariableFont_wdth,wght.ttf")
 	, rng(std::random_device()())
 	, visEngine_SLL(window, textFont)
 	, visEngine_Hash(&window, &textFont)
@@ -153,6 +154,7 @@ void Program::mainLoop() {
 			else if (const auto* resized = event->getIf<sf::Event::Resized>()) {
 				// Update view
 				resizeView();
+				// window.setView(window.getDefaultView());
 				
 				// Note: ImGui usually handles resizing on its own, but we need to update the SFML view
 				// so that the window’s default view matches the new size (for UI if needed)

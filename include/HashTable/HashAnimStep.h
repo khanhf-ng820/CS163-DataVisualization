@@ -12,10 +12,14 @@
 enum class HashAnimType : unsigned char {
 	NONE,
 	HIGHLIGHT_SLOT,
-	HIGHLIGHT_FOUND_SLOT, // Includes highlighting INSERTED slot
-	SET_KEY_TO_SLOT,      // Includes highlighting slot
-	// UPDATE_VALUE,      // Includes highlighting slot
-	SET_DELETED_TO_SLOT   // Includes highlighting slot
+	HIGHLIGHT_FOUND_SLOT, // Includes highlighting INSERTED slot GREEN
+	SET_KEY_TO_SLOT,      // Includes highlighting slot GREEN
+	SET_DELETED_TO_SLOT,  // Includes highlighting slot GREEN
+
+	// For UPDATE MODE ONLY, after removing old key
+	HIGHLIGHT_SLOT_AFTER_REMOVE,
+	HIGHLIGHT_FOUND_SLOT_AFTER_REMOVE,  // Includes highlighting slot GREEN
+	HIGHLIGHT_UPDATED_SLOT,             // Includes highlighting INSERTED slot in UPDATE MODE GREEN
 };
 
 
