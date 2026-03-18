@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "utils/readData.hpp"
 
 
 
@@ -16,6 +17,7 @@ public:
 	TableSlot();
 	explicit TableSlot(int index);
 	TableSlot(int index, int key);
+	TableSlot(int index, TableSlotInput input);
 
 	// Methods
 	bool hasKey(int keyVal);

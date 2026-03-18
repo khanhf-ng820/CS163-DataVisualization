@@ -7,7 +7,7 @@ DSType strToDSType(std::string str) {
 	if (str == "Lists - Singly Linked List") {
 		return DSType::SINGLY_LINKED_LIST;
 	} else if (str == "Hash Table - Linear Probing") {
-		return DSType::HASH_TABLE_LINEAR;
+		return DSType::HASH_TABLE;
 	} else if (str == "Trees - AVL Tree") {
 		return DSType::AVL_TREE;
 	} else if (str == "Trees - Trie") {
@@ -26,7 +26,7 @@ std::string getDataFileName(std::string ds_selection_str) {
 	case DSType::SINGLY_LINKED_LIST:
 		return "SLL.txt";
 		break;
-	case DSType::HASH_TABLE_LINEAR:
+	case DSType::HASH_TABLE:
 		return "HashTable.txt";
 		break;
 	case DSType::AVL_TREE:
@@ -133,7 +133,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 	// );
 
 	// if (ImGui::Button("Start", btnSize)) { // clicked
-	// 	printf("%s %f\nButton clicked!\n", buf, f);
+	// 	printf("%s %f\nButton clicked! \n", buf, f);
 	// }
 	// ImGui::End();
 
@@ -255,8 +255,52 @@ void Program::displayChooseDSMenuScreenGUI() {
 
 	bool invalidDataCustom = false; // To print error messages when invalid data
 
-	// --- MUST FINISH ALL 6 ---
-	if (dataInitOption == DATA_INIT_CUSTOM) {
+	// --- MUST FINISH ALL 6 DATA STRUCTURES ---
+	if (dataInitOption == DATA_INIT_EMPTY) {
+		switch (chosenDSType) {
+		case DSType::HASH_TABLE:
+			ImGui::Dummy(ImVec2(ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight()));
+			ImGui::InputScalar(SIZE_INPUT_WARNING_STRING.c_str(), 
+				ImGuiDataType_U32, &initHashTableSizeBuf);
+			initHashTableSizeBuf = std::min(std::max(initHashTableSizeBuf, 2U), MAX_INIT_HASHTABLE_SIZE); // Clamp table size
+			ImGui::InputScalar(MODULO_INPUT_WARNING_STRING.c_str(), 
+				ImGuiDataType_U32, &initHashTableModuloBuf);
+			initHashTableModuloBuf = std::min(std::max(initHashTableModuloBuf, 2U), MAX_INIT_HASHTABLE_MODULO); // Clamp table modulo for hash function
+			break;
+		case DSType::AVL_TREE:
+			break;
+		case DSType::TRIE_TREE:
+			break;
+		case DSType::MST_GRAPH:
+			break;
+		case DSType::DIJKSTRA_GRAPH:
+			break;
+		default:
+			break;
+		}
+	} else if (dataInitOption == DATA_INIT_RANDOMIZED) {
+		switch (chosenDSType) {
+		case DSType::HASH_TABLE:
+			ImGui::Dummy(ImVec2(ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight()));
+			ImGui::InputScalar(SIZE_INPUT_WARNING_STRING.c_str(), 
+				ImGuiDataType_U32, &initHashTableSizeBuf);
+			initHashTableSizeBuf = std::min(std::max(initHashTableSizeBuf, 2U), MAX_INIT_HASHTABLE_SIZE); // Clamp table size
+			ImGui::InputScalar(MODULO_INPUT_WARNING_STRING.c_str(), 
+				ImGuiDataType_U32, &initHashTableModuloBuf);
+			initHashTableModuloBuf = std::min(std::max(initHashTableModuloBuf, 2U), MAX_INIT_HASHTABLE_MODULO); // Clamp table modulo for hash function
+			break;
+		case DSType::AVL_TREE:
+			break;
+		case DSType::TRIE_TREE:
+			break;
+		case DSType::MST_GRAPH:
+			break;
+		case DSType::DIJKSTRA_GRAPH:
+			break;
+		default:
+			break;
+		}
+	} else if (dataInitOption == DATA_INIT_CUSTOM) {
 		std::string dataString; // String of entered data
 		switch (chosenDSType) {
 		case DSType::SINGLY_LINKED_LIST:
@@ -264,8 +308,10 @@ void Program::displayChooseDSMenuScreenGUI() {
 			dataString = std::string(customDataSLLbuf);
 			invalidDataCustom = !validDataSLLString(dataString);
 			break;
-		case DSType::HASH_TABLE_LINEAR:
+		case DSType::HASH_TABLE:
 			ImGui::InputTextMultiline("##CustomDataHash", customDataHashbuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
+			dataString = std::string(customDataHashbuf);
+			invalidDataCustom = !validDataHashTableString(dataString);
 			break;
 		case DSType::AVL_TREE:
 			ImGui::InputTextMultiline("##CustomDataAVL", customDataAVLbuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
@@ -296,8 +342,6 @@ void Program::displayChooseDSMenuScreenGUI() {
 		ImGui::SameLine();
 		ImGui::Text(" before confirmation.)");
 		ImGui::PopStyleVar();
-	} else {
-		ImGui::Dummy(ImVec2(ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight()));
 	}
 	ImGui::EndGroup();
 
@@ -312,7 +356,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 		std::cout << DSVectors[current_DS_item].c_str() <<" "<<  dataInitOption << std::endl; // DEBUG
 
 		// Change program mode
-		// --- MUST FINISH ALL 6 ---
+		// --- MUST FINISH ALL 6 DATA STRUCTURES ---
 		switch (chosenDSType) {
 		case DSType::SINGLY_LINKED_LIST:
 			invalidDataFromFile = !initSLL(dataInitOption);
@@ -320,8 +364,11 @@ void Program::displayChooseDSMenuScreenGUI() {
 				programState = ProgramState::VIS_SLL_SCREEN;
 			}
 			break;
-		case DSType::HASH_TABLE_LINEAR:
-			programState = ProgramState::VIS_HASH_SCREEN;
+		case DSType::HASH_TABLE:
+			invalidDataFromFile = !initHashTable(dataInitOption);
+			if (!invalidDataFromFile) {
+				programState = ProgramState::VIS_HASH_SCREEN;
+			}
 			break;
 		case DSType::AVL_TREE:
 			programState = ProgramState::VIS_AVL_SCREEN;

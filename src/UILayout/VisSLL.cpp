@@ -66,8 +66,6 @@ void Program::initVisSLLScreen() {
 	// sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(cornerBox));
 	// sfDrawables[ProgramState::VIS_SLL_SCREEN]->drawables.push_back(std::move(text));
 	// printf("VisSLL SFML init function called\n"); // DEBUG
-
-
 }
 
 
@@ -449,7 +447,7 @@ void Program::displayVisSLLScreenGUI() {
 	// );
 
 	// if (ImGui::Button("Start", btnSize)) { // clicked
-	// 	printf("%s %f\nButton clicked!\n", buf, f);
+	// 	printf("%s %f\nButton clicked! \n", buf, f);
 	// 	printf("-- Data structure selection menu.\n");
 	// 	// programState = ProgramState::CHOOSE_DS_MENU;
 	// }

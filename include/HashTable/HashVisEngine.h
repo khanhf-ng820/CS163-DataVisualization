@@ -6,12 +6,15 @@
 #include <SFML/Window.hpp>
 
 #include <iostream>
+#include <chrono>
+#include <random>
 
 #include "sfLayout/sfLayout.h"
-#include "utils/utils-readData.h"
+#include "utils/readData.hpp"
 #include "utils/utils.h"
 #include "AnimPlayer/AnimPlayer.h"
 #include "HashTable/HashAnimStep.h"
+#include "HashTable/HashSourceCode.h"
 
 
 
@@ -30,10 +33,15 @@ class HashVisEngine : public AnimPlayer {
 public:
 	HashVisEngine(sf::RenderWindow* window, sf::Font* font); // Empty, size 0 hash table
 	HashVisEngine(int tableSize, int tableModulo, sf::RenderWindow* window, sf::Font* font); // Empty hash table
-	HashVisEngine(std::vector<int> values, int tableModulo, sf::RenderWindow* window, sf::Font* font); // Custom hash table
+	HashVisEngine(int tableSize, int tableModulo, std::mt19937& rng, sf::RenderWindow* window, sf::Font* font); // Randomized hash table
+	HashVisEngine(std::vector<TableSlotInput>& values, int tableModulo, sf::RenderWindow* window, sf::Font* font); // Custom hash table
 
 	// Reset all properties to get ready for visualize new action
 	void resetParams();
+	// Initialize table data
+	void initHashTableData(); // Empty HashTable
+	void initHashTableData(std::mt19937& rng); // Randomized HashTable
+	void initHashTableData(std::vector<int> initData); // Specific data HashTable
 
 
 	// Draw nodes: Iterate through linked list and draw nodes
@@ -124,6 +132,10 @@ public:
 	bool isFull();
 
 
+	static constexpr int RANDOM_DISTRIB_KEY_MIN = -100;
+	static constexpr int RANDOM_DISTRIB_KEY_MAX = 100;
+
+
 	static constexpr sf::Vector2f originPosDisplacement = {75, 50};
 	sf::Vector2f originPos;
 	static constexpr sf::Vector2f descriptionTextPos = {50, 10};
@@ -148,7 +160,7 @@ private:
 	int hashFunc(int key);
 
 	// Create AND display ImGui window to highlight source code (pseudocode)
-	void drawHighlightCodeWindow(HashAnimStep eventHash);
+	void drawPseudocodeWindow(HashAnimStep eventHash);
 
 	std::string hashDescriptionString(int key);
 	sf::Vector2f lerp(sf::Vector2f v1, sf::Vector2f v2, float k) const;

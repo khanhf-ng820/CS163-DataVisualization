@@ -26,12 +26,22 @@ HashVisEngine::HashVisEngine(int tableSize, int tableModulo, sf::RenderWindow* w
 		table[i] = TableSlot(i);
 }
 
-HashVisEngine::HashVisEngine(std::vector<int> values, int tableModulo, sf::RenderWindow* window, sf::Font* font)
-	: tableSize(values.size()), tableModulo(tableModulo), table(values.size())
+HashVisEngine::HashVisEngine(int tableSize, int tableModulo, std::mt19937& rng, sf::RenderWindow* window, sf::Font* font)
+	: tableSize(tableSize), tableModulo(tableModulo), table(tableSize)
 	, windowPtr(window), fontPtr(font)
+	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {
+	std::uniform_int_distribution<int> distrib(RANDOM_DISTRIB_KEY_MIN, RANDOM_DISTRIB_KEY_MAX);
 	for (int i = 0; i < tableSize; i++)
-		table[i] = TableSlot(i);
+		table[i] = TableSlot(i, distrib(rng));
+}
+
+HashVisEngine::HashVisEngine(std::vector<TableSlotInput>& values, int tableModulo, sf::RenderWindow* window, sf::Font* font)
+	: HashVisEngine(values.size(), tableModulo, window, font)
+{
+	for (int i = 0; i < tableSize; i++) {
+		table[i] = TableSlot(i, values[i]);
+	}
 }
 
 
@@ -62,6 +72,18 @@ void HashVisEngine::resetParams() {
 
 
 
+// // Initialize table data
+// // Empty HashTable
+// void HashVisEngine::initHashTableData() {}
+// // Randomized HashTable
+// void HashVisEngine::initHashTableData(std::mt19937& rng)
+// // Specific data HashTable
+// void HashVisEngine::initHashTableData(std::vector<int> initData)
+
+
+
+
+
 
 
 
@@ -74,28 +96,31 @@ std::vector<HashAnimStep> HashVisEngine::getEventsSearch(int key) {
 
 	std::string description; // String for description of animation step
 	description = hashDescriptionString(key);
-	events.push_back(HashAnimStep(HashAnimType::NONE, description, {}, -1));
+	events.push_back(HashAnimStep(HashAnimType::NONE, description, {0,1}, -1));
 
 	int hashResult = hashFunc(key);
 	int moveSlotSteps = 0;
 	for (int i = hashResult; moveSlotSteps < tableSize; i++, i %= tableSize, moveSlotSteps++) {
 		description = "Checking key of slot of index " + std::to_string(i);
-		events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {}, i));
+		if (moveSlotSteps == 0)
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {3}, i));
+		else
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {3,8}, i));
 
 		if (table[i].empty && !table[i].deleted) {
 			description = "Found empty slot with no deletion marker.";
-			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {}, i));
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {4,5}, i));
 			break;
 		} else if (table[i].hasKey(key)) {
 			// description = "Found slot: key " + std::to_string(key) + ", value " + std::to_string(table[i].key);
 			description = "Found slot: key " + std::to_string(key) + ", index " + std::to_string(i);
-			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_FOUND_SLOT, description, {}, i));
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_FOUND_SLOT, description, {6,7}, i));
 			searchSlotIdx = i; // Index of slot found
 			return events;
 		}
 	}
 
-	events.push_back(HashAnimStep(HashAnimType::NONE, "No such slot found to search -> Stop.", {}, -1));
+	events.push_back(HashAnimStep(HashAnimType::NONE, "No such slot found to search -> Stop.", {9,10}, -1));
 	return events;
 }
 
@@ -126,24 +151,27 @@ std::vector<HashAnimStep> HashVisEngine::getEventsInsert(int key) {
 
 	std::string description; // String for description of animation step
 	description = hashDescriptionString(key);
-	events.push_back(HashAnimStep(HashAnimType::NONE, description, {}, -1));
+	events.push_back(HashAnimStep(HashAnimType::NONE, description, {0,1}, -1));
 
 	int hashResult = hashFunc(key);
 	int moveSlotSteps = 0;
 	for (int i = hashResult; moveSlotSteps < tableSize; i++, i %= tableSize, moveSlotSteps++) {
 		description = "Checking if slot of index " + std::to_string(i) + " is empty";
-		events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {}, i));
+		if (moveSlotSteps == 0)
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {3}, i));
+		else
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {3,7}, i));
 
 		if (i == insertSlotIdx) {
 			description = "Found empty slot: index " + std::to_string(i);
-			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {}, i));
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {4}, i));
 			description = "Assigning " + std::to_string(key) + " to slot index " + std::to_string(i);
-			events.push_back(HashAnimStep(HashAnimType::SET_KEY_TO_SLOT, description, {}, i));
+			events.push_back(HashAnimStep(HashAnimType::SET_KEY_TO_SLOT, description, {5,6}, i));
 			return events;
 		}
 	}
 
-	events.push_back(HashAnimStep(HashAnimType::NONE, "No empty slots found -> Cannot insert key.", {}, -1));
+	events.push_back(HashAnimStep(HashAnimType::NONE, "No empty slots found -> Cannot insert key.", {8,9}, -1));
 	return events;
 }
 
@@ -176,30 +204,33 @@ std::vector<HashAnimStep> HashVisEngine::getEventsRemove(int key) {
 
 	std::string description; // String for description of animation step
 	description = hashDescriptionString(key);
-	events.push_back(HashAnimStep(HashAnimType::NONE, description, {}, -1));
+	events.push_back(HashAnimStep(HashAnimType::NONE, description, {0,1}, -1));
 
 	int hashResult = hashFunc(key);
 	int moveSlotSteps = 0;
 	for (int i = hashResult; moveSlotSteps < tableSize; i++, i %= tableSize, moveSlotSteps++) {
 		description = "Checking key of slot of index " + std::to_string(i);
-		events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {}, i));
+		if (moveSlotSteps == 0)
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {3}, i));
+		else
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {3,9}, i));
 
 		if (i == removeStoppingSlotIdx) {
 			if (table[i].empty && !table[i].deleted) {
 				description = "Found empty slot with no deletion marker.";
-				events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {}, i));
+				events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {4,5}, i));
 			}
 			break;
 		} else if (i == removeSlotIdx) {
 			description = "Found slot: key " + std::to_string(key) + ", index " + std::to_string(i);
-			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_FOUND_SLOT, description, {}, i));
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_FOUND_SLOT, description, {6}, i));
 			description = "Remove key from node index " + std::to_string(i) + ", add deletion marker.";
-			events.push_back(HashAnimStep(HashAnimType::SET_DELETED_TO_SLOT, description, {}, i));
+			events.push_back(HashAnimStep(HashAnimType::SET_DELETED_TO_SLOT, description, {7,8}, i));
 			return events;
 		}
 	}
 
-	events.push_back(HashAnimStep(HashAnimType::NONE, "No such slot found to remove -> Stop.", {}, -1));
+	events.push_back(HashAnimStep(HashAnimType::NONE, "No such slot found to remove -> Stop.", {10,11}, -1));
 	return events;
 }
 
@@ -246,19 +277,22 @@ std::vector<HashAnimStep> HashVisEngine::getEventsUpdate(int key, int newKey) {
 	// Remove key step
 	std::string description; // String for description of animation step
 	description = hashDescriptionString(key);
-	events.push_back(HashAnimStep(HashAnimType::NONE, description, {}, -1));
+	events.push_back(HashAnimStep(HashAnimType::NONE, description, {0,1}, -1));
 
 	int hashResult = hashFunc(key);
 	int moveSlotSteps = 0;
 	for (int i = hashResult; moveSlotSteps < tableSize; i++, i %= tableSize, moveSlotSteps++) {
 		description = "Checking key of slot of index " + std::to_string(i);
-		events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {}, i));
+		if (moveSlotSteps == 0)
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {3}, i));
+		else
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT, description, {3,9}, i));
 
 		if (i == oldSlotRemoval.index) {
 			description = "Found slot: key " + std::to_string(key) + ", index " + std::to_string(i);
-			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_FOUND_SLOT, description, {}, i));
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_FOUND_SLOT, description, {6}, i));
 			description = "Remove key from node index " + std::to_string(i) + ", add deletion marker.";
-			events.push_back(HashAnimStep(HashAnimType::SET_DELETED_TO_SLOT, description, {}, i));
+			events.push_back(HashAnimStep(HashAnimType::SET_DELETED_TO_SLOT, description, {7,8}, i));
 			break;
 		}
 	}
@@ -266,18 +300,21 @@ std::vector<HashAnimStep> HashVisEngine::getEventsUpdate(int key, int newKey) {
 	// Insert key step
 	description = hashDescriptionString(newKey);
 	hashResult = hashFunc(newKey);
-	events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT_AFTER_REMOVE, description, {}, hashResult));
+	events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT_AFTER_REMOVE, description, {12,13}, hashResult));
 
 	moveSlotSteps = 0;
 	for (int i = hashResult; moveSlotSteps < tableSize; i++, i %= tableSize, moveSlotSteps++) {
 		description = "Checking if slot of index " + std::to_string(i) + " is empty";
-		events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT_AFTER_REMOVE, description, {}, i));
+		if (moveSlotSteps == 0)
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT_AFTER_REMOVE, description, {15}, i));
+		else
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_SLOT_AFTER_REMOVE, description, {15,19}, i));
 
 		if (i == oldSlotInsert.index) {
 			description = "Found empty slot: index " + std::to_string(i);
-			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_FOUND_SLOT_AFTER_REMOVE, description, {}, i));
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_FOUND_SLOT_AFTER_REMOVE, description, {16}, i));
 			description = "Assigning " + std::to_string(newKey) + " to slot index " + std::to_string(i);
-			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_UPDATED_SLOT, description, {}, i));
+			events.push_back(HashAnimStep(HashAnimType::HIGHLIGHT_UPDATED_SLOT, description, {17,18}, i));
 			break;
 		}
 	}
@@ -522,21 +559,22 @@ void HashVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 	}
 
 
-	
+
 	if (visMode == HashVisMode::INSERT) {
 		// INSERT MODE
 		addNodeDrawablesInsert(drawableList, eventHash);
-		// drawHighlightCodeWindow(eventHash);
+		drawPseudocodeWindow(eventHash);
 	} else if (visMode == HashVisMode::REMOVE) {
 		// REMOVE MODE
 		addNodeDrawablesRemove(drawableList, eventHash);
-		// drawHighlightCodeWindow(eventHash);
+		drawPseudocodeWindow(eventHash);
 	} else if (visMode == HashVisMode::UPDATE) {
 		// UPDATE MODE
 		addNodeDrawablesUpdate(drawableList, eventHash);
+		drawPseudocodeWindow(eventHash);
 	} else {
 		addNodeDrawables(drawableList, eventHash);
-		// drawHighlightCodeWindow(eventHash);
+		drawPseudocodeWindow(eventHash);
 	}
 
 
@@ -551,6 +589,64 @@ void HashVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 
 
 	std::cout << drawableList.size() << ' ' << time << " init done" << std::endl; // DEBUG
+}
+
+
+
+
+
+
+
+
+
+
+// Create AND display ImGui window to highlight source code (pseudocode)
+void HashVisEngine::drawPseudocodeWindow(HashAnimStep eventHash) {
+	ImGui::Begin("Pseudocode", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+
+	switch (visMode) {
+	case HashVisMode::SEARCH:
+		for (int i = 0; i < HASH_TABLE_CODE_SEARCH.size(); i++) {
+			if (vecContains(eventHash.highlightLineIndex, i))
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", HASH_TABLE_CODE_SEARCH[i].c_str());
+			if (vecContains(eventHash.highlightLineIndex, i))
+				ImGui::PopStyleColor();
+		}
+		break;
+	case HashVisMode::UPDATE:
+		for (int i = 0; i < HASH_TABLE_CODE_UPDATE.size(); i++) {
+			if (vecContains(eventHash.highlightLineIndex, i))
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", HASH_TABLE_CODE_UPDATE[i].c_str());
+			if (vecContains(eventHash.highlightLineIndex, i))
+				ImGui::PopStyleColor();
+		}
+		break;
+	case HashVisMode::INSERT:
+		for (int i = 0; i < HASH_TABLE_CODE_INSERT.size(); i++) {
+			if (vecContains(eventHash.highlightLineIndex, i))
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", HASH_TABLE_CODE_INSERT[i].c_str());
+			if (vecContains(eventHash.highlightLineIndex, i))
+				ImGui::PopStyleColor();
+		}
+		break;
+	case HashVisMode::REMOVE:
+		for (int i = 0; i < HASH_TABLE_CODE_REMOVE.size(); i++) {
+			if (vecContains(eventHash.highlightLineIndex, i))
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", HASH_TABLE_CODE_REMOVE[i].c_str());
+			if (vecContains(eventHash.highlightLineIndex, i))
+				ImGui::PopStyleColor();
+		}
+		break;
+	default:
+		ImGui::Text("(Nothing to visualize.)");
+		break;
+	}
+
+	ImGui::End();
 }
 
 

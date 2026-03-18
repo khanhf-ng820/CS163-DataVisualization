@@ -10,7 +10,7 @@ const std::vector<std::string> ALL_DS_LIST = ALL_DS_TYPE_LIST;
 
 enum class DSType {
 	SINGLY_LINKED_LIST,
-	HASH_TABLE_LINEAR,
+	HASH_TABLE,
 	AVL_TREE,
 	TRIE_TREE,
 	MST_GRAPH,

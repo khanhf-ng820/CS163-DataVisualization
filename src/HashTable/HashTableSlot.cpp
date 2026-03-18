@@ -14,6 +14,10 @@ TableSlot::TableSlot(int index, int key)
 	: index(index), key(key), empty(false)
 {}
 
+TableSlot::TableSlot(int index, TableSlotInput input)
+	: index(index), key(input.key), empty(input.empty)
+{}
+
 
 
 bool TableSlot::hasKey(int keyVal) {

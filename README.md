@@ -13,8 +13,8 @@ This project contains visualizations for these data structures and algorithms:
 
 ### Technology stack:
 - **C++, CMake**
-- 2D Graphics: **SFML 3.0.2**
-- GUI: **ImGui-SFML 3.0**
+- 2D Graphics: **[SFML 3.0.2](https://github.com/SFML/SFML)**
+- GUI: **[ImGui-SFML 3.0](https://github.com/SFML/imgui-sfml)**
 
 ## Building
 
@@ -29,7 +29,7 @@ Download and make sure you have:
 Make sure all of them are available in **PATH** in order to be used in the Terminal, and make sure you have Internet connection while following these building steps.
 
 #### Clone the repository:
-Open the Terminal (Command Prompt), and navigate to the directory where you want the repository to be in, using the `cd` command.
+Open the Terminal (Command Prompt), and navigate to the directory where you want the repository to be in, using the `cd` command. (Example: `cd path/to/directory/`).
 
 Clone this repository using *git*:
 ```bash
@@ -77,14 +77,14 @@ cmake --build .
 mkdir build
 cd build
 
-# Generate build files
-# --- If you use the MinGW C++ compiler, do this:
+# Generate build files and build the project
+### If using MinGW:
 cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -S .. -B .
-# --- Else, do this:
-cmake -DCMAKE_BUILD_TYPE=Release -S .. -B .
-
-# Build the project
 cmake --build .
+
+### If using Visual Studio (default on Windows):
+cmake -S .. -B .
+cmake --build . --config Release
 ```
 
 ### 3. Running the application

@@ -22,15 +22,13 @@ void Program::createAndOpen(const fs::path dataFilePath) {
 
 
 // --- Initialize data structures
+///// SINGLY LINKED LIST /////
 bool Program::initSLL(const int dataInitOption) {
-	bool validData;
-	std::string dataString;
+	bool validData; // Whether data from file/string is valid
+	std::string dataString; // String of data
+	std::vector<int> SLLData; // Data to be initialized into HashTable
 
 	switch (dataInitOption) {
-	case DATA_INIT_RANDOMIZED: // Randomized data
-		visEngine_SLL.resetEngine(); // Free all memory, reset entire engine
-		visEngine_SLL.initSLLData(rng);
-		return true;
 	case DATA_INIT_CUSTOM: // Custom data as string
 		dataString = std::string(customDataSLLbuf);
 		validData = validDataSLLString(dataString);
@@ -39,11 +37,15 @@ bool Program::initSLL(const int dataInitOption) {
 			// THIS BRANCH SHOULD NOT RUN IN PRACTICE
 			std::cout << "Invalid data string. Something went wrong!!"<<std::endl; // Invalid data
 			visEngine_SLL.resetEngine(); // Free all memory, reset entire engine
+
 			visEngine_SLL.initSLLData();
 			return false;
 		}
 		visEngine_SLL.resetEngine(); // Free all memory, reset entire engine
-		visEngine_SLL.initSLLData(getDataSLLString(dataString));
+
+		SLLData = getDataSLLString(dataString);
+		visEngine_SLL.initSLLData(SLLData);
+
 		return true;
 	case DATA_INIT_FROM_FILE: // Data from file
 		SLL_dataFile.open(SLL_DATA_FILEPATH); // Open data file
@@ -53,17 +55,81 @@ bool Program::initSLL(const int dataInitOption) {
 			std::cout << "Invalid data file. Check the .txt data file and try again." << std::endl; // Invalid data
 			visEngine_SLL.resetEngine(); // Free all memory, reset entire engine
 			visEngine_SLL.initSLLData();
+
 			SLL_dataFile.close(); // Close the data file
 			return false;
 		}
 		visEngine_SLL.resetEngine(); // Free all memory, reset entire engine
-		visEngine_SLL.initSLLData(getDataSLLFile(SLL_dataFile));
+
+		SLLData = getDataSLLFile(SLL_dataFile);
+		visEngine_SLL.initSLLData(SLLData);
+
 		SLL_dataFile.close(); // Close the data file
+		return true;
+	case DATA_INIT_RANDOMIZED: // Randomized data
+		visEngine_SLL.resetEngine(); // Free all memory, reset entire engine
+		visEngine_SLL.initSLLData(rng);
+
 		return true;
 	case DATA_INIT_EMPTY: // Empty data
 	default:
 		visEngine_SLL.resetEngine(); // Free all memory, reset entire engine
 		visEngine_SLL.initSLLData();
+
+		return true;
+	}
+}
+
+
+
+
+
+///// HASH TABLE (LINEAR PROBING) /////
+bool Program::initHashTable(const int dataInitOption) {
+	bool validData; // Whether data from file/string is valid
+	std::string dataString; // String of data
+	std::vector<TableSlotInput> hashTableData; // Data to be initialized into HashTable
+
+	switch (dataInitOption) {
+	case DATA_INIT_CUSTOM: // Custom data as string
+		dataString = std::string(customDataHashbuf);
+		validData = validDataHashTableString(dataString);
+
+		if (!validData) {
+			//// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+			std::cout << "Invalid data string. Something went wrong!!" << std::endl; // Invalid data
+
+			visEngine_Hash = HashVisEngine(initHashTableSizeBuf, initHashTableSizeBuf, &window, &textFont);
+			return false;
+		}
+
+		hashTableData = getDataHashTableString(dataString);
+		visEngine_Hash = HashVisEngine(hashTableData, hashTableData.size(), &window, &textFont);
+
+		return true;
+	case DATA_INIT_FROM_FILE: // Data from file
+		hashTable_dataFile.open(HASH_DATA_FILEPATH); // Open data file
+		validData = validDataHashTableFile(hashTable_dataFile);
+
+		if (!validData) {
+			std::cout << "Invalid data file. Check the .txt data file and try again." << std::endl; // Invalid data
+
+			visEngine_Hash = HashVisEngine(initHashTableSizeBuf, initHashTableSizeBuf, &window, &textFont);
+			hashTable_dataFile.close(); // Close the data file
+			return false;
+		}
+
+		hashTableData = getDataHashTableFile(hashTable_dataFile);
+		visEngine_Hash = HashVisEngine(hashTableData, hashTableData.size(), &window, &textFont);
+
+		hashTable_dataFile.close(); // Close the data file
+		return true;
+	case DATA_INIT_RANDOMIZED: // Randomized data
+		visEngine_Hash = HashVisEngine(initHashTableSizeBuf, initHashTableSizeBuf, rng, &window, &textFont);
+		return true;
+	case DATA_INIT_EMPTY: // Empty data
+	default:
+		visEngine_Hash = HashVisEngine(initHashTableSizeBuf, initHashTableSizeBuf, &window, &textFont);
 		return true;
 	}
 }

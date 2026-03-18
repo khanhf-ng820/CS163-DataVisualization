@@ -75,7 +75,7 @@ void Program::displaySettingsMenuScreenGUI() {
 	// );
 
 	// if (ImGui::Button("Start", btnSize)) { // clicked
-	// 	printf("%s %f\nButton clicked!\n", buf, f);
+	// 	printf("%s %f\nButton clicked! \n", buf, f);
 	// }
 	// ImGui::End();
 
@@ -138,11 +138,9 @@ void Program::displaySettingsMenuScreenGUI() {
 		std::cout << "-- Go to main menu." << std::endl;
 		resizeView();
 	}
+	ImGui::Separator();
 	ImGui::Text("Window resolution: ");
 
-	const char* resolutionOptions[]                   = { "800×600", "1920×1080", "1366×768", "1440×900", "1280×720", "1024×768" }; // Removed 2560×1440
-	const std::vector<sf::Vector2u> resolutionVectors = { {800,600}, {1920,1080}, {1366,768}, {1440,900}, {1280,720}, {1024,768} };
-	static int current_resolution_item = 0;
 	// ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(173.f/255, 216.f/255, 230.f/255, 1.f));
 	if (ImGui::BeginCombo("##resolution_combo", resolutionOptions[current_resolution_item])) { // Pass the "current" item name as the preview
 		for (int n = 0; n < IM_ARRAYSIZE(resolutionOptions); n++) {
@@ -160,8 +158,40 @@ void Program::displaySettingsMenuScreenGUI() {
 	}
 	// ImGui::PopStyleColor();
 
+
+	ImGui::Separator();
+	ImGui::Text("Theme: ");
+	if (ImGui::BeginCombo("##appTheme_combo", appThemeOptions[current_appTheme_item])) { // Pass the "current" item name as the preview
+		for (int n = 0; n < IM_ARRAYSIZE(appThemeOptions); n++) {
+			bool is_selected = (current_appTheme_item == n);
+			if (ImGui::Selectable(appThemeOptions[n], is_selected)) {
+				current_appTheme_item = n;
+			}
+
+			// Set the initial focus when opening the combo (scrolling + keyboard navigation)
+			if (is_selected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+
+	ImGui::Separator();
 	if (ImGui::Button("Apply Settings")) {
 		window.setSize(resolutionVectors[current_resolution_item]);
+
+		switch (appThemeVectors[current_appTheme_item]) {
+		case APP_THEME::LIGHT:
+			ImGui::StyleColorsLight(); // Light theme
+			break;
+		case APP_THEME::DARK:
+			ImGui::StyleColorsDark(); // Dark theme
+			break;
+		case APP_THEME::CLASSIC:
+			ImGui::StyleColorsClassic(); // Classic theme
+			break;
+		}
 	}
 	ImGui::End();
 }

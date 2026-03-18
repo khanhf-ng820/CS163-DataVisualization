@@ -135,7 +135,7 @@ void Program::displayMainMenuScreenGUI() {
 	);
 
 	if (ImGui::Button("Start", btnSize)) { // clicked
-		std::cout << "Button clicked!" << buf << f << std::endl;
+		std::cout << "Button clicked! " << buf << f << std::endl;
 		std::cout << "-- Data structure selection menu." << std::endl;
 		programState = ProgramState::CHOOSE_DS_MENU;
 	}

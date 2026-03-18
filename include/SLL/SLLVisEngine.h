@@ -9,7 +9,7 @@
 #include <random>
 
 #include "sfLayout/sfLayout.h"
-#include "utils/utils-readData.h"
+#include "utils/readData.hpp"
 #include "SLL/SLLAnimStep.h"
 #include "SLL/SLLAlgoEngine.h"
 
@@ -41,7 +41,7 @@ public:
 	void resetEngine(); // CLEAR/RESET ALL PROPERTIES (REMEMBER TO UPDATE, ONLY USE WHEN INITIALIZING NEW SLL)
 	void initSLLData(); // Empty SLL
 	void initSLLData(std::mt19937& rng); // Randomized SLL
-	void initSLLData(std::vector<int> initData); // Specific data SLL
+	void initSLLData(std::vector<int>& initData); // Specific data SLL
 
 	// Draw nodes: Iterate through linked list and draw nodes
 	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, SLLAnimStep eventSLL);
@@ -96,6 +96,12 @@ public:
 	void skipToFinalState();
 
 
+	static constexpr unsigned int RANDOM_DISTRIB_SIZE_MIN = 6;
+	static constexpr unsigned int RANDOM_DISTRIB_SIZE_MAX = 9;
+	static constexpr int RANDOM_DISTRIB_VALUE_MIN = -100;
+	static constexpr int RANDOM_DISTRIB_VALUE_MAX = 100;
+
+
 	static constexpr sf::Vector2f originPosDisplacement = {75, 50};
 	static constexpr sf::Vector2f headPosDisplacement = {-50, 0};
 	sf::Vector2f originPos;
@@ -111,10 +117,10 @@ public:
 	static constexpr ImVec4       highlightCodeColor = {0.4f, 1.f, 0.f, 1.f};
 
 private:
-	void initSLLvector(std::vector<int> values); // Init SLL from std::vector<int>
+	void initSLLvector(std::vector<int>& values); // Init SLL from std::vector<int>
 
 	// Create AND display ImGui window to highlight source code (pseudocode)
-	void drawHighlightCodeWindow(SLLAnimStep eventSLL);
+	void drawPseudocodeWindow(SLLAnimStep eventSLL);
 
 	sf::Vector2f lerp(sf::Vector2f v1, sf::Vector2f v2, float k) const;
 	void drawArrow(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f v1, sf::Vector2f v2) const;

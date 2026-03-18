@@ -8,7 +8,8 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
-#include "utils/utils-readData.h"
+#include "Themes/Themes.h"
+#include "utils/readData.hpp"
 #include "sfLayout/sfLayout.h"
 #include "SLL/SLLVisEngine.h"
 #include "HashTable/HashVisEngine.h"
@@ -159,14 +160,33 @@ private:
 
 	constexpr static size_t CUSTOM_DATA_BUF_SIZE = 512;
 
+	///// Input buffers for ImGui /////
 	char* buf = new char[25];
 	float f = 0.36;
-	char* customDataSLLbuf = new char[CUSTOM_DATA_BUF_SIZE];
-	char* customDataHashbuf = new char[CUSTOM_DATA_BUF_SIZE];
-	char* customDataAVLbuf = new char[CUSTOM_DATA_BUF_SIZE];
-	char* customDataTriebuf = new char[CUSTOM_DATA_BUF_SIZE];
-	char* customDataMSTbuf = new char[CUSTOM_DATA_BUF_SIZE];
+
+	/// Input buffers for settings
+	const char* resolutionOptions[6]                  = { "800×600", "1920×1080", "1366×768", "1440×900", "1280×720", "1024×768" }; // Removed 2560×1440
+	const std::vector<sf::Vector2u> resolutionVectors = { {800,600}, {1920,1080}, {1366,768}, {1440,900}, {1280,720}, {1024,768} };
+	const char* appThemeOptions[3]               = { "Light", "Dark", "Classic" };
+	const std::vector<APP_THEME> appThemeVectors = { APP_THEME::LIGHT, APP_THEME::DARK, APP_THEME::CLASSIC };
+	int current_resolution_item = 0;
+	int current_appTheme_item = 1; // Default is Dark mode
+
+	unsigned int initHashTableSizeBuf = 10;
+	unsigned int initHashTableModuloBuf = 10;
+	constexpr static unsigned int MAX_INIT_HASHTABLE_SIZE = 128;
+	constexpr static unsigned int MAX_INIT_HASHTABLE_MODULO = 128;
+	const std::string SIZE_INPUT_WARNING_STRING   = "Table Size (min. 2, max. " + std::to_string(MAX_INIT_HASHTABLE_SIZE) + ")";
+	const std::string MODULO_INPUT_WARNING_STRING = "Modulo M (min. 2, max. " + std::to_string(MAX_INIT_HASHTABLE_MODULO) + ")";
+
+	char* customDataSLLbuf      = new char[CUSTOM_DATA_BUF_SIZE];
+	char* customDataHashbuf     = new char[CUSTOM_DATA_BUF_SIZE];
+	char* customDataAVLbuf      = new char[CUSTOM_DATA_BUF_SIZE];
+	char* customDataTriebuf     = new char[CUSTOM_DATA_BUF_SIZE];
+	char* customDataMSTbuf      = new char[CUSTOM_DATA_BUF_SIZE];
 	char* customDataDijkstrabuf = new char[CUSTOM_DATA_BUF_SIZE];
+
+
 
 	inline const static fs::path SLL_DATA_FILEPATH = fs::path(DATA_DIR) / "SLL.txt";
 	inline const static fs::path HASH_DATA_FILEPATH = fs::path(DATA_DIR) / "HashTable.txt";

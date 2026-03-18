@@ -16,7 +16,7 @@ SLLVisEngine::SLLVisEngine(sf::RenderWindow& window, sf::Font& font)
 SLLVisEngine::~SLLVisEngine() {
 	freeMem(); // Free all memory
 }
-void SLLVisEngine::freeMem() {
+void SLLVisEngine::freeMem() { // Free all memory
 	clear();
 }
 
@@ -25,15 +25,15 @@ void SLLVisEngine::initSLLData() {
 	size = 0;
 }
 void SLLVisEngine::initSLLData(std::mt19937& rng) {
-	std::uniform_int_distribution<int> distribution_size(6, 9);
+	std::uniform_int_distribution<int> distribution_size(RANDOM_DISTRIB_SIZE_MIN, RANDOM_DISTRIB_SIZE_MAX);
 	size = distribution_size(rng); // Set size
-	std::uniform_int_distribution<int> distribution_node(-100, 100);
+	std::uniform_int_distribution<int> distribution_node(RANDOM_DISTRIB_VALUE_MIN, RANDOM_DISTRIB_VALUE_MAX);
 	std::vector<int> values(size);
 	for (int i = 0; i < size; i++)
 		values[i] = distribution_node(rng);
 	initSLLvector(values);
 }
-void SLLVisEngine::initSLLData(std::vector<int> initData) {
+void SLLVisEngine::initSLLData(std::vector<int>& initData) {
 	size = initData.size();
 	initSLLvector(initData);
 }
@@ -739,7 +739,7 @@ void SLLVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawab
 
 
 // Create ImGui window to highlight source code (pseudocode)
-void SLLVisEngine::drawHighlightCodeWindow(SLLAnimStep eventSLL) {
+void SLLVisEngine::drawPseudocodeWindow(SLLAnimStep eventSLL) {
 	ImGui::Begin("Pseudocode", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
 	switch (visMode) {
@@ -830,14 +830,14 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 		pInsert = ithNode(eventSLL.idxInsert);
 		idxInsert = eventSLL.idxInsert;
 		addNodeDrawablesInsert(drawableList, eventSLL);
-		drawHighlightCodeWindow(eventSLL);
+		drawPseudocodeWindow(eventSLL);
 	} else if (visMode == SLLVisMode::REMOVE_BEG || visMode == SLLVisMode::REMOVE_K) {
 	// REMOVE MODE
 		addNodeDrawablesRemove(drawableList, eventSLL);
-		drawHighlightCodeWindow(eventSLL);
+		drawPseudocodeWindow(eventSLL);
 	} else {
 		addNodeDrawables(drawableList, eventSLL);
-		drawHighlightCodeWindow(eventSLL);
+		drawPseudocodeWindow(eventSLL);
 	}
 
 
@@ -973,7 +973,7 @@ void SLLVisEngine::resetEngine() {
 }
 
 
-void SLLVisEngine::initSLLvector(std::vector<int> values) {
+void SLLVisEngine::initSLLvector(std::vector<int>& values) {
 	size = values.size();
 	pHead = nullptr;
 	SLLNode* cur = nullptr;

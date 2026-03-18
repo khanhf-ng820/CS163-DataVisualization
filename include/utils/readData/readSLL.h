@@ -13,7 +13,7 @@
 inline const bool validDataSLLFile(std::ifstream& ifile) {
 	if (!ifile.is_open())
 		return false; // Can't open file
-	
+
 	int num;
 	bool read = false;
 	while (ifile >> num) {
