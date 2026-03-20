@@ -128,8 +128,7 @@ public:
 
 
 	// Helper methods
-	bool containsKey(int key);
-	bool isFull();
+	bool isUpdatable(int oldKey, int newKey);
 
 
 	static constexpr int RANDOM_DISTRIB_KEY_MIN = -100;
@@ -158,6 +157,10 @@ public:
 
 private:
 	int hashFunc(int key);
+
+	//// Helper methods
+	bool containsKey(int key);
+	bool isFull();
 
 	// Create AND display ImGui window to highlight source code (pseudocode)
 	void drawPseudocodeWindow(HashAnimStep eventHash);

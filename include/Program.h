@@ -167,8 +167,8 @@ private:
 	/// Input buffers for settings
 	const char* resolutionOptions[6]                  = { "800×600", "1920×1080", "1366×768", "1440×900", "1280×720", "1024×768" }; // Removed 2560×1440
 	const std::vector<sf::Vector2u> resolutionVectors = { {800,600}, {1920,1080}, {1366,768}, {1440,900}, {1280,720}, {1024,768} };
-	const char* appThemeOptions[3]               = { "Light", "Dark", "Classic" };
-	const std::vector<APP_THEME> appThemeVectors = { APP_THEME::LIGHT, APP_THEME::DARK, APP_THEME::CLASSIC };
+	const char* appThemeOptions[3]               = { "Light", "Dark", "Purple" };
+	const std::vector<APP_THEME> appThemeVectors = { APP_THEME::LIGHT, APP_THEME::DARK, APP_THEME::PURPLE };
 	int current_resolution_item = 0;
 	int current_appTheme_item = 1; // Default is Dark mode
 

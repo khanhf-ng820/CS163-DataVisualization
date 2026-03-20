@@ -245,8 +245,8 @@ void Program::displayVisHashScreenGUI() {
 	ImGui::InputInt("Old key", &visEngine_Hash.oldKeyToUpdateInput);
 	ImGui::InputInt("New key", &visEngine_Hash.newKeyToUpdateInput);
 
-	bool updatable = visEngine_Hash.containsKey(visEngine_Hash.oldKeyToUpdateInput)
-				 && !visEngine_Hash.isFull();
+	bool updatable = visEngine_Hash.isUpdatable(visEngine_Hash.oldKeyToUpdateInput, 
+												visEngine_Hash.newKeyToUpdateInput);
 	ImGui::BeginDisabled(!updatable);
 	if (ImGui::Button("Update")) {
 		visEngine_Hash.oldKeyToUpdate = visEngine_Hash.oldKeyToUpdateInput;

@@ -188,8 +188,8 @@ void Program::displaySettingsMenuScreenGUI() {
 		case APP_THEME::DARK:
 			ImGui::StyleColorsDark(); // Dark theme
 			break;
-		case APP_THEME::CLASSIC:
-			ImGui::StyleColorsClassic(); // Classic theme
+		case APP_THEME::PURPLE:
+			ImGui::StyleColorsClassic(); // Purple theme
 			break;
 		}
 	}

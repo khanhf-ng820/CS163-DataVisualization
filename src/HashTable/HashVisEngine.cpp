@@ -691,6 +691,10 @@ bool HashVisEngine::isFull() {
 	return true;
 }
 
+bool HashVisEngine::isUpdatable(int oldKey, int newKey) {
+	return containsKey(oldKey);
+}
+
 
 
 
