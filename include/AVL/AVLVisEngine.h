@@ -83,6 +83,9 @@ private:
 
 	// Draw a node (a circle with the key as text inside it)
 	void drawNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const VisualAVLNode& visNode);
+	// Draw tree edges
+	///// MAKE SURE visualNodes std::map OBJECTS ARE POPULATED FIRST) /////
+	void drawTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicAVLNode* root);
 	// Draw a STILL tree (no interpolation between the tree states)
 	void drawStillTree(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::map<int, VisualAVLNode>& visualNodes);
 };
