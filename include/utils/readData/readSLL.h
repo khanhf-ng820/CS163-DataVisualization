@@ -14,7 +14,7 @@ inline const bool validDataSLLFile(std::ifstream& ifile) {
 	if (!ifile.is_open())
 		return false; // Can't open file
 
-	int num;
+	short int num;
 	bool read = false;
 	while (ifile >> num) {
 		read = true; // Successfully read an int
@@ -30,7 +30,7 @@ inline const bool validDataSLLString(std::string& data) {
 	std::string trimmedData = trim(data);
 	std::istringstream iss(trimmedData);
 
-	int num;
+	short int num;
 	bool read = false;
 	while (iss >> num) {
 		read = true;
@@ -44,7 +44,7 @@ inline const std::vector<int> getDataSLLFile(std::ifstream& ifile) {
 	if (!validDataSLLFile(ifile)) return {};
 
 	std::vector<int> vec;
-	int num;
+	short int num;
 	while (ifile >> num) {
 		vec.push_back(num);
 	}
@@ -60,7 +60,7 @@ inline const std::vector<int> getDataSLLString(std::string& data) {
 	std::string trimmedData = trim(data);
 	std::istringstream iss(trimmedData);
 	std::vector<int> vec;
-	int num;
+	short int num;
 	while (iss >> num) {
 		vec.push_back(num);
 	}

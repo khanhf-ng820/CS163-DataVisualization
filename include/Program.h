@@ -13,6 +13,7 @@
 #include "sfLayout/sfLayout.h"
 #include "SLL/SLLVisEngine.h"
 #include "HashTable/HashVisEngine.h"
+#include "AVL/AVLVisEngine.h"
 
 #include <iostream>
 #include <fstream>
@@ -87,10 +88,10 @@ public:
 	void finishVisHashScreen();
 
 	// Display AVL visualization screen
-	void initVisAVLScreen() {};
-	void displayVisAVLScreenSFML() {};
-	void displayVisAVLScreenGUI() {};
-	void finishVisAVLScreen() {};
+	void initVisAVLScreen();
+	void displayVisAVLScreenSFML();
+	void displayVisAVLScreenGUI();
+	void finishVisAVLScreen();
 
 	// Display Trie visualization screen
 	void initVisTrieScreen() {};
@@ -153,8 +154,10 @@ private:
 	// SFML shapes to draw
 	std::map<ProgramState, std::unique_ptr<sfLayout>> sfDrawables;
 
+	// Visualization engines
 	SLLVisEngine visEngine_SLL; // Engine for visualizing SLL
 	HashVisEngine visEngine_Hash; // Engine for visualizing Hash Table
+	AVLVisEngine visEngine_AVL; // Engine for visualizing AVL Tree
 
 
 
@@ -172,9 +175,9 @@ private:
 	int current_resolution_item = 0;
 	int current_appTheme_item = 1; // Default is Dark mode
 
-	unsigned int initHashTableSizeBuf = 10;
+	unsigned int initHashTableSizeBuf   = 10;
 	unsigned int initHashTableModuloBuf = 10;
-	constexpr static unsigned int MAX_INIT_HASHTABLE_SIZE = 128;
+	constexpr static unsigned int MAX_INIT_HASHTABLE_SIZE   = 128;
 	constexpr static unsigned int MAX_INIT_HASHTABLE_MODULO = 128;
 	const std::string SIZE_INPUT_WARNING_STRING   = "Table Size (min. 2, max. " + std::to_string(MAX_INIT_HASHTABLE_SIZE) + ")";
 	const std::string MODULO_INPUT_WARNING_STRING = "Modulo M (min. 2, max. " + std::to_string(MAX_INIT_HASHTABLE_MODULO) + ")";

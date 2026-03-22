@@ -46,6 +46,7 @@ HashVisEngine::HashVisEngine(std::vector<TableSlotInput>& values, int tableModul
 
 
 
+///// MAKE SURE TO RESET ALL NECESSARY PROPERTIES
 void HashVisEngine::resetParams() {
 	curIndex = -1; // Index of slot currently animating
 
@@ -331,6 +332,7 @@ std::vector<HashAnimStep> HashVisEngine::getEventsUpdate(int key, int newKey) {
 
 
 
+
 // Draw nodes: Iterate through linked list and draw nodes
 // --- NORMAL | SEARCH MODE ---
 void HashVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, HashAnimStep eventHash) {
@@ -338,12 +340,14 @@ void HashVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>&
 		sf::Vector2f slotPos = originPos + sf::Vector2f(idx * slotKeyRectSize.x, 0);
 		drawSlot(drawableList, idx, table[idx].key, table[idx].empty, table[idx].deleted, slotPos);
 	}
+
 	for (int idx = 0; idx < tableSize; idx++) {
 		sf::Vector2f slotPos = originPos + sf::Vector2f(idx * slotKeyRectSize.x, 0);
 		if (idx == eventHash.curIndex)
 			drawHighlightBorder(drawableList, idx, table[idx].key, slotPos, (eventHash.type == HashAnimType::HIGHLIGHT_FOUND_SLOT));
 	}
 }
+
 
 // --- INSERT MODE ---
 void HashVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, HashAnimStep eventHash) {
@@ -363,6 +367,7 @@ void HashVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawa
 			drawSlot(drawableList, idx, table[idx].key, table[idx].empty, table[idx].deleted, slotPos);
 		}
 	}
+
 	for (int idx = 0; idx < tableSize; idx++) {
 		sf::Vector2f slotPos = originPos + sf::Vector2f(idx * slotKeyRectSize.x, 0);
 		if (idx == eventHash.curIndex)
@@ -371,6 +376,7 @@ void HashVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawa
 					|| eventHash.type == HashAnimType::SET_KEY_TO_SLOT));
 	}
 }
+
 
 // --- REMOVE MODE ---
 void HashVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, HashAnimStep eventHash) {
@@ -390,6 +396,7 @@ void HashVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawa
 			drawSlot(drawableList, idx, table[idx].key, table[idx].empty, table[idx].deleted, slotPos);
 		}
 	}
+
 	for (int idx = 0; idx < tableSize; idx++) {
 		sf::Vector2f slotPos = originPos + sf::Vector2f(idx * slotKeyRectSize.x, 0);
 		if (idx == eventHash.curIndex)
@@ -398,6 +405,7 @@ void HashVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawa
 					|| eventHash.type == HashAnimType::SET_DELETED_TO_SLOT));
 	}
 }
+
 
 // --- UPDATE MODE ---
 void HashVisEngine::addNodeDrawablesUpdate(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, HashAnimStep eventHash) {
@@ -462,6 +470,7 @@ void HashVisEngine::addNodeDrawablesUpdate(std::vector<std::unique_ptr<sf::Drawa
 			}
 		}
 	}
+	
 	for (int idx = 0; idx < tableSize; idx++) {
 		if (idx != eventHash.curIndex) continue;
 
@@ -527,7 +536,7 @@ void HashVisEngine::addNodeDrawablesUpdate(std::vector<std::unique_ptr<sf::Drawa
 
 
 
-
+// --- Create DRAWABLES to draw later ---
 void HashVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList) {
 	drawableList.clear();
 

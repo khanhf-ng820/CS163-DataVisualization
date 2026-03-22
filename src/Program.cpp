@@ -13,6 +13,7 @@ Program::Program()
 	, rng(std::random_device()())
 	, visEngine_SLL(window, textFont)
 	, visEngine_Hash(&window, &textFont)
+	, visEngine_AVL(&window, &textFont)
 {
 	window.requestFocus();
 	window.setFramerateLimit(FRAMERATE_LIMIT);

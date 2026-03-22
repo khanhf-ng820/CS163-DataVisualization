@@ -4,3 +4,4 @@
 #include "UILayout/ChooseDS.h"
 #include "UILayout/VisSLL.h"
 #include "UILayout/VisHashTable.h"
+#include "UILayout/VisAVL.h"

@@ -24,6 +24,10 @@ inline const sf::Vector2f round(sf::Vector2f vec) {
 	return sf::Vector2f(round(vec.x), round(vec.y));
 }
 
+inline const sf::Vector2f lerp(sf::Vector2f v1, sf::Vector2f v2, float k)  {
+	return v1 + k * (v2 - v1);
+}
+
 
 
 inline const std::string trim(const std::string& str) {
