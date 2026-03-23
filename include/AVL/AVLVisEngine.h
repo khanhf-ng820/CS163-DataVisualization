@@ -49,8 +49,32 @@ public:
 	std::vector<AVLAnimStep> eventList;
 
 
+	///// Parameters for Visualization
+	// int curIndex = -1; // Index of slot currently animating
+
+
+	///// Parameters for Input in ImGui
+	int keyToSearch = -1;      // Searching
+	int keyToSearchInput = 0;
+
+	int keyToInsert = -1;      // Inserting
+	int keyToInsertInput = 0;
+
+	int keyToRemove = -1;      // Removing
+	int keyToRemoveInput = 0;
+
+	int oldKeyToUpdate = -1;      // Updating
+	int oldKeyToUpdateInput = 0;
+	int newKeyToUpdate = -1;
+	int newKeyToUpdateInput = 0;
+
+
 	// Methods and properties for animating steps
 	// (Already included in AnimPlayer class)
+
+
+	///// ALGORITHMS
+	std::vector<AVLAnimStep> getEventsSearch(int key);
 
 
 	LogicAVLTree tree;
@@ -65,16 +89,24 @@ public:
 	static constexpr sf::Vector2f descriptionTextPos    = {50, 10};
 	static constexpr int          descriptionFontSize   = 15;
 	static constexpr float        nodeCircleRadius      = 25;
+	static constexpr float        nodeOutlineThickness  = 2;
 	static constexpr int          nodeKeyTextFontSize   = 15;
 	static constexpr float        nodeLayerSpacing      = 100;
+	static constexpr float        highlightCircleThickness = 5;
+	static constexpr float        arrowHeadSideLen      = 8;
 	static constexpr float        canvasLeftMargin      = 100;
 
 	static constexpr sf::Color    normalNodeColor         = sf::Color::Black;
 	static constexpr sf::Color    normalNodeKeyColor      = sf::Color::Blue;
 	static constexpr sf::Color    normalNodeHeightColor   = sf::Color(6, 64, 43, 255);
+	static constexpr sf::Color    highlightCircleColor    = sf::Color::Green;
+	static constexpr sf::Color    highlightFoundCircleColor = sf::Color::Red;
 
 
 private:
+	// Helper algorithms functions
+	void getEventsSearchStep(std::vector<AVLAnimStep>& events, LogicAVLNode* root, int key);
+
 	// Set correct positions for ALL VISUAL nodes (uses inorder positioning)
 	void refreshAllVisNodePos(std::map<int, VisualAVLNode>& visualNodes, LogicAVLNode* root);
 	// Helper function for refreshAllNodePos
@@ -83,9 +115,15 @@ private:
 
 	// Draw a node (a circle with the key as text inside it)
 	void drawNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const VisualAVLNode& visNode);
+	// Draw the highlight circle (a circle highlighting a node)
+	void drawHighlightCircle(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f center, bool isFoundNode);
 	// Draw tree edges
 	///// MAKE SURE visualNodes std::map OBJECTS ARE POPULATED FIRST) /////
-	void drawTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicAVLNode* root);
+	void drawTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicAVLNode* root, std::map<int, VisualAVLNode>& visualNodes);
 	// Draw a STILL tree (no interpolation between the tree states)
 	void drawStillTree(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::map<int, VisualAVLNode>& visualNodes);
+
+
+	// Helper drawing functions
+	void drawNodeArrow(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end);
 };

@@ -29,27 +29,27 @@ void Program::displayVisAVLScreenSFML() {
 		if (!visEngine_AVL.animPaused)
 			visEngine_AVL.increaseTime();
 		break;
-	// // ----- SEARCH MODE -----
-	// case AVLVisMode::SEARCH:
-	// 	visEngine_AVL.eventList = visEngine_AVL.getEventsSearch(visEngine_AVL.keyToSearch);
-	// 	visEngine_AVL.createDrawables(
-	// 		sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables
-	// 	);
-	// 	sfDrawables[ProgramState::VIS_AVL_SCREEN]->displayAll();
+	// ----- SEARCH MODE -----
+	case AVLVisMode::SEARCH:
+		visEngine_AVL.eventList = visEngine_AVL.getEventsSearch(visEngine_AVL.keyToSearch);
+		visEngine_AVL.createDrawables(
+			sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_AVL_SCREEN]->displayAll();
 
-	// 	// If not paused, just increase / decrease time
-	// 	if (visEngine_AVL.animPaused) {
-	// 		if (visEngine_AVL.time < visEngine_AVL.targetTime) {
-	// 			visEngine_AVL.increaseTime();
-	// 			visEngine_AVL.time = std::min(visEngine_AVL.time, visEngine_AVL.targetTime);
-	// 		} else if (visEngine_AVL.time > visEngine_AVL.targetTime) {
-	// 			visEngine_AVL.decreaseTime();
-	// 			visEngine_AVL.time = std::max(visEngine_AVL.time, visEngine_AVL.targetTime);
-	// 		}
-	// 	} else {
-	// 		visEngine_AVL.increaseTime();
-	// 	}
-	// 	break;
+		// If not paused, just increase / decrease time
+		if (visEngine_AVL.animPaused) {
+			if (visEngine_AVL.time < visEngine_AVL.targetTime) {
+				visEngine_AVL.increaseTime();
+				visEngine_AVL.time = std::min(visEngine_AVL.time, visEngine_AVL.targetTime);
+			} else if (visEngine_AVL.time > visEngine_AVL.targetTime) {
+				visEngine_AVL.decreaseTime();
+				visEngine_AVL.time = std::max(visEngine_AVL.time, visEngine_AVL.targetTime);
+			}
+		} else {
+			visEngine_AVL.increaseTime();
+		}
+		break;
 	// // ----- INSERT MODE -----
 	// case AVLVisMode::INSERT:
 	// 	visEngine_AVL.eventList = visEngine_AVL.getEventsInsert(visEngine_AVL.keyToInsert);
@@ -181,22 +181,22 @@ void Program::displayVisAVLScreenGUI() {
 	ImGui::Separator();
 
 
-	// // -- SEARCH OPERATION --
-	// ImGui::BeginDisabled(visEngine_AVL.animInProgress);
-	// ImGui::Text("Enter key of slot to search:");
-	// ImGui::InputInt("Key to search", &visEngine_AVL.keyToSearchInput);
-	// // float f;
-	// // ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+	// -- SEARCH OPERATION --
+	ImGui::BeginDisabled(visEngine_AVL.animInProgress);
+	ImGui::Text("Enter key of slot to search:");
+	ImGui::InputInt("Key to search", &visEngine_AVL.keyToSearchInput);
+	// float f;
+	// ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
 
-	// if (ImGui::Button("Search")) {
-	// 	visEngine_AVL.keyToSearch = visEngine_AVL.keyToSearchInput;
-	// 	visEngine_AVL.visMode = AVLVisMode::SEARCH;
-	// 	visEngine_AVL.resetParams();
-	// 	visEngine_AVL.animPaused = false; // Auto un-pause
-	// }
-	// ImGui::EndDisabled();
+	if (ImGui::Button("Search")) {
+		visEngine_AVL.keyToSearch = visEngine_AVL.keyToSearchInput;
+		visEngine_AVL.visMode = AVLVisMode::SEARCH;
+		visEngine_AVL.resetParams();
+		visEngine_AVL.animPaused = false; // Auto un-pause
+	}
+	ImGui::EndDisabled();
 
-	// ImGui::Separator();
+	ImGui::Separator();
 
 
 	// // -- INSERT OPERATION --

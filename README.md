@@ -88,7 +88,7 @@ cmake --build . --config Release
 ```
 
 ### 3. Running the application
-You can run the application by double-clicking the application in the ```build/``` folder inside the project's directory in File Explorer/Finder, or you can open the Terminal in the **project root folder** and run:
+You can run the application by double-clicking the application in the ```build/src/``` folder inside the project's directory in File Explorer/Finder, or you can open the Terminal in the **project root folder** and run:
 
 **macOS** and **Linux:**
 ```bash

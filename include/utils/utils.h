@@ -14,10 +14,11 @@
 
 
 
-
 static inline constexpr float EPSILON_TIME = 1e-6;
 
 
+
+// Math / Vector utility functions
 inline const float fract(float f) { return f - floor(f); }
 
 inline const sf::Vector2f round(sf::Vector2f vec) {
@@ -28,8 +29,15 @@ inline const sf::Vector2f lerp(sf::Vector2f v1, sf::Vector2f v2, float k)  {
 	return v1 + k * (v2 - v1);
 }
 
+inline const sf::Vector2f easeInOutLerp(sf::Vector2f v1, sf::Vector2f v2, float k)  {
+	return v1 + (v2 - v1) * (k < 0.5f ? 2 * k * k : 1 - 2 * (1 - k) * (1 - k));
+}
 
 
+
+
+
+// String utility functions
 inline const std::string trim(const std::string& str) {
 	auto start = std::find_if_not(str.begin(), str.end(),
 		[](unsigned char ch) { return std::isspace(ch); });

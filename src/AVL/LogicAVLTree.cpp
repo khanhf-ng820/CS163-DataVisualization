@@ -5,7 +5,8 @@
 LogicAVLTree::LogicAVLTree() {
 	///// EXAMPLE TREE
 	///// ONLY FOR TESTING, WILL DELETE LATER
-	LogicAVLNode* left = new LogicAVLNode(18);
+	LogicAVLNode* leftright = new LogicAVLNode(18);
+	LogicAVLNode* left = new LogicAVLNode(16, nullptr, leftright);
 	LogicAVLNode* rightright = new LogicAVLNode(69);
 	LogicAVLNode* right = new LogicAVLNode(67, nullptr, rightright);
 	// LogicAVLNode* right = new LogicAVLNode(67);
@@ -40,6 +41,13 @@ unsigned int LogicAVLTree::getSize() {
 
 
 
+// Get node knowing key
+LogicAVLNode* LogicAVLTree::getNodeKey(int key) {
+	return getNodeKey(key, root);
+}
+
+
+
 
 
 
@@ -52,11 +60,6 @@ void LogicAVLTree::clear(LogicAVLNode*& node) {
 	node = nullptr;
 }
 
-unsigned int LogicAVLTree::getSize(LogicAVLNode* node) {
-	if (!node) return 0;
-	return getSize(node->left) + 1U + getSize(node->right);
-}
-
 LogicAVLNode* LogicAVLTree::copyTree(const LogicAVLNode* node) {
 	if (!node) return nullptr;
 	LogicAVLNode* copyNode = new LogicAVLNode(node->key);
@@ -64,4 +67,19 @@ LogicAVLNode* LogicAVLTree::copyTree(const LogicAVLNode* node) {
 	copyNode->right = copyTree(node->right);
 	copyNode->height = node->height;
 	return copyNode;
+}
+
+unsigned int LogicAVLTree::getSize(LogicAVLNode* node) {
+	if (!node) return 0;
+	return getSize(node->left) + 1U + getSize(node->right);
+}
+
+// Get node knowing key
+LogicAVLNode* LogicAVLTree::getNodeKey(int key, LogicAVLNode* node) {
+	if (!node) return nullptr;
+	if (node->key > key) {
+		return getNodeKey(key, node->left);
+	} else if (node->key < key) {
+		return getNodeKey(key, node->right);
+	} else return node;
 }

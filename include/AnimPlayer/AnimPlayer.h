@@ -17,7 +17,7 @@ public:
 	AnimPlayer();
 
 	float time = 0;
-	float dt = 0.005; // Speed of animation
+	float dt = 0.010; // Speed of animation (Default 0.010)
 	float targetTime = 0; // ONLY USE WHEN PAUSED
 
 	bool animPaused = false;

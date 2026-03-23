@@ -117,7 +117,7 @@ public:
 	// (Already included in AnimPlayer class)
 
 
-	// Algorithms
+	///// ALGORITHMS
 	std::vector<HashAnimStep> getEventsSearch(int key);
 	void insert(int key);
 	std::vector<HashAnimStep> getEventsInsert(int key);
