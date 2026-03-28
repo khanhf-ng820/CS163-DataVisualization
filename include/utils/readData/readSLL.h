@@ -7,7 +7,7 @@
 
 #include "utils/utils.h"
 
-
+static constexpr unsigned int MAX_SLL_SIZE = 128;
 
 // --- Read SLL data ---
 inline const bool validDataSLLFile(std::ifstream& ifile) {
@@ -16,8 +16,15 @@ inline const bool validDataSLLFile(std::ifstream& ifile) {
 
 	short int num;
 	bool read = false;
+	unsigned int inputCount = 0;
 	while (ifile >> num) {
 		read = true; // Successfully read an int
+		inputCount++;
+		if (inputCount > MAX_SLL_SIZE) {
+			ifile.clear(); // Cleanup
+			ifile.seekg(0, std::ios::beg);
+			return false;
+		}
 	}
 	bool isValid = read && ifile.eof();
 
@@ -32,8 +39,13 @@ inline const bool validDataSLLString(std::string& data) {
 
 	short int num;
 	bool read = false;
+	unsigned int inputCount = 0;
 	while (iss >> num) {
 		read = true;
+		inputCount++;
+		if (inputCount > MAX_SLL_SIZE) {
+			return false;
+		}
 	}
 
 	return read && iss.eof();

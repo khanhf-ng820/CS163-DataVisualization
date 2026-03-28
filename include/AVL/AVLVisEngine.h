@@ -37,6 +37,7 @@ public:
 
 	// Draw nodes: Iterate through linked list and draw nodes
 	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, AVLAnimStep eventAVL);
+	void addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, AVLAnimStep eventAVL);
 	// Draw nodes and links, depending on eventList
 	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
 	void displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout);
@@ -75,11 +76,13 @@ public:
 
 	///// ALGORITHMS
 	std::vector<AVLAnimStep> getEventsSearch(int key);
+	std::vector<AVLAnimStep> getEventsInsert(int key);
 
 
-	LogicAVLTree tree;
-	std::map<int, VisualAVLNode> visualNodesOld1; // Visual nodes for TREE BEFORE ROTATION 1
-	std::map<int, VisualAVLNode> visualNodesOld2; // Visual nodes for TREE BEFORE ROTATION 2 / AFTER ROTATION 1
+	LogicAVLTree tree; // Final state of tree
+	std::vector<LogicAVLTree> oldTreeSnapshots; // Old Logical AVL trees
+
+	std::vector<std::map<int, VisualAVLNode>> groupsOldVisualNodes; // Visual nodes from old trees (from oldest to newest)
 	std::map<int, VisualAVLNode> visualNodesCur; // Visual nodes for CURRENT TREE
 
 
@@ -108,9 +111,10 @@ private:
 	void getEventsSearchStep(std::vector<AVLAnimStep>& events, LogicAVLNode* root, int key);
 
 	// Set correct positions for ALL VISUAL nodes (uses inorder positioning)
-	void refreshAllVisNodePos(std::map<int, VisualAVLNode>& visualNodes, LogicAVLNode* root);
-	// Helper function for refreshAllNodePos
-	void refreshRecursiveVisNodePos(std::map<int, VisualAVLNode>& visualNodes, LogicAVLNode* node, float& xPos, float dx, int& layerY);
+	void generateAllVisNodePos(std::map<int, VisualAVLNode>& visualNodes, LogicAVLTree& logicTree);
+	// Helper functions for generateAllVisNodePos
+	void generateAllVisNodePosHelper(std::map<int, VisualAVLNode>& visualNodes, LogicAVLTree& logicTree, LogicAVLNode* root);
+	void generateRecursiveVisNodePos(std::map<int, VisualAVLNode>& visualNodes, LogicAVLNode* node, float& xPos, float dx, int& layerY);
 
 
 	// Draw a node (a circle with the key as text inside it)
@@ -120,8 +124,8 @@ private:
 	// Draw tree edges
 	///// MAKE SURE visualNodes std::map OBJECTS ARE POPULATED FIRST) /////
 	void drawTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicAVLNode* root, std::map<int, VisualAVLNode>& visualNodes);
-	// Draw a STILL tree (no interpolation between the tree states)
-	void drawStillTree(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::map<int, VisualAVLNode>& visualNodes);
+	// Draw a STILL tree (no interpolation between the tree snapshots)
+	void drawStillTree(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::map<int, VisualAVLNode>& visualNodes, LogicAVLTree& logicTree);
 
 
 	// Helper drawing functions

@@ -7,7 +7,7 @@
 
 #include "utils/utils.h"
 
-
+static constexpr unsigned int MAX_HASH_TABLE_SIZE = 128;
 
 // --- Class for representation of a slot in text file, for init HashTable ---
 inline const bool validSlotInput(std::string input) {
@@ -49,6 +49,10 @@ inline const bool validDataHashTableFile(std::ifstream& ifile) {
 	while (ifile >> keyInput) {
 		read = true; // Successfully read an int key / "NONE"
 		inputCount++; // Increase counter
+		if (inputCount > MAX_HASH_TABLE_SIZE) {
+			isValid = false;
+			break;
+		}
 		if (!validSlotInput(keyInput)) {
 			isValid = false;
 		}
@@ -71,6 +75,9 @@ inline const bool validDataHashTableString(std::string& data) {
 	while (iss >> keyInput) {
 		read = true;
 		inputCount++; // Increase counter
+		if (inputCount > MAX_HASH_TABLE_SIZE) {
+			return false;
+		}
 		if (!validSlotInput(keyInput)) {
 			return false;
 		}

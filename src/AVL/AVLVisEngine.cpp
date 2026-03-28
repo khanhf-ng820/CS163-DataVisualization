@@ -15,8 +15,6 @@ AVLVisEngine::AVLVisEngine(sf::RenderWindow* window, sf::Font* font)
 // Reset all properties to get ready for visualize new action
 ///// MAKE SURE TO RESET ALL NECESSARY PROPERTIES
 void AVLVisEngine::resetParams() {
-
-
 	resetAnimParams();
 }
 
@@ -54,17 +52,40 @@ std::vector<AVLAnimStep> AVLVisEngine::getEventsSearch(int key) {
 
 
 
+// -- INSERTING --
+std::vector<AVLAnimStep> AVLVisEngine::getEventsInsert(int key) {
+	std::vector<AVLAnimStep> events;
+	oldTreeSnapshots.clear();
+	oldTreeSnapshots.push_back(tree);
+	tree.inorderPrint(); // DEBUG
+
+	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before inserting key " + std::to_string(key), {}, key, 0));
+	// Insert node into tree and get animation events
+	tree.insertEvents(tree.root, key, events, oldTreeSnapshots);
+	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting key " + std::to_string(key), {}, key, -1));
+	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
+	tree.inorderPrint(); // DEBUG
+	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
+	return events;
+}
+
+
+
+
+
+
+
 
 
 
 // Draw nodes: Iterate through linked list and draw nodes
 // --- NORMAL | SEARCH MODE ---
 void AVLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, AVLAnimStep eventAVL) {
-	refreshAllVisNodePos(visualNodesCur, tree.root);
-	drawTreeEdges(drawableList, tree.root, visualNodesCur);
-	for (const auto& [key, visNode] : visualNodesCur) {
-		drawNode(drawableList, visNode);
-	}
+	generateAllVisNodePos(visualNodesCur, tree);
+
+	drawStillTree(drawableList, visualNodesCur, tree);
+
+	// Draw highlighting circle
 	switch (eventAVL.type) {
 	case AVLAnimType::HIGHLIGHT_NODE:
 		drawHighlightCircle(drawableList, visualNodesCur[eventAVL.curKey].position, false);
@@ -93,6 +114,76 @@ void AVLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 		break;
 	}
 }
+
+
+
+// --- INSERT MODE ---
+void AVLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, AVLAnimStep eventAVL) {
+	groupsOldVisualNodes.clear();
+	unsigned int numOfOldTreeSnapshots = oldTreeSnapshots.size();
+	groupsOldVisualNodes.resize(numOfOldTreeSnapshots);
+	generateAllVisNodePos(visualNodesCur, tree);
+	for (int i = 0; i < numOfOldTreeSnapshots; i++) {
+		generateAllVisNodePos(groupsOldVisualNodes[i], oldTreeSnapshots[i]);
+	}
+	std::cerr << "numOfOldTreeSnapshots = " << numOfOldTreeSnapshots << ", "; // DEBUG
+
+	std::map<int, VisualAVLNode>& oldVisualNodes =
+		(eventAVL.oldTreeSnapshotIndex == -1) ? visualNodesCur : groupsOldVisualNodes[eventAVL.oldTreeSnapshotIndex];
+	LogicAVLTree& oldTreeSnapshot =
+		(eventAVL.oldTreeSnapshotIndex == -1) ? tree : oldTreeSnapshots[eventAVL.oldTreeSnapshotIndex];
+
+	drawStillTree(drawableList, oldVisualNodes, oldTreeSnapshot);
+
+	// Draw highlighting circle
+	switch (eventAVL.type) {
+	case AVLAnimType::HIGHLIGHT_NODE:
+	case AVLAnimType::HIGHLIGHT_NODE_UPDATE_HEIGHT:
+		drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, false);
+		break;
+	case AVLAnimType::HIGHLIGHT_FOUND_NODE:
+	case AVLAnimType::INSERT_NODE:
+		drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, true);
+		break;
+	case AVLAnimType::MOVE_HIGHLIGHT_LEFT_DOWN:
+		if (oldTreeSnapshot.getNodeKey(eventAVL.curKey) && oldTreeSnapshot.getNodeKey(eventAVL.curKey)->left)
+			drawHighlightCircle(drawableList,
+				easeInOutLerp(oldVisualNodes[eventAVL.curKey].position, oldVisualNodes[oldTreeSnapshot.getNodeKey(eventAVL.curKey)->left->key].position, fract(time)),
+				false);
+		else
+			drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, false);
+		break;
+	case AVLAnimType::MOVE_HIGHLIGHT_LEFT_UP:
+		if (oldTreeSnapshot.getNodeKey(eventAVL.curKey) && oldTreeSnapshot.getNodeKey(eventAVL.curKey)->left)
+			drawHighlightCircle(drawableList,
+				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeKey(eventAVL.curKey)->left->key].position, oldVisualNodes[eventAVL.curKey].position, fract(time)),
+				false);
+		else
+			drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, false);
+		break;
+	case AVLAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN:
+		if (oldTreeSnapshot.getNodeKey(eventAVL.curKey) && oldTreeSnapshot.getNodeKey(eventAVL.curKey)->right)
+			drawHighlightCircle(drawableList,
+				easeInOutLerp(oldVisualNodes[eventAVL.curKey].position, oldVisualNodes[oldTreeSnapshot.getNodeKey(eventAVL.curKey)->right->key].position, fract(time)),
+				false);
+		else
+			drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, false);
+		break;
+	case AVLAnimType::MOVE_HIGHLIGHT_RIGHT_UP:
+		if (oldTreeSnapshot.getNodeKey(eventAVL.curKey) && oldTreeSnapshot.getNodeKey(eventAVL.curKey)->right)
+			drawHighlightCircle(drawableList,
+				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeKey(eventAVL.curKey)->right->key].position, oldVisualNodes[eventAVL.curKey].position, fract(time)),
+				false);
+		else
+			drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, false);
+		break;
+	case AVLAnimType::NONE:
+	default:
+		break;
+	}
+}
+
+
 
 
 
@@ -132,22 +223,22 @@ void AVLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 
 
 
-	// if (visMode == AVLVisMode::INSERT) {
-	// 	// INSERT MODE
-	// 	addNodeDrawablesInsert(drawableList, eventAVL);
-	// 	drawPseudocodeWindow(eventAVL);
-	// } else if (visMode == AVLVisMode::REMOVE) {
-	// 	// REMOVE MODE
-	// 	addNodeDrawablesRemove(drawableList, eventAVL);
-	// 	drawPseudocodeWindow(eventAVL);
-	// } else if (visMode == AVLVisMode::UPDATE) {
-	// 	// UPDATE MODE
-	// 	addNodeDrawablesUpdate(drawableList, eventAVL);
-	// 	drawPseudocodeWindow(eventAVL);
-	// } else {
+	if (visMode == AVLVisMode::INSERT) {
+		// INSERT MODE
+		addNodeDrawablesInsert(drawableList, eventAVL);
+		// drawPseudocodeWindow(eventAVL);
+	} else if (visMode == AVLVisMode::REMOVE) {
+		// // REMOVE MODE
+		// addNodeDrawablesRemove(drawableList, eventAVL);
+		// drawPseudocodeWindow(eventAVL);
+	} else if (visMode == AVLVisMode::UPDATE) {
+		// // UPDATE MODE
+		// addNodeDrawablesUpdate(drawableList, eventAVL);
+		// drawPseudocodeWindow(eventAVL);
+	} else {
 		addNodeDrawables(drawableList, eventAVL);
 		// drawPseudocodeWindow(eventAVL);
-	// }
+	}
 
 
 
@@ -176,30 +267,34 @@ void AVLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 
 // Set correct positions for ALL VISUAL nodes
 // Uses inorder positioning
-void AVLVisEngine::refreshAllVisNodePos(std::map<int, VisualAVLNode>& visualNodes, LogicAVLNode* root) {
+void AVLVisEngine::generateAllVisNodePos(std::map<int, VisualAVLNode>& visualNodes, LogicAVLTree& logicTree) {
+	generateAllVisNodePosHelper(visualNodes, logicTree, logicTree.root);
+}
+
+void AVLVisEngine::generateAllVisNodePosHelper(std::map<int, VisualAVLNode>& visualNodes, LogicAVLTree& logicTree, LogicAVLNode* root) {
 	visualNodes.clear();
-	unsigned int size = tree.getSize();
+	unsigned int size = logicTree.getSize();
 	float xPos = canvasLeftMargin;
 	float dx = (windowPtr->getSize().x - 2 * canvasLeftMargin) / (size > 1 ? size-1 : 1);
 	int layerY = 0;
 	// Prevent nodes overlapping
 	if (dx < 2 * nodeCircleRadius) dx = 2 * nodeCircleRadius;
 
-	refreshRecursiveVisNodePos(visualNodes, root, xPos, dx, layerY);
+	generateRecursiveVisNodePos(visualNodes, root, xPos, dx, layerY);
 }
 
 
-void AVLVisEngine::refreshRecursiveVisNodePos(std::map<int, VisualAVLNode>& visualNodes, LogicAVLNode* node, float& xPos, float dx, int& layerY) {
+void AVLVisEngine::generateRecursiveVisNodePos(std::map<int, VisualAVLNode>& visualNodes, LogicAVLNode* node, float& xPos, float dx, int& layerY) {
 	if (!node) return;
 	layerY++;
-	refreshRecursiveVisNodePos(visualNodes, node->left, xPos, dx, layerY);
+	generateRecursiveVisNodePos(visualNodes, node->left, xPos, dx, layerY);
 	layerY--;
-	visualNodes[node->key] = VisualAVLNode(node->key,
+	visualNodes[node->key] = VisualAVLNode(node->key, 0, node->height,
 		sf::Vector2f(originPos.x + xPos, originPos.y + layerY * nodeLayerSpacing)
 	);
 	xPos += dx;
 	layerY++;
-	refreshRecursiveVisNodePos(visualNodes, node->right, xPos, dx, layerY);
+	generateRecursiveVisNodePos(visualNodes, node->right, xPos, dx, layerY);
 	layerY--;
 }
 
@@ -207,6 +302,7 @@ void AVLVisEngine::refreshRecursiveVisNodePos(std::map<int, VisualAVLNode>& visu
 
 
 
+///// --- DRAWING FUNCTIONS ---
 // Draw a node (a circle with the key as text inside it)
 void AVLVisEngine::drawNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const VisualAVLNode& visNode) {
 	// Draw circle
@@ -253,6 +349,14 @@ void AVLVisEngine::drawTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>& dra
 	if (root->right) {
 		sf::Vector2f start = visualNodes[root->key].position, end = visualNodes[root->right->key].position;
 		drawNodeArrow(drawableList, start, end);
+	}
+}
+
+
+void AVLVisEngine::drawStillTree(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::map<int, VisualAVLNode>& visualNodes, LogicAVLTree& logicTree) {
+	drawTreeEdges(drawableList, logicTree.root, visualNodes);
+	for (const auto& [key, visNode] : visualNodes) {
+		drawNode(drawableList, visNode);
 	}
 }
 

@@ -12,3 +12,8 @@ AVLAnimStep::AVLAnimStep(AVLAnimType type, std::string description, std::vector<
 	: type(type), description(description), highlightCodeLineIndex(highlightCodeLineIndex)
 	, hasCurKey(true), curKey(curKey)
 {}
+
+AVLAnimStep::AVLAnimStep(AVLAnimType type, std::string description, std::vector<int> highlightCodeLineIndex, int curKey, int oldTreeSnapshotIndex)
+	: type(type), description(description), highlightCodeLineIndex(highlightCodeLineIndex)
+	, hasCurKey(true), curKey(curKey), oldTreeSnapshotIndex(oldTreeSnapshotIndex)
+{}

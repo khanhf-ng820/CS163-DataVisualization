@@ -9,8 +9,19 @@ enum class AVLAnimType : unsigned char {
 	NONE,
 	HIGHLIGHT_NODE,
 	HIGHLIGHT_FOUND_NODE,
-	MOVE_HIGHLIGHT_LEFT_DOWN,
-	MOVE_HIGHLIGHT_RIGHT_DOWN
+	MOVE_HIGHLIGHT_LEFT_DOWN,  // curKey is the parent's key
+	MOVE_HIGHLIGHT_RIGHT_DOWN, // curKey is the parent's key
+
+	INSERT_NODE,               // Includes highlighting
+	HIGHLIGHT_NODE_UPDATE_HEIGHT,
+	MOVE_HIGHLIGHT_LEFT_UP,    // curKey is the parent's key
+	MOVE_HIGHLIGHT_RIGHT_UP,   // curKey is the parent's key
+	ROTATE_RIGHT_LL, // No highlighting nodes in rotation events
+	ROTATE_LEFT_RR,
+	ROTATE_LEFT_LR,
+	ROTATE_RIGHT_LR,
+	ROTATE_LEFT_RL,
+	ROTATE_RIGHT_RL
 };
 
 
@@ -20,6 +31,7 @@ public:
 	AVLAnimStep();
 	AVLAnimStep(AVLAnimType type, std::string description, std::vector<int> highlightCodeLineIndex);
 	AVLAnimStep(AVLAnimType type, std::string description, std::vector<int> highlightCodeLineIndex, int curKey);
+	AVLAnimStep(AVLAnimType type, std::string description, std::vector<int> highlightCodeLineIndex, int curKey, int oldTreeSnapshotIndex);
 
 	AVLAnimType type = AVLAnimType::NONE;
 	std::string description = "";
@@ -27,7 +39,17 @@ public:
 
 	bool hasCurKey = false; // Whether anim step considers the current node
 	int curKey = -1; // Key of current node (highlighted node)
+	int oldTreeSnapshotIndex = -1; // Index of old tree snapshot
+	// (if transitioning from tree index A to B, the int is A)
+	// (-1 means current tree)
 
 	int rootKey = -1; // Key of first imbalanced node
 	int pivotKey = -1; // Key of child of first imbalanced node
 };
+
+
+inline const AVLAnimStep AVLAnimStepOldTreeIndex(AVLAnimType type, std::string description, std::vector<int> highlightCodeLineIndex, int oldTreeSnapshotIndex) {
+	AVLAnimStep animStep = AVLAnimStep(type, description, highlightCodeLineIndex, -1, oldTreeSnapshotIndex);
+	animStep.hasCurKey = false;
+	return animStep;
+}

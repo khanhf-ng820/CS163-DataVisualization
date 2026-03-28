@@ -21,12 +21,35 @@ public:
 
 
 	LogicAVLNode* getNodeKey(int key); // Get node knowing key
+	void inorderPrint();
+
+
+	bool snapshotTreeReminder = false; // Snapshot after rotation
+	AVLAnimType animTypeReminder = AVLAnimType::NONE;
+	std::string descriptionReminder = "";
+
+
+	///// ANIMATION EVENTS
+	// Returns copy of the whole tree
+	LogicAVLNode* leftRotate(LogicAVLNode*& node, 
+		std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots);
+	LogicAVLNode* rightRotate(LogicAVLNode*& node, 
+		std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots);
+	LogicAVLNode* insertEvents(LogicAVLNode*& node, int key, 
+		std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots);
 
 private:
 	void clear(LogicAVLNode*& node);
 
-	// Helper functions
+	// Helper functions for animation events generation
+	void setSnapshotReminder(AVLAnimType animType, std::string desc);
+	void clearSnapshotReminder();
+
+
+	///// Helper functions (other)
 	LogicAVLNode* copyTree(const LogicAVLNode* node); // Return copy of tree
-	unsigned int getSize(LogicAVLNode* node);
-	LogicAVLNode* getNodeKey(int key, LogicAVLNode* node); // Get node knowing key
+
+	unsigned int getSizeHelper(LogicAVLNode* node);
+	LogicAVLNode* getNodeKeyHelper(int key, LogicAVLNode* node); // Get node knowing key
+	void inorderPrintHelper(LogicAVLNode* node);
 };

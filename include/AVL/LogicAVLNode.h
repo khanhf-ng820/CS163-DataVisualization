@@ -31,7 +31,13 @@ inline const unsigned int getHeight(LogicAVLNode* node) {
 	return node->height;
 }
 
-inline const unsigned int getBalance(LogicAVLNode* node) {
+inline const unsigned int setHeight(LogicAVLNode* node) {
+	if (!node) return 0;
+	node->height = 1U + std::max(getHeight(node->left), getHeight(node->right));
+	return node->height;
+}
+
+inline const int getBalance(LogicAVLNode* node) {
 	if (!node) return 0;
 	return getHeight(node->left) - getHeight(node->right);
 }
