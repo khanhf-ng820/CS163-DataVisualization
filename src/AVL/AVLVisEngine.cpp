@@ -133,7 +133,26 @@ void AVLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 	LogicAVLTree& oldTreeSnapshot =
 		(eventAVL.oldTreeSnapshotIndex == -1) ? tree : oldTreeSnapshots[eventAVL.oldTreeSnapshotIndex];
 
-	drawStillTree(drawableList, oldVisualNodes, oldTreeSnapshot);
+	// Draw the tree
+	switch (eventAVL.type) {
+	case AVLAnimType::ROTATE_RIGHT_LL:
+	case AVLAnimType::ROTATE_LEFT_RR:
+	case AVLAnimType::ROTATE_LEFT_LR:
+	case AVLAnimType::ROTATE_RIGHT_LR:
+	case AVLAnimType::ROTATE_LEFT_RL:
+	case AVLAnimType::ROTATE_RIGHT_RL:
+		drawLerpTree(drawableList,
+			groupsOldVisualNodes[eventAVL.oldTreeSnapshotIndex - 1],
+			oldTreeSnapshots[eventAVL.oldTreeSnapshotIndex - 1], 
+			oldVisualNodes, oldTreeSnapshot
+		);
+		break;
+	case AVLAnimType::INSERT_NODE:
+		drawLerpTreeInsertNode(drawableList, oldVisualNodes, oldTreeSnapshot);
+		break;
+	default:
+		drawStillTree(drawableList, oldVisualNodes, oldTreeSnapshot);
+	}
 
 	// Draw highlighting circle
 	switch (eventAVL.type) {
@@ -142,7 +161,7 @@ void AVLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 		drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, false);
 		break;
 	case AVLAnimType::HIGHLIGHT_FOUND_NODE:
-	case AVLAnimType::INSERT_NODE:
+	// case AVLAnimType::INSERT_NODE: // Highlight inserted node when inserting
 		drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, true);
 		break;
 	case AVLAnimType::MOVE_HIGHLIGHT_LEFT_DOWN:
@@ -337,7 +356,7 @@ void AVLVisEngine::drawHighlightCircle(std::vector<std::unique_ptr<sf::Drawable>
 }
 
 
-// Draw tree edges
+// Draw tree edges (arrows)
 void AVLVisEngine::drawTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicAVLNode* root, std::map<int, VisualAVLNode>& visualNodes) {
 	if (!root) return;
 	drawTreeEdges(drawableList, root->left, visualNodes);
@@ -358,6 +377,64 @@ void AVLVisEngine::drawStillTree(std::vector<std::unique_ptr<sf::Drawable>>& dra
 	for (const auto& [key, visNode] : visualNodes) {
 		drawNode(drawableList, visNode);
 	}
+}
+
+
+
+// Draw lerped node
+void AVLVisEngine::drawLerpNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const VisualAVLNode& visNode1, const VisualAVLNode& visNode2) {
+	// Draw circle
+	auto nodeCircle = std::make_unique<sf::CircleShape>(nodeCircleRadius);
+	nodeCircle->setOrigin({nodeCircle->getRadius(), nodeCircle->getRadius()}); 
+	nodeCircle->setFillColor(sf::Color::Transparent);
+	nodeCircle->setOutlineColor(normalNodeColor);
+	nodeCircle->setOutlineThickness(nodeOutlineThickness);
+	nodeCircle->setPosition(easeInOutLerp(visNode1.position, visNode2.position, fract(time)));
+	// Draw key text
+	auto nodeKeyText = std::make_unique<sf::Text>(*fontPtr, std::to_string(visNode1.key), nodeKeyTextFontSize);
+	sf::FloatRect localBounds = nodeKeyText->getLocalBounds();
+	nodeKeyText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
+	nodeKeyText->setFillColor(normalNodeKeyColor);
+	nodeKeyText->setPosition(nodeCircle->getPosition());
+	nodeKeyText->setPosition(round(nodeKeyText->getPosition()));
+
+	drawableList.push_back(std::move(nodeCircle));
+	drawableList.push_back(std::move(nodeKeyText));
+}
+
+// Draw lerped tree edges (arrows)
+void AVLVisEngine::drawLerpTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicAVLNode* root,
+	std::map<int, VisualAVLNode>& visualNodes1, std::map<int, VisualAVLNode>& visualNodes2) {
+	if (!root) return;
+	drawLerpTreeEdges(drawableList, root->left, visualNodes1, visualNodes2);
+	drawLerpTreeEdges(drawableList, root->right, visualNodes1, visualNodes2);
+	if (root->left) {
+		sf::Vector2f start = easeInOutLerp(visualNodes1[root->key].position, visualNodes2[root->key].position, fract(time));
+		sf::Vector2f end = easeInOutLerp(visualNodes1[root->left->key].position, visualNodes2[root->left->key].position, fract(time));
+		drawNodeArrow(drawableList, start, end);
+	}
+	if (root->right) {
+		sf::Vector2f start = easeInOutLerp(visualNodes1[root->key].position, visualNodes2[root->key].position, fract(time));
+		sf::Vector2f end = easeInOutLerp(visualNodes1[root->right->key].position, visualNodes2[root->right->key].position, fract(time));
+		drawNodeArrow(drawableList, start, end);
+	}
+}
+
+void AVLVisEngine::drawLerpTree(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
+	std::map<int, VisualAVLNode>& visualNodes1, LogicAVLTree& logicTree1,
+	std::map<int, VisualAVLNode>& visualNodes2, LogicAVLTree& logicTree2) {
+	drawLerpTreeEdges(drawableList, logicTree2.root, visualNodes1, visualNodes2);
+	for (const auto& [key, visNode2] : visualNodes2) {
+		drawLerpNode(drawableList, visualNodes1[key], visNode2);
+	}
+}
+
+void AVLVisEngine::drawLerpTreeInsertNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
+	std::map<int, VisualAVLNode>& visualNodes, LogicAVLTree& logicTree) {
+	LogicAVLTree logicTreeBefore = logicTree;
+	std::map<int, VisualAVLNode> visualNodesBefore = visualNodes;
+	visualNodesBefore[keyToInsert].position = originPos + newNodeStartPos;
+	drawLerpTree(drawableList, visualNodesBefore, logicTreeBefore, visualNodes, logicTree);
 }
 
 

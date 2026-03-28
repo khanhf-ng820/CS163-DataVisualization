@@ -12,11 +12,11 @@ enum class AVLAnimType : unsigned char {
 	MOVE_HIGHLIGHT_LEFT_DOWN,  // curKey is the parent's key
 	MOVE_HIGHLIGHT_RIGHT_DOWN, // curKey is the parent's key
 
-	INSERT_NODE,               // Includes highlighting
+	INSERT_NODE,               // Includes highlighting, lerp tree
 	HIGHLIGHT_NODE_UPDATE_HEIGHT,
 	MOVE_HIGHLIGHT_LEFT_UP,    // curKey is the parent's key
 	MOVE_HIGHLIGHT_RIGHT_UP,   // curKey is the parent's key
-	ROTATE_RIGHT_LL, // No highlighting nodes in rotation events
+	ROTATE_RIGHT_LL, // No highlighting nodes in rotation events, lerp tree
 	ROTATE_LEFT_RR,
 	ROTATE_LEFT_LR,
 	ROTATE_RIGHT_LR,

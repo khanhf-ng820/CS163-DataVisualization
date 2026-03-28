@@ -89,6 +89,7 @@ public:
 
 	static constexpr sf::Vector2f originPosDisplacement = {0, 50};
 	sf::Vector2f originPos;
+	static constexpr sf::Vector2f newNodeStartPos       = {50, 50};
 	static constexpr sf::Vector2f descriptionTextPos    = {50, 10};
 	static constexpr int          descriptionFontSize   = 15;
 	static constexpr float        nodeCircleRadius      = 25;
@@ -126,6 +127,18 @@ private:
 	void drawTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicAVLNode* root, std::map<int, VisualAVLNode>& visualNodes);
 	// Draw a STILL tree (no interpolation between the tree snapshots)
 	void drawStillTree(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::map<int, VisualAVLNode>& visualNodes, LogicAVLTree& logicTree);
+
+	// Draw lerped node
+	void drawLerpNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const VisualAVLNode& visNode1, const VisualAVLNode& visNode2);
+	// Draw lerped tree edges (arrows)
+	void drawLerpTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicAVLNode* root,
+		std::map<int, VisualAVLNode>& visualNodes1, std::map<int, VisualAVLNode>& visualNodes2);
+	// Draw lerped tree (nodes and edges)
+	void drawLerpTree(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
+		std::map<int, VisualAVLNode>& visualNodes1, LogicAVLTree& logicTree1,
+		std::map<int, VisualAVLNode>& visualNodes2, LogicAVLTree& logicTree2);
+	// Draw lerped tree when inserting a node
+	void drawLerpTreeInsertNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::map<int, VisualAVLNode>& visualNodes, LogicAVLTree& logicTree);
 
 
 	// Helper drawing functions
