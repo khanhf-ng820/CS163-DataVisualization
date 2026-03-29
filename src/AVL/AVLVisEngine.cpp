@@ -61,11 +61,16 @@ std::vector<AVLAnimStep> AVLVisEngine::getEventsInsert(int key) {
 
 	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before inserting key " + std::to_string(key), {}, key, 0));
 	// Insert node into tree and get animation events
-	tree.insertEvents(tree.root, key, events, oldTreeSnapshots);
+	tree.root = tree.insertEvents(tree.root, key, events, oldTreeSnapshots);
+	// Remind to snapshot tree after insertion/rotation
+	tree.snapshotTree(key, events, oldTreeSnapshots);
+
 	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting key " + std::to_string(key), {}, key, -1));
+	
 	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
 	tree.inorderPrint(); // DEBUG
 	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
+
 	return events;
 }
 
@@ -141,14 +146,20 @@ void AVLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 	case AVLAnimType::ROTATE_RIGHT_LR:
 	case AVLAnimType::ROTATE_LEFT_RL:
 	case AVLAnimType::ROTATE_RIGHT_RL:
+		// Tree rotations animation
 		drawLerpTree(drawableList,
 			groupsOldVisualNodes[eventAVL.oldTreeSnapshotIndex - 1],
-			oldTreeSnapshots[eventAVL.oldTreeSnapshotIndex - 1], 
+			oldTreeSnapshots[eventAVL.oldTreeSnapshotIndex - 1],
 			oldVisualNodes, oldTreeSnapshot
 		);
 		break;
 	case AVLAnimType::INSERT_NODE:
-		drawLerpTreeInsertNode(drawableList, oldVisualNodes, oldTreeSnapshot);
+		// Node insertion animation
+		drawLerpTreeInsertNode(drawableList,
+			groupsOldVisualNodes[eventAVL.oldTreeSnapshotIndex - 1],
+			oldTreeSnapshots[eventAVL.oldTreeSnapshotIndex - 1],
+			oldVisualNodes, oldTreeSnapshot
+		);
 		break;
 	default:
 		drawStillTree(drawableList, oldVisualNodes, oldTreeSnapshot);
@@ -161,7 +172,7 @@ void AVLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 		drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, false);
 		break;
 	case AVLAnimType::HIGHLIGHT_FOUND_NODE:
-	// case AVLAnimType::INSERT_NODE: // Highlight inserted node when inserting
+	// case AVLAnimType::INSERT_NODE: // Highlight inserted node when at inserting event
 		drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, true);
 		break;
 	case AVLAnimType::MOVE_HIGHLIGHT_LEFT_DOWN:
@@ -420,6 +431,7 @@ void AVLVisEngine::drawLerpTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>&
 	}
 }
 
+// Draw lerped tree (nodes and edges)
 void AVLVisEngine::drawLerpTree(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
 	std::map<int, VisualAVLNode>& visualNodes1, LogicAVLTree& logicTree1,
 	std::map<int, VisualAVLNode>& visualNodes2, LogicAVLTree& logicTree2) {
@@ -429,12 +441,17 @@ void AVLVisEngine::drawLerpTree(std::vector<std::unique_ptr<sf::Drawable>>& draw
 	}
 }
 
+// Draw lerped tree when inserting a node
 void AVLVisEngine::drawLerpTreeInsertNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
-	std::map<int, VisualAVLNode>& visualNodes, LogicAVLTree& logicTree) {
-	LogicAVLTree logicTreeBefore = logicTree;
-	std::map<int, VisualAVLNode> visualNodesBefore = visualNodes;
+	std::map<int, VisualAVLNode>& visualNodes1, LogicAVLTree& logicTree1,
+	std::map<int, VisualAVLNode>& visualNodes2, LogicAVLTree& logicTree2) {
+	LogicAVLTree logicTreeBefore = logicTree2;
+	std::map<int, VisualAVLNode> visualNodesBefore = visualNodes2;
+	for (const auto& [key, visNode1] : visualNodes1) {
+		visualNodesBefore[key].position = visNode1.position;
+	}
 	visualNodesBefore[keyToInsert].position = originPos + newNodeStartPos;
-	drawLerpTree(drawableList, visualNodesBefore, logicTreeBefore, visualNodes, logicTree);
+	drawLerpTree(drawableList, visualNodesBefore, logicTreeBefore, visualNodes2, logicTree2);
 }
 
 

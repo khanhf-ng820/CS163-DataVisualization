@@ -27,6 +27,8 @@ public:
 	bool snapshotTreeReminder = false; // Snapshot after rotation
 	AVLAnimType animTypeReminder = AVLAnimType::NONE;
 	std::string descriptionReminder = "";
+	// Remind to snapshot tree after insertion/rotation
+	void snapshotTree(int key, std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots);
 
 
 	///// ANIMATION EVENTS

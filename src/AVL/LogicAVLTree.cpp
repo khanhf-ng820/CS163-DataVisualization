@@ -5,12 +5,13 @@
 LogicAVLTree::LogicAVLTree() {
 	///// EXAMPLE TREE
 	///// ONLY FOR TESTING, WILL DELETE LATER
-	LogicAVLNode* leftright = new LogicAVLNode(18);
-	LogicAVLNode* left = new LogicAVLNode(16, nullptr, leftright);
-	LogicAVLNode* rightright = new LogicAVLNode(69);
-	LogicAVLNode* right = new LogicAVLNode(67, nullptr, rightright);
-	// LogicAVLNode* right = new LogicAVLNode(67);
-	root = new LogicAVLNode(36, left, right);
+	root = nullptr;
+
+	// LogicAVLNode* leftright = new LogicAVLNode(18);
+	// LogicAVLNode* left = new LogicAVLNode(16, nullptr, leftright);
+	// LogicAVLNode* rightright = new LogicAVLNode(69);
+	// LogicAVLNode* right = new LogicAVLNode(67, nullptr, rightright);
+	// root = new LogicAVLNode(36, left, right);
 }
 
 LogicAVLTree::~LogicAVLTree() {
@@ -54,7 +55,22 @@ void LogicAVLTree::inorderPrint() {
 
 
 
+
+
 ///// ANIMATION EVENTS
+// Remind to snapshot tree after insertion/rotation
+void LogicAVLTree::snapshotTree(int key, std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots) {
+	if (snapshotTreeReminder) {
+		treeSnapshots.push_back(*this);
+		if (animTypeReminder == AVLAnimType::INSERT_NODE)
+			events.push_back(AVLAnimStep(animTypeReminder, descriptionReminder, {}, key, treeSnapshots.size() - 1));
+		else
+			events.push_back(AVLAnimStepOldTreeIndex(animTypeReminder, descriptionReminder, {}, treeSnapshots.size() - 1));
+		clearSnapshotReminder();
+	}
+}
+
+
 LogicAVLNode* LogicAVLTree::leftRotate(LogicAVLNode*& node, std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots) {
 	LogicAVLNode* rightChild = node->right;
 	LogicAVLNode* rightleftChild = rightChild->left;
@@ -62,7 +78,7 @@ LogicAVLNode* LogicAVLTree::leftRotate(LogicAVLNode*& node, std::vector<AVLAnimS
 	node->right = rightleftChild;
 	setHeight(node);
 	setHeight(rightChild);
-	// treeSnapshots.push_back(LogicAVLTree(*this));
+	// treeSnapshots.push_back(*this);
 	return rightChild;
 }
 
@@ -73,7 +89,7 @@ LogicAVLNode* LogicAVLTree::rightRotate(LogicAVLNode*& node, std::vector<AVLAnim
 	node->left = leftrightChild;
 	setHeight(node);
 	setHeight(leftChild);
-	// treeSnapshots.push_back(LogicAVLTree(*this));
+	// treeSnapshots.push_back(*this);
 	return leftChild;
 }
 

@@ -138,7 +138,9 @@ private:
 		std::map<int, VisualAVLNode>& visualNodes1, LogicAVLTree& logicTree1,
 		std::map<int, VisualAVLNode>& visualNodes2, LogicAVLTree& logicTree2);
 	// Draw lerped tree when inserting a node
-	void drawLerpTreeInsertNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::map<int, VisualAVLNode>& visualNodes, LogicAVLTree& logicTree);
+	void drawLerpTreeInsertNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
+		std::map<int, VisualAVLNode>& visualNodes1, LogicAVLTree& logicTree1,
+		std::map<int, VisualAVLNode>& visualNodes2, LogicAVLTree& logicTree2);
 
 
 	// Helper drawing functions
