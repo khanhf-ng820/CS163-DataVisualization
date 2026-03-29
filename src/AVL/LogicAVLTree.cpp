@@ -40,15 +40,19 @@ unsigned int LogicAVLTree::getSize() {
 	return getSizeHelper(root);
 }
 
-
-
-// Get node knowing key
+// Get node, knowing the key
 LogicAVLNode* LogicAVLTree::getNodeKey(int key) {
 	return getNodeKeyHelper(key, root);
 }
 
+// Print inorder
 void LogicAVLTree::inorderPrint() {
 	inorderPrintHelper(root);
+}
+
+// Find min successor node
+LogicAVLNode* LogicAVLTree::minSuccNode(LogicAVLNode* node) {
+	return node ? minValueNode(node->right) : nullptr;
 }
 
 
@@ -96,7 +100,7 @@ LogicAVLNode* LogicAVLTree::rightRotate(LogicAVLNode*& node, std::vector<AVLAnim
 
 
 // -- INSERTION --
-LogicAVLNode* LogicAVLTree::insertEvents(LogicAVLNode*& node, int key, std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots) {
+LogicAVLNode* LogicAVLTree::generateInsertEvents(LogicAVLNode*& node, int key, std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots) {
 	if (!node) {
 		// events.push_back(AVLAnimStep(AVLAnimType::INSERT_NODE, "Found null subtree, insert node " + std::to_string(key), {}, key, treeSnapshots.size() - 1));
 		std::cerr << "INSERTED NEW NODE" << std::endl; // DEBUG
@@ -109,22 +113,15 @@ LogicAVLNode* LogicAVLTree::insertEvents(LogicAVLNode*& node, int key, std::vect
 		heavySide = -1;
 		events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
 		events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_LEFT_DOWN, "Looking at left subtree of node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
-		node->left = insertEvents(node->left, key, events, treeSnapshots);
+		node->left = generateInsertEvents(node->left, key, events, treeSnapshots);
 	} else if (key > node->key) {
 		heavySide = 1;
 		events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
 		events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN, "Looking at right subtree of node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
-		node->right = insertEvents(node->right, key, events, treeSnapshots);
+		node->right = generateInsertEvents(node->right, key, events, treeSnapshots);
 	}
 	// Remind to snapshot tree after rotation
-	if (snapshotTreeReminder) {
-		treeSnapshots.push_back(*this);
-		if (animTypeReminder == AVLAnimType::INSERT_NODE)
-			events.push_back(AVLAnimStep(animTypeReminder, descriptionReminder, {}, key, treeSnapshots.size() - 1));
-		else
-			events.push_back(AVLAnimStepOldTreeIndex(animTypeReminder, descriptionReminder, {}, treeSnapshots.size() - 1));
-		clearSnapshotReminder();
-	}
+	snapshotTree(key, events, treeSnapshots);
 	assert(heavySide != 0);
 
 	// Update the balance factor and balance the tree
@@ -136,8 +133,8 @@ LogicAVLNode* LogicAVLTree::insertEvents(LogicAVLNode*& node, int key, std::vect
 	}
 	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE_UPDATE_HEIGHT, "Update height of node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
 
-	int balance = getBalance(node);
 	// Unwinding recursion, balancing the tree
+	int balance = getBalance(node);
 	// Rotation when unbalanced
 	// LL
 	if (balance > 1 && getBalance(node->left) >= 0) {
@@ -173,6 +170,7 @@ LogicAVLNode* LogicAVLTree::insertEvents(LogicAVLNode*& node, int key, std::vect
 	}
 	return node;
 }
+
 
 
 
@@ -220,7 +218,7 @@ unsigned int LogicAVLTree::getSizeHelper(LogicAVLNode* node) {
 	return getSizeHelper(node->left) + 1U + getSizeHelper(node->right);
 }
 
-// Get node knowing key
+// Get node, knowing the key
 LogicAVLNode* LogicAVLTree::getNodeKeyHelper(int key, LogicAVLNode* node) {
 	if (!node) return nullptr;
 	if (node->key > key) {
@@ -230,9 +228,19 @@ LogicAVLNode* LogicAVLTree::getNodeKeyHelper(int key, LogicAVLNode* node) {
 	} else return node;
 }
 
+// Print inorder
 void LogicAVLTree::inorderPrintHelper(LogicAVLNode* node) {
 	if (!node) return;
 	inorderPrintHelper(node->left);
 	std::cout << node->key << " ";
 	inorderPrintHelper(node->right);
+}
+
+// Get minimum node of subtree
+LogicAVLNode* LogicAVLTree::minValueNode(LogicAVLNode* node) {
+	LogicAVLNode* cur = node;
+	while (cur && cur->left) {
+		cur = cur->left;
+	}
+	return cur;
 }

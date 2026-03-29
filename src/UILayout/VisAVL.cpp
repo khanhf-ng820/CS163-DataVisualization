@@ -197,7 +197,7 @@ void Program::displayVisAVLScreenGUI() {
 
 		// Generate events
 		visEngine_AVL.eventList = visEngine_AVL.getEventsSearch(visEngine_AVL.keyToSearch);
-
+		std::cout << "search AVL tree cool, " << visEngine_AVL.eventList.size() << " events" << std::endl; // DEBUG
 	}
 	ImGui::EndDisabled();
 

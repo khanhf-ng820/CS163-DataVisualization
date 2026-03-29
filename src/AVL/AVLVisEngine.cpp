@@ -46,6 +46,7 @@ void AVLVisEngine::getEventsSearchStep(std::vector<AVLAnimStep>& events, LogicAV
 
 std::vector<AVLAnimStep> AVLVisEngine::getEventsSearch(int key) {
 	std::vector<AVLAnimStep> events;
+	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before searching key " + std::to_string(key), {}));
 	getEventsSearchStep(events, tree.root, key);
 	return events;
 }
@@ -61,12 +62,12 @@ std::vector<AVLAnimStep> AVLVisEngine::getEventsInsert(int key) {
 
 	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before inserting key " + std::to_string(key), {}, key, 0));
 	// Insert node into tree and get animation events
-	tree.root = tree.insertEvents(tree.root, key, events, oldTreeSnapshots);
+	tree.root = tree.generateInsertEvents(tree.root, key, events, oldTreeSnapshots);
 	// Remind to snapshot tree after insertion/rotation
 	tree.snapshotTree(key, events, oldTreeSnapshots);
 
 	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting key " + std::to_string(key), {}, key, -1));
-	
+
 	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
 	tree.inorderPrint(); // DEBUG
 	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
@@ -266,6 +267,7 @@ void AVLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 		// addNodeDrawablesUpdate(drawableList, eventAVL);
 		// drawPseudocodeWindow(eventAVL);
 	} else {
+		// SEARCH MODE
 		addNodeDrawables(drawableList, eventAVL);
 		// drawPseudocodeWindow(eventAVL);
 	}
