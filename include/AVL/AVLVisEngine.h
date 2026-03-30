@@ -39,6 +39,7 @@ public:
 	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, AVLAnimStep eventAVL);
 	void addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, AVLAnimStep eventAVL);
 	void addNodeDrawablesDelete(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, AVLAnimStep eventAVL);
+	void addNodeDrawablesUpdate(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, AVLAnimStep eventAVL);
 	// Draw nodes and links, depending on eventList
 	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
 	void displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout);
@@ -79,6 +80,7 @@ public:
 	std::vector<AVLAnimStep> getEventsSearch(int key);
 	std::vector<AVLAnimStep> getEventsInsert(int key);
 	std::vector<AVLAnimStep> getEventsDelete(int key);
+	std::vector<AVLAnimStep> getEventsUpdate(int key);
 
 
 	LogicAVLTree tree; // Final state of tree
@@ -89,7 +91,7 @@ public:
 
 
 
-	static constexpr sf::Vector2f originPosDisplacement = {0, 50};
+	static constexpr sf::Vector2f originPosDisplacement = {0, 70};
 	sf::Vector2f originPos;
 	static constexpr sf::Vector2f newNodeStartPos       = {50, 50};
 	static constexpr sf::Vector2f descriptionTextPos    = {50, 10};
@@ -97,6 +99,7 @@ public:
 	static constexpr float        nodeCircleRadius      = 25;
 	static constexpr float        nodeOutlineThickness  = 2;
 	static constexpr int          nodeKeyTextFontSize   = 15;
+	static constexpr int          nodeHeightTextFontSize = 12;
 	static constexpr float        nodeLayerSpacing      = 100;
 	static constexpr float        highlightCircleThickness = 5;
 	static constexpr float        arrowHeadSideLen      = 8;
@@ -142,6 +145,10 @@ private:
 		std::map<int, VisualAVLNode>& visualNodes2, LogicAVLTree& logicTree2);
 	// Draw lerped tree when inserting a node
 	void drawLerpTreeInsertNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
+		std::map<int, VisualAVLNode>& visualNodes1, LogicAVLTree& logicTree1,
+		std::map<int, VisualAVLNode>& visualNodes2, LogicAVLTree& logicTree2);
+	// Draw lerped tree when deleting a node
+	void drawLerpTreeDeleteNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
 		std::map<int, VisualAVLNode>& visualNodes1, LogicAVLTree& logicTree1,
 		std::map<int, VisualAVLNode>& visualNodes2, LogicAVLTree& logicTree2);
 

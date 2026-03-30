@@ -25,7 +25,7 @@ enum class AVLAnimType : unsigned char {
 
 	COPY_KEY_FROM_MIN_SUCC,    // Highlights node that got copied, curKey is the key to be copied
 	DELETE_LEAF_NODE,          // No highlighting
-	DELETE_NODE_ONE_CHILD
+	DELETE_NODE_ONE_CHILD      // No highlighting
 };
 
 
@@ -47,10 +47,8 @@ public:
 	// (if transitioning from tree index A to B, the int is B)
 	// (-1 means current tree)
 
+	// Whether this step happens at/after when copying minimum successor node
 	bool afterCopyMinimumSucc = false;
-
-	int rootKey = -1; // Key of first imbalanced node
-	int pivotKey = -1; // Key of child of first imbalanced node
 };
 
 

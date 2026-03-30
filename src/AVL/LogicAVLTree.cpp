@@ -132,6 +132,7 @@ LogicAVLNode* LogicAVLTree::generateInsertEvents(LogicAVLNode*& node, int key, s
 	} else if (heavySide == 1) {
 		events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_RIGHT_UP, "Unwinding recursion", {}, node->key, treeSnapshots.size() - 1));
 	}
+	treeSnapshots.push_back(*this);
 	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE_UPDATE_HEIGHT, "Update height of node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
 
 	// Unwinding recursion, balancing the tree
@@ -247,6 +248,7 @@ LogicAVLNode* LogicAVLTree::generateDeleteEvents(LogicAVLNode*& node, int key, s
 		events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_RIGHT_UP, "Unwinding recursion", {}, node->key, treeSnapshots.size() - 1));
 	}
 	node->height = 1U + std::max(getHeight(node->left), getHeight(node->right));
+	treeSnapshots.push_back(*this);
 	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE_UPDATE_HEIGHT, "Update height of node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
 
 	// Rotation when unbalanced
