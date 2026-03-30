@@ -19,3 +19,10 @@ VisualAVLNode::VisualAVLNode(int key, unsigned int height, unsigned int oldHeigh
 VisualAVLNode::VisualAVLNode(int key, unsigned int height, unsigned int oldHeight, sf::Vector2f position)
 	: key(key), height(height), oldHeight(oldHeight), position(position)
 {}
+
+
+
+void VisualAVLNode::setSecondPos(sf::Vector2f secPos) {
+	hasSecondPos = true;
+	secondPos = secPos;
+}

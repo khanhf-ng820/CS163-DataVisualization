@@ -38,6 +38,7 @@ public:
 	// Draw nodes: Iterate through linked list and draw nodes
 	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, AVLAnimStep eventAVL);
 	void addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, AVLAnimStep eventAVL);
+	void addNodeDrawablesDelete(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, AVLAnimStep eventAVL);
 	// Draw nodes and links, depending on eventList
 	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
 	void displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout);
@@ -77,6 +78,7 @@ public:
 	///// ALGORITHMS
 	std::vector<AVLAnimStep> getEventsSearch(int key);
 	std::vector<AVLAnimStep> getEventsInsert(int key);
+	std::vector<AVLAnimStep> getEventsDelete(int key);
 
 
 	LogicAVLTree tree; // Final state of tree
@@ -108,7 +110,8 @@ public:
 
 
 private:
-	// Helper algorithms functions
+	void refreshOriginPos();
+	// Helper algorithm functions
 	void getEventsSearchStep(std::vector<AVLAnimStep>& events, LogicAVLNode* root, int key);
 
 	// Set correct positions for ALL VISUAL nodes (uses inorder positioning)

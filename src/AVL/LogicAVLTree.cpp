@@ -51,8 +51,9 @@ void LogicAVLTree::inorderPrint() {
 }
 
 // Find min successor node
-LogicAVLNode* LogicAVLTree::minSuccNode(LogicAVLNode* node) {
-	return node ? minValueNode(node->right) : nullptr;
+LogicAVLNode* LogicAVLTree::minSuccNode(LogicAVLNode* node, int deleteKey,
+	std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots) {
+	return node ? minValueNode(node->right, deleteKey, events, treeSnapshots) : nullptr;
 }
 
 
@@ -136,19 +137,19 @@ LogicAVLNode* LogicAVLTree::generateInsertEvents(LogicAVLNode*& node, int key, s
 	// Unwinding recursion, balancing the tree
 	int balance = getBalance(node);
 	// Rotation when unbalanced
-	// LL
+	// Left Left
 	if (balance > 1 && getBalance(node->left) >= 0) {
 		LogicAVLNode* rotatedRoot = rightRotate(node, events, treeSnapshots);
 		setSnapshotReminder(AVLAnimType::ROTATE_RIGHT_LL, "Single Rotate Right (LL)");
 		return rotatedRoot;
 	}
-	// RR
+	// Right Right
 	if (balance < -1 && getBalance(node->right) <= 0) {
 		LogicAVLNode* rotatedRoot = leftRotate(node, events, treeSnapshots);
 		setSnapshotReminder(AVLAnimType::ROTATE_LEFT_RR, "Single Rotate Left (RR)");
 		return rotatedRoot;
 	}
-	// LR
+	// Left Right
 	if (balance > 1 && getBalance(node->left) < 0) {
 		node->left = leftRotate(node->left, events, treeSnapshots);
 		treeSnapshots.push_back(*this);
@@ -158,7 +159,7 @@ LogicAVLNode* LogicAVLTree::generateInsertEvents(LogicAVLNode*& node, int key, s
 		setSnapshotReminder(AVLAnimType::ROTATE_RIGHT_LR, "Double Rotate (LR), rotate right");
 		return rotatedRoot;
 	}
-	// RL
+	// Right Left
 	if (balance < -1 && getBalance(node->right) > 0) {
 		node->right = rightRotate(node->right, events, treeSnapshots);
 		treeSnapshots.push_back(*this);
@@ -168,6 +169,120 @@ LogicAVLNode* LogicAVLTree::generateInsertEvents(LogicAVLNode*& node, int key, s
 		setSnapshotReminder(AVLAnimType::ROTATE_LEFT_RL, "Double Rotate (RL), rotate left");
 		return rotatedRoot;
 	}
+	return node;
+}
+
+
+
+// -- DELETION --
+LogicAVLNode* LogicAVLTree::generateDeleteEvents(LogicAVLNode*& node, int key, std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots) {
+	if (!node) {
+		events.push_back(AVLAnimStep(AVLAnimType::NONE, "Found null subtree", {}, key, treeSnapshots.size() - 1));
+		return node;
+	}
+
+	short int heavySide = 0; // Heavy side (left/right)
+	if (key < node->key) {
+		heavySide = -1;
+		events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
+		events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_LEFT_DOWN, "Looking at left subtree of node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
+		node->left = generateDeleteEvents(node->left, key, events, treeSnapshots);
+	} else if (key > node->key) {
+		heavySide = 1;
+		events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
+		events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN, "Looking at right subtree of node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
+		node->right = generateDeleteEvents(node->right, key, events, treeSnapshots);
+	} else {
+		events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE, "Found node " + std::to_string(key), {}, key, treeSnapshots.size() - 1));
+
+		if (node->left == nullptr) {
+			LogicAVLNode* temp = node->right;
+			node = nullptr;
+
+			if (temp == nullptr) {
+				setSnapshotReminder(AVLAnimType::DELETE_LEAF_NODE, "Delete the leaf node");
+			} else {
+				setSnapshotReminder(AVLAnimType::DELETE_NODE_ONE_CHILD, "Delete the node with one child");
+			}
+			return temp;
+		} else if (node->right == nullptr) {
+			LogicAVLNode* temp = node->left;
+			node = nullptr;
+
+			setSnapshotReminder(AVLAnimType::DELETE_NODE_ONE_CHILD, "Delete the node with one child");
+			return temp;
+		}
+
+		events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN, "Looking at right subtree of node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
+		LogicAVLNode* temp = minValueNode(node->right, key, events, treeSnapshots);
+
+		treeSnapshots.push_back(*this);
+		events.push_back(AVLAnimStep(AVLAnimType::COPY_KEY_FROM_MIN_SUCC, "Copy the minimum successor into node to delete", {}, temp->key, treeSnapshots.size() - 1));
+		node->key = temp->key;
+		minSuccKey = temp->key; // Minimum successor key placeholder
+
+		// events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
+		// events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN, "Looking at right subtree of node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
+		events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(node->key), {}, key, treeSnapshots.size() - 1));
+		events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN, "Looking at right subtree of node " + std::to_string(node->key), {}, key, treeSnapshots.size() - 1));
+		node->right = generateDeleteEvents(node->right, temp->key, events, treeSnapshots);
+	}
+
+	// Remind to snapshot tree after rotation
+	snapshotTree(key, events, treeSnapshots);
+
+	// If deletion removed the node completely, stop
+	if (node == nullptr) {
+		return node;
+	}
+
+	// Update the balance factor and balance the tree
+	int balance = getBalance(node);
+	if (heavySide == -1) {
+		events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_LEFT_UP, "Unwinding recursion", {}, node->key, treeSnapshots.size() - 1));
+	} else if (heavySide == 1) {
+		events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_RIGHT_UP, "Unwinding recursion", {}, node->key, treeSnapshots.size() - 1));
+	} else {
+		// Moving up right subtree because we want minimum successor
+		events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_RIGHT_UP, "Unwinding recursion", {}, node->key, treeSnapshots.size() - 1));
+	}
+	node->height = 1U + std::max(getHeight(node->left), getHeight(node->right));
+	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE_UPDATE_HEIGHT, "Update height of node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
+
+	// Rotation when unbalanced
+	// Left Left
+	if (balance > 1 && getBalance(node->left) >= 0) {
+		LogicAVLNode* rotatedRoot = rightRotate(node, events, treeSnapshots);
+		setSnapshotReminder(AVLAnimType::ROTATE_RIGHT_LL, "Single Rotate Right (LL)");
+		return rotatedRoot;
+	}
+	// Right Right
+	if (balance < -1 && getBalance(node->right) <= 0) {
+		LogicAVLNode* rotatedRoot = leftRotate(node, events, treeSnapshots);
+		setSnapshotReminder(AVLAnimType::ROTATE_LEFT_RR, "Single Rotate Left (RR)");
+		return rotatedRoot;
+	}
+	// Left Right
+	if (balance > 1 && getBalance(node->left) < 0) {
+		node->left = leftRotate(node->left, events, treeSnapshots);
+		treeSnapshots.push_back(*this);
+		events.push_back(AVLAnimStepOldTreeIndex(AVLAnimType::ROTATE_LEFT_LR, "Double Rotate (LR), rotate left", {}, treeSnapshots.size() - 1));
+		
+		LogicAVLNode* rotatedRoot = rightRotate(node, events, treeSnapshots);
+		setSnapshotReminder(AVLAnimType::ROTATE_RIGHT_LR, "Double Rotate (LR), rotate right");
+		return rotatedRoot;
+	}
+	// Right Left
+	if (balance < -1 && getBalance(node->right) > 0) {
+		node->right = rightRotate(node->right, events, treeSnapshots);
+		treeSnapshots.push_back(*this);
+		events.push_back(AVLAnimStepOldTreeIndex(AVLAnimType::ROTATE_RIGHT_RL, "Double Rotate (RL), rotate right", {}, treeSnapshots.size() - 1));
+
+		LogicAVLNode* rotatedRoot = leftRotate(node, events, treeSnapshots);
+		setSnapshotReminder(AVLAnimType::ROTATE_LEFT_RL, "Double Rotate (RL), rotate left");
+		return rotatedRoot;
+	}
+
 	return node;
 }
 
@@ -237,10 +352,14 @@ void LogicAVLTree::inorderPrintHelper(LogicAVLNode* node) {
 }
 
 // Get minimum node of subtree
-LogicAVLNode* LogicAVLTree::minValueNode(LogicAVLNode* node) {
+LogicAVLNode* LogicAVLTree::minValueNode(LogicAVLNode* node, int deleteKey, std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots) {
 	LogicAVLNode* cur = node;
+	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE, "Finding the leftmost node of right subtree of node " + std::to_string(deleteKey), {}, cur->key, treeSnapshots.size() - 1));
 	while (cur && cur->left) {
+		LogicAVLNode* oldCur = cur;
 		cur = cur->left;
+		if (cur)
+			events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_LEFT_DOWN, "Finding the leftmost node of right subtree of node " + std::to_string(deleteKey), {}, oldCur->key, treeSnapshots.size() - 1));
 	}
 	return cur;
 }

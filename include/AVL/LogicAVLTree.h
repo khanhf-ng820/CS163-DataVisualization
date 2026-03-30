@@ -25,9 +25,13 @@ public:
 	// Print inorder
 	void inorderPrint();
 	// Find min successor node
-	LogicAVLNode* minSuccNode(LogicAVLNode* node);
+	LogicAVLNode* minSuccNode(LogicAVLNode* node, int deleteKey,
+		std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots);
+
+	int minSuccKey = -1; // Minimum successor key placeholder
 
 
+	// Reminders
 	bool snapshotTreeReminder = false; // Snapshot after rotation
 	AVLAnimType animTypeReminder = AVLAnimType::NONE;
 	std::string descriptionReminder = "";
@@ -42,6 +46,8 @@ public:
 	LogicAVLNode* rightRotate(LogicAVLNode*& node, 
 		std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots);
 	LogicAVLNode* generateInsertEvents(LogicAVLNode*& node, int key, 
+		std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots);
+	LogicAVLNode* generateDeleteEvents(LogicAVLNode*& node, int key, 
 		std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots);
 
 
@@ -62,5 +68,6 @@ private:
 	// Print inorder
 	void inorderPrintHelper(LogicAVLNode* node);
 	// Get minimum node of subtree
-	LogicAVLNode* minValueNode(LogicAVLNode* node);
+	LogicAVLNode* minValueNode(LogicAVLNode* node, int deleteKey,
+		std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots);
 };

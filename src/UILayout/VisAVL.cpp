@@ -71,27 +71,27 @@ void Program::displayVisAVLScreenSFML() {
 			visEngine_AVL.increaseTime();
 		}
 		break;
-	// // ----- REMOVE MODE -----
-	// case AVLVisMode::REMOVE:
-	// 	visEngine_AVL.eventList = visEngine_AVL.getEventsRemove(visEngine_AVL.keyToRemove);
-	// 	visEngine_AVL.createDrawables(
-	// 		sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables
-	// 	);
-	// 	sfDrawables[ProgramState::VIS_AVL_SCREEN]->displayAll();
+	// ----- REMOVE MODE -----
+	case AVLVisMode::REMOVE:
+		// visEngine_AVL.eventList = visEngine_AVL.getEventsRemove(visEngine_AVL.keyToRemove);
+		visEngine_AVL.createDrawables(
+			sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_AVL_SCREEN]->displayAll();
 
-	// 	// If not paused, just increase / decrease time
-	// 	if (visEngine_AVL.animPaused) {
-	// 		if (visEngine_AVL.time < visEngine_AVL.targetTime) {
-	// 			visEngine_AVL.increaseTime();
-	// 			visEngine_AVL.time = std::min(visEngine_AVL.time, visEngine_AVL.targetTime);
-	// 		} else if (visEngine_AVL.time > visEngine_AVL.targetTime) {
-	// 			visEngine_AVL.decreaseTime();
-	// 			visEngine_AVL.time = std::max(visEngine_AVL.time, visEngine_AVL.targetTime);
-	// 		}
-	// 	} else {
-	// 		visEngine_AVL.increaseTime();
-	// 	}
-	// 	break;
+		// If not paused, just increase / decrease time
+		if (visEngine_AVL.animPaused) {
+			if (visEngine_AVL.time < visEngine_AVL.targetTime) {
+				visEngine_AVL.increaseTime();
+				visEngine_AVL.time = std::min(visEngine_AVL.time, visEngine_AVL.targetTime);
+			} else if (visEngine_AVL.time > visEngine_AVL.targetTime) {
+				visEngine_AVL.decreaseTime();
+				visEngine_AVL.time = std::max(visEngine_AVL.time, visEngine_AVL.targetTime);
+			}
+		} else {
+			visEngine_AVL.increaseTime();
+		}
+		break;
 	// // ----- UPDATE MODE -----
 	// case AVLVisMode::UPDATE:
 	// 	visEngine_AVL.eventList = visEngine_AVL.getEventsUpdate(visEngine_AVL.oldKeyToUpdate, visEngine_AVL.newKeyToUpdate);
@@ -226,25 +226,25 @@ void Program::displayVisAVLScreenGUI() {
 	ImGui::Separator();
 
 
-	// // -- REMOVE OPERATION --
-	// ImGui::BeginDisabled(visEngine_AVL.animInProgress);
-	// ImGui::Text("Enter key of slot to remove:");
-	// ImGui::InputInt("Key to remove", &visEngine_AVL.keyToRemoveInput);
+	// -- REMOVE OPERATION --
+	ImGui::BeginDisabled(visEngine_AVL.animInProgress);
+	ImGui::Text("Enter key of slot to remove:");
+	ImGui::InputInt("Key to remove", &visEngine_AVL.keyToRemoveInput);
 
-	// if (ImGui::Button("Remove")) {
-	// 	visEngine_AVL.keyToRemove = visEngine_AVL.keyToRemoveInput;
-	// 	visEngine_AVL.visMode = AVLVisMode::REMOVE;
+	if (ImGui::Button("Remove")) {
+		visEngine_AVL.keyToRemove = visEngine_AVL.keyToRemoveInput;
+		visEngine_AVL.visMode = AVLVisMode::REMOVE;
 
-	// 	visEngine_AVL.resetParams();
-	// 	visEngine_AVL.animPaused = false; // Auto un-pause
+		visEngine_AVL.resetParams();
+		visEngine_AVL.animPaused = false; // Auto un-pause
 
-	//	// Generate events
-	// 	visEngine_AVL.remove(visEngine_AVL.keyToRemove);
-	// 	std::cout << "remove AVL tree cool" << std::endl; // DEBUG
-	// }
-	// ImGui::EndDisabled();
+		// Generate events
+		visEngine_AVL.eventList = visEngine_AVL.getEventsDelete(visEngine_AVL.keyToRemove);
+		std::cout << "remove AVL tree cool" << std::endl; // DEBUG
+	}
+	ImGui::EndDisabled();
 
-	// ImGui::Separator();
+	ImGui::Separator();
 
 
 	// // -- UPDATE OPERATION --

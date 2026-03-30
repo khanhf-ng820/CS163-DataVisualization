@@ -21,7 +21,11 @@ enum class AVLAnimType : unsigned char {
 	ROTATE_LEFT_LR,
 	ROTATE_RIGHT_LR,
 	ROTATE_LEFT_RL,
-	ROTATE_RIGHT_RL
+	ROTATE_RIGHT_RL,
+
+	COPY_KEY_FROM_MIN_SUCC,    // Highlights node that got copied, curKey is the key to be copied
+	DELETE_LEAF_NODE,          // No highlighting
+	DELETE_NODE_ONE_CHILD
 };
 
 
@@ -40,8 +44,10 @@ public:
 	bool hasCurKey = false; // Whether anim step considers the current node
 	int curKey = -1; // Key of current node (highlighted node)
 	int oldTreeSnapshotIndex = -1; // Index of old tree snapshot
-	// (if transitioning from tree index A to B, the int is A)
+	// (if transitioning from tree index A to B, the int is B)
 	// (-1 means current tree)
+
+	bool afterCopyMinimumSucc = false;
 
 	int rootKey = -1; // Key of first imbalanced node
 	int pivotKey = -1; // Key of child of first imbalanced node

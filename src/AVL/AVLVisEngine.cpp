@@ -53,7 +53,7 @@ std::vector<AVLAnimStep> AVLVisEngine::getEventsSearch(int key) {
 
 
 
-// -- INSERTING --
+// -- INSERTION --
 std::vector<AVLAnimStep> AVLVisEngine::getEventsInsert(int key) {
 	std::vector<AVLAnimStep> events;
 	oldTreeSnapshots.clear();
@@ -69,6 +69,39 @@ std::vector<AVLAnimStep> AVLVisEngine::getEventsInsert(int key) {
 	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting key " + std::to_string(key), {}, key, -1));
 
 	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
+	tree.inorderPrint(); // DEBUG
+	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
+
+	return events;
+}
+
+
+
+// -- DELETION --
+std::vector<AVLAnimStep> AVLVisEngine::getEventsDelete(int key) {
+	std::vector<AVLAnimStep> events;
+	oldTreeSnapshots.clear();
+	oldTreeSnapshots.push_back(tree);
+	tree.inorderPrint(); // DEBUG
+
+	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before deleting key " + std::to_string(key), {}, key, 0));
+	// Delete node into tree and get animation events
+	tree.root = tree.generateDeleteEvents(tree.root, key, events, oldTreeSnapshots);
+	// Remind to snapshot tree after deletion/rotation
+	tree.snapshotTree(key, events, oldTreeSnapshots);
+
+	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Finished deleting key " + std::to_string(key), {}, key, oldTreeSnapshots.size() -1));
+
+	// Change 'afterCopyMinimumSucc' property of each anim event
+	bool copiedMinSucc = false;
+	for (auto& event : events) {
+		if (event.type == AVLAnimType::COPY_KEY_FROM_MIN_SUCC)
+			copiedMinSucc = true;
+		if (copiedMinSucc)
+			event.afterCopyMinimumSucc = true;
+	}
+
+	std::cerr << "Done generating deletion events!" << std::endl; // DEBUG
 	tree.inorderPrint(); // DEBUG
 	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
 
@@ -216,6 +249,118 @@ void AVLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 
 
 
+// --- DELETE MODE ---
+void AVLVisEngine::addNodeDrawablesDelete(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, AVLAnimStep eventAVL) {
+	groupsOldVisualNodes.clear();
+	size_t numOfOldTreeSnapshots = oldTreeSnapshots.size();
+	groupsOldVisualNodes.resize(numOfOldTreeSnapshots);
+
+	generateAllVisNodePos(visualNodesCur, tree);
+	// Check if afterCopyMinimumSucc is true
+	if (visualNodesCur.count(keyToRemove)) {
+		if (eventAVL.afterCopyMinimumSucc) {
+			visualNodesCur[keyToRemove].key = tree.minSuccKey;
+		} else {
+			visualNodesCur[keyToRemove].key = keyToRemove;
+		}
+	}
+	for (int i = 0; i < numOfOldTreeSnapshots; i++) {
+		generateAllVisNodePos(groupsOldVisualNodes[i], oldTreeSnapshots[i]);
+		// Check if afterCopyMinimumSucc is true
+		if (groupsOldVisualNodes[i].count(keyToRemove)) {
+			if (eventAVL.afterCopyMinimumSucc) {
+				groupsOldVisualNodes[i][keyToRemove].key = tree.minSuccKey;
+			} else {
+				groupsOldVisualNodes[i][keyToRemove].key = keyToRemove;
+			}
+		}
+	}
+	std::cerr << "numOfOldTreeSnapshots = " << numOfOldTreeSnapshots << ", "; // DEBUG
+
+	std::map<int, VisualAVLNode>& oldVisualNodes =
+		(eventAVL.oldTreeSnapshotIndex == -1) ? visualNodesCur : groupsOldVisualNodes[eventAVL.oldTreeSnapshotIndex];
+	LogicAVLTree& oldTreeSnapshot =
+		(eventAVL.oldTreeSnapshotIndex == -1) ? tree : oldTreeSnapshots[eventAVL.oldTreeSnapshotIndex];
+
+	// Draw the tree
+	switch (eventAVL.type) {
+	case AVLAnimType::ROTATE_RIGHT_LL:
+	case AVLAnimType::ROTATE_LEFT_RR:
+	case AVLAnimType::ROTATE_LEFT_LR:
+	case AVLAnimType::ROTATE_RIGHT_LR:
+	case AVLAnimType::ROTATE_LEFT_RL:
+	case AVLAnimType::ROTATE_RIGHT_RL:
+		// Tree rotations animation
+		drawLerpTree(drawableList,
+			groupsOldVisualNodes[eventAVL.oldTreeSnapshotIndex - 1],
+			oldTreeSnapshots[eventAVL.oldTreeSnapshotIndex - 1],
+			oldVisualNodes, oldTreeSnapshot
+		);
+		break;
+	case AVLAnimType::INSERT_NODE:
+		// Node insertion animation
+		drawLerpTreeInsertNode(drawableList,
+			groupsOldVisualNodes[eventAVL.oldTreeSnapshotIndex - 1],
+			oldTreeSnapshots[eventAVL.oldTreeSnapshotIndex - 1],
+			oldVisualNodes, oldTreeSnapshot
+		);
+		break;
+	default:
+		drawStillTree(drawableList, oldVisualNodes, oldTreeSnapshot);
+	}
+
+	// Draw highlighting circle
+	switch (eventAVL.type) {
+	case AVLAnimType::HIGHLIGHT_NODE:
+	case AVLAnimType::HIGHLIGHT_NODE_UPDATE_HEIGHT:
+	case AVLAnimType::COPY_KEY_FROM_MIN_SUCC:
+		drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, false);
+		break;
+	case AVLAnimType::HIGHLIGHT_FOUND_NODE:
+	// case AVLAnimType::INSERT_NODE: // Highlight inserted node when at inserting event
+		drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, true);
+		break;
+	case AVLAnimType::MOVE_HIGHLIGHT_LEFT_DOWN:
+		if (oldTreeSnapshot.getNodeKey(eventAVL.curKey) && oldTreeSnapshot.getNodeKey(eventAVL.curKey)->left)
+			drawHighlightCircle(drawableList,
+				easeInOutLerp(oldVisualNodes[eventAVL.curKey].position, oldVisualNodes[oldTreeSnapshot.getNodeKey(eventAVL.curKey)->left->key].position, fract(time)),
+				false);
+		else
+			drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, false);
+		break;
+	case AVLAnimType::MOVE_HIGHLIGHT_LEFT_UP:
+		if (oldTreeSnapshot.getNodeKey(eventAVL.curKey) && oldTreeSnapshot.getNodeKey(eventAVL.curKey)->left)
+			drawHighlightCircle(drawableList,
+				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeKey(eventAVL.curKey)->left->key].position, oldVisualNodes[eventAVL.curKey].position, fract(time)),
+				false);
+		else
+			drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, false);
+		break;
+	case AVLAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN:
+		if (oldTreeSnapshot.getNodeKey(eventAVL.curKey) && oldTreeSnapshot.getNodeKey(eventAVL.curKey)->right)
+			drawHighlightCircle(drawableList,
+				easeInOutLerp(oldVisualNodes[eventAVL.curKey].position, oldVisualNodes[oldTreeSnapshot.getNodeKey(eventAVL.curKey)->right->key].position, fract(time)),
+				false);
+		else
+			drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, false);
+		break;
+	case AVLAnimType::MOVE_HIGHLIGHT_RIGHT_UP:
+		if (oldTreeSnapshot.getNodeKey(eventAVL.curKey) && oldTreeSnapshot.getNodeKey(eventAVL.curKey)->right)
+			drawHighlightCircle(drawableList,
+				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeKey(eventAVL.curKey)->right->key].position, oldVisualNodes[eventAVL.curKey].position, fract(time)),
+				false);
+		else
+			drawHighlightCircle(drawableList, oldVisualNodes[eventAVL.curKey].position, false);
+		break;
+	case AVLAnimType::NONE:
+	default:
+		break;
+	}
+}
+
+
+
+
 
 
 
@@ -223,6 +368,7 @@ void AVLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 
 // Draw nodes and links, depending on eventList
 void AVLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList) {
+	refreshOriginPos(); // Refresh properties when window size changes
 	drawableList.clear();
 
 
@@ -259,8 +405,8 @@ void AVLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 		addNodeDrawablesInsert(drawableList, eventAVL);
 		// drawPseudocodeWindow(eventAVL);
 	} else if (visMode == AVLVisMode::REMOVE) {
-		// // REMOVE MODE
-		// addNodeDrawablesRemove(drawableList, eventAVL);
+		// REMOVE MODE
+		addNodeDrawablesDelete(drawableList, eventAVL);
 		// drawPseudocodeWindow(eventAVL);
 	} else if (visMode == AVLVisMode::UPDATE) {
 		// // UPDATE MODE
@@ -499,3 +645,7 @@ void AVLVisEngine::drawNodeArrow(std::vector<std::unique_ptr<sf::Drawable>>& dra
 }
 
 
+
+void AVLVisEngine::refreshOriginPos() {
+	originPos = originPosDisplacement - sf::Vector2f(windowPtr->getSize()) / 2.f;
+}
