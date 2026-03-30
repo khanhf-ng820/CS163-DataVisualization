@@ -80,7 +80,7 @@ public:
 	std::vector<AVLAnimStep> getEventsSearch(int key);
 	std::vector<AVLAnimStep> getEventsInsert(int key);
 	std::vector<AVLAnimStep> getEventsDelete(int key);
-	std::vector<AVLAnimStep> getEventsUpdate(int key);
+	std::vector<AVLAnimStep> getEventsUpdate(int oldKey, int newKey);
 
 
 	LogicAVLTree tree; // Final state of tree

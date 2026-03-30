@@ -92,27 +92,27 @@ void Program::displayVisAVLScreenSFML() {
 			visEngine_AVL.increaseTime();
 		}
 		break;
-	// // ----- UPDATE MODE -----
-	// case AVLVisMode::UPDATE:
-	// 	visEngine_AVL.eventList = visEngine_AVL.getEventsUpdate(visEngine_AVL.oldKeyToUpdate, visEngine_AVL.newKeyToUpdate);
-	// 	visEngine_AVL.createDrawables(
-	// 		sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables
-	// 	);
-	// 	sfDrawables[ProgramState::VIS_AVL_SCREEN]->displayAll();
+	// ----- UPDATE MODE -----
+	case AVLVisMode::UPDATE:
+		// visEngine_AVL.eventList = visEngine_AVL.getEventsUpdate(visEngine_AVL.oldKeyToUpdate, visEngine_AVL.newKeyToUpdate);
+		visEngine_AVL.createDrawables(
+			sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_AVL_SCREEN]->displayAll();
 
-	// 	// If not paused, just increase / decrease time
-	// 	if (visEngine_AVL.animPaused) {
-	// 		if (visEngine_AVL.time < visEngine_AVL.targetTime) {
-	// 			visEngine_AVL.increaseTime();
-	// 			visEngine_AVL.time = std::min(visEngine_AVL.time, visEngine_AVL.targetTime);
-	// 		} else if (visEngine_AVL.time > visEngine_AVL.targetTime) {
-	// 			visEngine_AVL.decreaseTime();
-	// 			visEngine_AVL.time = std::max(visEngine_AVL.time, visEngine_AVL.targetTime);
-	// 		}
-	// 	} else {
-	// 		visEngine_AVL.increaseTime();
-	// 	}
-	// 	break;
+		// If not paused, just increase / decrease time
+		if (visEngine_AVL.animPaused) {
+			if (visEngine_AVL.time < visEngine_AVL.targetTime) {
+				visEngine_AVL.increaseTime();
+				visEngine_AVL.time = std::min(visEngine_AVL.time, visEngine_AVL.targetTime);
+			} else if (visEngine_AVL.time > visEngine_AVL.targetTime) {
+				visEngine_AVL.decreaseTime();
+				visEngine_AVL.time = std::max(visEngine_AVL.time, visEngine_AVL.targetTime);
+			}
+		} else {
+			visEngine_AVL.increaseTime();
+		}
+		break;
 	default:
 		break;
 	}
@@ -247,29 +247,29 @@ void Program::displayVisAVLScreenGUI() {
 	ImGui::Separator();
 
 
-	// // -- UPDATE OPERATION --
-	// ImGui::BeginDisabled(visEngine_AVL.animInProgress);
-	// ImGui::Text("Enter keys to update:");
-	// ImGui::InputInt("Old key", &visEngine_AVL.oldKeyToUpdateInput);
-	// ImGui::InputInt("New key", &visEngine_AVL.newKeyToUpdateInput);
+	// -- UPDATE OPERATION --
+	ImGui::BeginDisabled(visEngine_AVL.animInProgress);
+	ImGui::Text("Enter keys to update:");
+	ImGui::InputInt("Old key", &visEngine_AVL.oldKeyToUpdateInput);
+	ImGui::InputInt("New key", &visEngine_AVL.newKeyToUpdateInput);
 
-	// bool updatable = visEngine_AVL.isUpdatable(visEngine_AVL.oldKeyToUpdateInput, 
-	// 											visEngine_AVL.newKeyToUpdateInput);
-	// ImGui::BeginDisabled(!updatable);
-	// if (ImGui::Button("Update")) {
-	// 	visEngine_AVL.oldKeyToUpdate = visEngine_AVL.oldKeyToUpdateInput;
-	// 	visEngine_AVL.newKeyToUpdate = visEngine_AVL.newKeyToUpdateInput;
-	// 	visEngine_AVL.visMode = AVLVisMode::UPDATE;
+	bool updatable = (visEngine_AVL.tree.getNodeKey(visEngine_AVL.oldKeyToUpdateInput) != nullptr);
+	ImGui::BeginDisabled(!updatable);
+	if (ImGui::Button("Update")) {
+		visEngine_AVL.keyToRemove = visEngine_AVL.oldKeyToUpdateInput;
+		visEngine_AVL.keyToInsert = visEngine_AVL.newKeyToUpdateInput;
+		visEngine_AVL.visMode = AVLVisMode::UPDATE;
 
-	// 	visEngine_AVL.resetParams();
-	// 	visEngine_AVL.animPaused = false; // Auto un-pause
+		visEngine_AVL.resetParams();
+		visEngine_AVL.animPaused = false; // Auto un-pause
 
-	//	// Generate events
-	// 	visEngine_AVL.update(visEngine_AVL.oldKeyToUpdate, visEngine_AVL.newKeyToUpdate);
-	// 	std::cout << "update AVL tree cool" << std::endl; // DEBUG
-	// }
-	// ImGui::EndDisabled();
-	// ImGui::EndDisabled();
+		// Generate events
+		// visEngine_AVL.update(visEngine_AVL.keyToRemove, visEngine_AVL.keyToInsert);
+		visEngine_AVL.eventList = visEngine_AVL.getEventsUpdate(visEngine_AVL.keyToRemove, visEngine_AVL.keyToInsert);
+		std::cout << "update AVL tree cool" << std::endl; // DEBUG
+	}
+	ImGui::EndDisabled();
+	ImGui::EndDisabled();
 
 
 

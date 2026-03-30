@@ -111,32 +111,20 @@ std::vector<AVLAnimStep> AVLVisEngine::getEventsDelete(int key) {
 
 
 // -- UPDATING --
-std::vector<AVLAnimStep> AVLVisEngine::getEventsUpdate(int key) {
+std::vector<AVLAnimStep> AVLVisEngine::getEventsUpdate(int oldKey, int newKey) {
 	std::vector<AVLAnimStep> events;
 	oldTreeSnapshots.clear();
 	oldTreeSnapshots.push_back(tree);
 	tree.inorderPrint(); // DEBUG
 
-	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before inserting key " + std::to_string(key), {}, key, 0));
-	// Insert node into tree and get animation events
-	tree.root = tree.generateInsertEvents(tree.root, key, events, oldTreeSnapshots);
-	// Remind to snapshot tree after insertion/rotation
-	tree.snapshotTree(key, events, oldTreeSnapshots);
-
-	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting key " + std::to_string(key), {}, key, -1));
-
-	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
-	tree.inorderPrint(); // DEBUG
-	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
-
-	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before deleting key " + std::to_string(key), {}, key, 0));
+	// -- Deletion step
+	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before deleting key " + std::to_string(oldKey), {}, oldKey, 0));
 	// Delete node into tree and get animation events
-	tree.root = tree.generateDeleteEvents(tree.root, key, events, oldTreeSnapshots);
+	tree.root = tree.generateDeleteEvents(tree.root, oldKey, events, oldTreeSnapshots);
 	// Remind to snapshot tree after deletion/rotation
-	tree.snapshotTree(key, events, oldTreeSnapshots);
+	tree.snapshotTree(oldKey, events, oldTreeSnapshots);
 
-	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Finished deleting key " + std::to_string(key), {}, key, oldTreeSnapshots.size() -1));
-	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Finished updating operation" , {}, key, oldTreeSnapshots.size() -1));
+	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Finished deleting key " + std::to_string(oldKey), {}, oldKey, oldTreeSnapshots.size() -1));
 
 	// Change 'afterCopyMinimumSucc' property of each anim event
 	bool copiedMinSucc = false;
@@ -151,6 +139,21 @@ std::vector<AVLAnimStep> AVLVisEngine::getEventsUpdate(int key) {
 	tree.inorderPrint(); // DEBUG
 	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
 
+	// -- Insertion step
+	oldTreeSnapshots.push_back(tree);
+	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before inserting key " + std::to_string(newKey), {}, newKey, oldTreeSnapshots.size() -1));
+	// Insert node into tree and get animation events
+	tree.root = tree.generateInsertEvents(tree.root, newKey, events, oldTreeSnapshots);
+	// Remind to snapshot tree after insertion/rotation
+	tree.snapshotTree(newKey, events, oldTreeSnapshots);
+
+	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting key " + std::to_string(newKey), {}, newKey, -1));
+
+	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
+	tree.inorderPrint(); // DEBUG
+	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
+
+	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_FOUND_NODE, "Finished updating operation" , {}, newKey, oldTreeSnapshots.size() -1));
 	return events;
 }
 
@@ -586,8 +589,8 @@ void AVLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 		addNodeDrawablesDelete(drawableList, eventAVL);
 		// drawPseudocodeWindow(eventAVL);
 	} else if (visMode == AVLVisMode::UPDATE) {
-		// // UPDATE MODE
-		// addNodeDrawablesUpdate(drawableList, eventAVL);
+		// UPDATE MODE
+		addNodeDrawablesUpdate(drawableList, eventAVL);
 		// drawPseudocodeWindow(eventAVL);
 	} else {
 		// SEARCH MODE
