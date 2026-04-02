@@ -12,10 +12,10 @@ VisualAVLNode::VisualAVLNode(int key, unsigned int height, sf::Vector2f position
 	: key(key), height(height), position(position)
 {}
 
-VisualAVLNode::VisualAVLNode(int key, unsigned int height, unsigned int oldHeight)
-	: key(key), height(height), oldHeight(oldHeight)
-{}
+// VisualAVLNode::VisualAVLNode(int key, unsigned int height, unsigned int oldHeight)
+// 	: key(key), height(height), oldHeight(oldHeight)
+// {}
 
-VisualAVLNode::VisualAVLNode(int key, unsigned int height, unsigned int oldHeight, sf::Vector2f position)
-	: key(key), height(height), oldHeight(oldHeight), position(position)
-{}
+// VisualAVLNode::VisualAVLNode(int key, unsigned int height, unsigned int oldHeight, sf::Vector2f position)
+// 	: key(key), height(height), oldHeight(oldHeight), position(position)
+// {}

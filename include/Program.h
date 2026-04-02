@@ -14,6 +14,7 @@
 #include "SLL/SLLVisEngine.h"
 #include "HashTable/HashVisEngine.h"
 #include "AVL/AVLVisEngine.h"
+#include "Trie/TrieVisEngine.h"
 
 #include <iostream>
 #include <fstream>
@@ -94,10 +95,10 @@ public:
 	void finishVisAVLScreen();
 
 	// Display Trie visualization screen
-	void initVisTrieScreen() {};
-	void displayVisTrieScreenSFML() {};
-	void displayVisTrieScreenGUI() {};
-	void finishVisTrieScreen() {};
+	void initVisTrieScreen();
+	void displayVisTrieScreenSFML();
+	void displayVisTrieScreenGUI();
+	void finishVisTrieScreen();
 
 	// Display MST visualization screen
 	void initVisMSTScreen() {};
@@ -158,6 +159,7 @@ private:
 	SLLVisEngine visEngine_SLL; // Engine for visualizing SLL
 	HashVisEngine visEngine_Hash; // Engine for visualizing Hash Table
 	AVLVisEngine visEngine_AVL; // Engine for visualizing AVL Tree
+	TrieVisEngine visEngine_Trie; // Engine for visualizing AVL Tree
 
 
 

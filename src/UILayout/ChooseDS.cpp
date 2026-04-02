@@ -183,7 +183,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 	ImVec2 Im_gui_window_size = sf::Vector2f(gui_window_size);
 	ImGui::SetNextWindowPos(sfml_window_size / 2U - gui_window_size / 2U);
 	ImGui::SetNextWindowSize(gui_window_size, ImGuiCond_Always);
-	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+	// ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 	ImGui::Begin("Data Structure Selection",
 		nullptr,
 		ImGuiWindowFlags_NoCollapse |
@@ -192,7 +192,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 		// ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoMove
 	);
-	ImGui::PopStyleColor();
+	// ImGui::PopStyleColor();
 
 	if (ImGui::Button("Go back")) {
 		programState = ProgramState::MAIN_MENU;

@@ -1,0 +1,299 @@
+#include "UILayout/VisTrie.h"
+
+
+
+
+
+// REMEMBER:
+// Drawing SFML: The center of the window is now (0, 0) coordinates
+// Drawing GUI: The top-left of the window is (0, 0) coordinates
+// Clear SFML drawables
+void Program::initVisTrieScreen() {
+	// Push back to vector
+	sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables.clear();
+	// printf("VisTrie SFML init function called\n"); // DEBUG
+}
+
+
+
+// Display vis Trie Tree screen, set up SFML drawables
+void Program::displayVisTrieScreenSFML() {
+	switch (visEngine_Trie.visMode) {
+	// ----- NO MODE (STILL MODE) -----
+	case TrieVisMode::NONE:
+		visEngine_Trie.eventList = std::vector<TrieAnimStep>();
+		visEngine_Trie.createDrawables(
+			sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
+		if (!visEngine_Trie.animPaused)
+			visEngine_Trie.increaseTime();
+		break;
+	// // ----- SEARCH MODE -----
+	// case TrieVisMode::SEARCH:
+	// 	// visEngine_Trie.eventList = visEngine_Trie.getEventsSearch(visEngine_Trie.keyToSearch);
+	// 	visEngine_Trie.createDrawables(
+	// 		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
+	// 	);
+	// 	sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
+
+	// 	// If not paused, just increase / decrease time
+	// 	if (visEngine_Trie.animPaused) {
+	// 		if (visEngine_Trie.time < visEngine_Trie.targetTime) {
+	// 			visEngine_Trie.increaseTime();
+	// 			visEngine_Trie.time = std::min(visEngine_Trie.time, visEngine_Trie.targetTime);
+	// 		} else if (visEngine_Trie.time > visEngine_Trie.targetTime) {
+	// 			visEngine_Trie.decreaseTime();
+	// 			visEngine_Trie.time = std::max(visEngine_Trie.time, visEngine_Trie.targetTime);
+	// 		}
+	// 	} else {
+	// 		visEngine_Trie.increaseTime();
+	// 	}
+	// 	break;
+	// // ----- INSERT MODE -----
+	// case TrieVisMode::INSERT:
+	// 	// visEngine_Trie.eventList = visEngine_Trie.getEventsInsert(visEngine_Trie.keyToInsert);
+	// 	visEngine_Trie.createDrawables(
+	// 		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
+	// 	);
+	// 	sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
+
+	// 	// If not paused, just increase / decrease time
+	// 	if (visEngine_Trie.animPaused) {
+	// 		if (visEngine_Trie.time < visEngine_Trie.targetTime) {
+	// 			visEngine_Trie.increaseTime();
+	// 			visEngine_Trie.time = std::min(visEngine_Trie.time, visEngine_Trie.targetTime);
+	// 		} else if (visEngine_Trie.time > visEngine_Trie.targetTime) {
+	// 			visEngine_Trie.decreaseTime();
+	// 			visEngine_Trie.time = std::max(visEngine_Trie.time, visEngine_Trie.targetTime);
+	// 		}
+	// 	} else {
+	// 		visEngine_Trie.increaseTime();
+	// 	}
+	// 	break;
+	// // ----- REMOVE MODE -----
+	// case TrieVisMode::REMOVE:
+	// 	// visEngine_Trie.eventList = visEngine_Trie.getEventsRemove(visEngine_Trie.keyToRemove);
+	// 	visEngine_Trie.createDrawables(
+	// 		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
+	// 	);
+	// 	sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
+
+	// 	// If not paused, just increase / decrease time
+	// 	if (visEngine_Trie.animPaused) {
+	// 		if (visEngine_Trie.time < visEngine_Trie.targetTime) {
+	// 			visEngine_Trie.increaseTime();
+	// 			visEngine_Trie.time = std::min(visEngine_Trie.time, visEngine_Trie.targetTime);
+	// 		} else if (visEngine_Trie.time > visEngine_Trie.targetTime) {
+	// 			visEngine_Trie.decreaseTime();
+	// 			visEngine_Trie.time = std::max(visEngine_Trie.time, visEngine_Trie.targetTime);
+	// 		}
+	// 	} else {
+	// 		visEngine_Trie.increaseTime();
+	// 	}
+	// 	break;
+	// // ----- UPDATE MODE -----
+	// case TrieVisMode::UPDATE:
+	// 	// visEngine_Trie.eventList = visEngine_Trie.getEventsUpdate(visEngine_Trie.oldKeyToUpdate, visEngine_Trie.newKeyToUpdate);
+	// 	visEngine_Trie.createDrawables(
+	// 		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
+	// 	);
+	// 	sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
+
+	// 	// If not paused, just increase / decrease time
+	// 	if (visEngine_Trie.animPaused) {
+	// 		if (visEngine_Trie.time < visEngine_Trie.targetTime) {
+	// 			visEngine_Trie.increaseTime();
+	// 			visEngine_Trie.time = std::min(visEngine_Trie.time, visEngine_Trie.targetTime);
+	// 		} else if (visEngine_Trie.time > visEngine_Trie.targetTime) {
+	// 			visEngine_Trie.decreaseTime();
+	// 			visEngine_Trie.time = std::max(visEngine_Trie.time, visEngine_Trie.targetTime);
+	// 		}
+	// 	} else {
+	// 		visEngine_Trie.increaseTime();
+	// 	}
+	// 	break;
+	default:
+		break;
+	}
+
+
+	// std::cout << sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables.size() << std::endl;
+	// printf("VisTrieTable SFML function called\n"); // DEBUG
+}
+
+
+
+void Program::displayVisTrieScreenGUI() {
+	allowDragCanvas = true;
+
+	// Show the demo window
+	// ImGui::ShowDemoWindow();
+
+	// Get the current window size
+	sf::Vector2u sfml_window_size = window.getSize();
+
+	ImGui::Begin("Trie Tree Menu",
+		nullptr
+		// ImGuiWindowFlags_NoCollapse
+		// ImGuiWindowFlags_NoBackground
+	);
+	// -- GO BACK TO MAIN MENU BUTTON
+	if (ImGui::Button("<- Back to Main Menu")) {
+		programState = ProgramState::MAIN_MENU;
+		resizeView();
+	}
+	ImGui::SameLine();
+	// - RESET VIEW BUTTON
+	if (ImGui::Button("Reset View")) {
+		resizeView();
+	}
+	// -- SPEED/PAUSE/STEP MENU
+	ImGui::SliderFloat("Animation Speed", &visEngine_Trie.dt, 0.001f, 0.499f);
+
+	ImGui::BeginDisabled(!visEngine_Trie.animPaused);
+	if (ImGui::Button("Previous Step")) {
+		visEngine_Trie.prevStep();
+	}
+	ImGui::EndDisabled();
+	ImGui::SameLine();
+	if (ImGui::Button("Pause/Unpause")) {
+		visEngine_Trie.animPaused = !visEngine_Trie.animPaused;
+		visEngine_Trie.targetTime = visEngine_Trie.time;
+	}
+	ImGui::SameLine();
+	ImGui::BeginDisabled(!visEngine_Trie.animPaused);
+	if (ImGui::Button("Next Step")) {
+		visEngine_Trie.nextStep();
+	}
+	ImGui::EndDisabled();
+	ImGui::SameLine();
+	ImGui::BeginDisabled(!visEngine_Trie.animPaused);
+	if (ImGui::Button("Skip to Final")) {
+		visEngine_Trie.skipToFinalState();
+	}
+	ImGui::EndDisabled();
+	if (visEngine_Trie.animPaused) {
+		// ImGui::SameLine();
+		ImGui::Text("Paused");
+	}
+
+	ImGui::Separator();
+
+
+	// // -- SEARCH OPERATION --
+	// ImGui::BeginDisabled(visEngine_Trie.animInProgress);
+	// ImGui::Text("Enter key of slot to search:");
+	// ImGui::InputInt("Key to search", &visEngine_Trie.keyToSearchInput);
+	// // float f;
+	// // ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+
+	// if (ImGui::Button("Search")) {
+	// 	visEngine_Trie.keyToSearch = visEngine_Trie.keyToSearchInput;
+	// 	visEngine_Trie.visMode = TrieVisMode::SEARCH;
+
+	// 	visEngine_Trie.resetParams();
+	// 	visEngine_Trie.animPaused = false; // Auto un-pause
+
+	// 	// Generate events
+	// 	visEngine_Trie.eventList = visEngine_Trie.getEventsSearch(visEngine_Trie.keyToSearch);
+	// 	std::cout << "search Trie tree cool, " << visEngine_Trie.eventList.size() << " events" << std::endl; // DEBUG
+	// }
+	// ImGui::EndDisabled();
+
+	// ImGui::Separator();
+
+
+	// // -- INSERT OPERATION --
+	// ImGui::BeginDisabled(visEngine_Trie.animInProgress);
+	// ImGui::Text("Enter key to insert:");
+	// ImGui::InputInt("Key to insert", &visEngine_Trie.keyToInsertInput);
+
+	// if (ImGui::Button("Insert")) {
+	// 	visEngine_Trie.keyToInsert = visEngine_Trie.keyToInsertInput;
+	// 	visEngine_Trie.visMode = TrieVisMode::INSERT;
+
+	// 	visEngine_Trie.resetParams();
+	// 	visEngine_Trie.animPaused = false; // Auto un-pause
+
+	// 	// visEngine_Trie.insert(visEngine_Trie.keyToInsert);
+	// 	// Generate events
+	// 	visEngine_Trie.eventList = visEngine_Trie.getEventsInsert(visEngine_Trie.keyToInsert);
+	// 	std::cout << "insert Trie tree cool" << std::endl; // DEBUG
+	// }
+	// ImGui::EndDisabled();
+
+	// ImGui::Separator();
+
+
+	// // -- REMOVE OPERATION --
+	// ImGui::BeginDisabled(visEngine_Trie.animInProgress);
+	// ImGui::Text("Enter key of slot to remove:");
+	// ImGui::InputInt("Key to remove", &visEngine_Trie.keyToRemoveInput);
+
+	// if (ImGui::Button("Remove")) {
+	// 	visEngine_Trie.keyToRemove = visEngine_Trie.keyToRemoveInput;
+	// 	visEngine_Trie.visMode = TrieVisMode::REMOVE;
+
+	// 	visEngine_Trie.resetParams();
+	// 	visEngine_Trie.animPaused = false; // Auto un-pause
+
+	// 	// Generate events
+	// 	visEngine_Trie.eventList = visEngine_Trie.getEventsDelete(visEngine_Trie.keyToRemove);
+	// 	std::cout << "remove Trie tree cool" << std::endl; // DEBUG
+	// }
+	// ImGui::EndDisabled();
+
+	// ImGui::Separator();
+
+
+	// // -- UPDATE OPERATION --
+	// ImGui::BeginDisabled(visEngine_Trie.animInProgress);
+	// ImGui::Text("Enter keys to update:");
+	// ImGui::InputInt("Old key", &visEngine_Trie.oldKeyToUpdateInput);
+	// ImGui::InputInt("New key", &visEngine_Trie.newKeyToUpdateInput);
+
+	// bool updatable = (visEngine_Trie.tree.getNodeKey(visEngine_Trie.oldKeyToUpdateInput) != nullptr);
+	// ImGui::BeginDisabled(!updatable);
+	// if (ImGui::Button("Update")) {
+	// 	visEngine_Trie.keyToRemove = visEngine_Trie.oldKeyToUpdateInput;
+	// 	visEngine_Trie.keyToInsert = visEngine_Trie.newKeyToUpdateInput;
+	// 	visEngine_Trie.visMode = TrieVisMode::UPDATE;
+
+	// 	visEngine_Trie.resetParams();
+	// 	visEngine_Trie.animPaused = false; // Auto un-pause
+
+	// 	// Generate events
+	// 	// visEngine_Trie.update(visEngine_Trie.keyToRemove, visEngine_Trie.keyToInsert);
+	// 	visEngine_Trie.eventList = visEngine_Trie.getEventsUpdate(visEngine_Trie.keyToRemove, visEngine_Trie.keyToInsert);
+	// 	std::cout << "update Trie tree cool" << std::endl; // DEBUG
+	// }
+	// ImGui::EndDisabled();
+	// ImGui::EndDisabled();
+
+
+
+	// const char* items[] = { "Option 1", "Option 2", "Option 3", "Option 4" };
+	// static int current_item = 0;
+	// if (ImGui::BeginCombo("##mycombo", items[current_item])) { // Pass the "current" item name as the preview
+	// 	for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
+	// 		bool is_selected = (current_item == n);
+	// 		if (ImGui::Selectable(items[n], is_selected)) {
+	// 			current_item = n;
+	// 		}
+
+	// 		// Set the initial focus when opening the combo (scrolling + keyboard navigation)
+	// 		if (is_selected) {
+	// 			ImGui::SetItemDefaultFocus();
+	// 		}
+	// 	}
+	// 	ImGui::EndCombo();
+	// }
+	ImGui::End();
+}
+
+
+
+void Program::finishVisTrieScreen() {
+
+}

@@ -5,3 +5,4 @@
 #include "UILayout/VisSLL.h"
 #include "UILayout/VisHashTable.h"
 #include "UILayout/VisAVL.h"
+#include "UILayout/VisTrie.h"

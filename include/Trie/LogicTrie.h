@@ -1,0 +1,78 @@
+#pragma once
+#include "Trie/LogicTrieNode.h"
+#include "Trie/VisualTrieNode.h"
+#include "Trie/TrieAnimStep.h"
+
+
+
+
+
+///// Event (animation step) generator
+class LogicTrie {
+public:
+	LogicTrie();
+	~LogicTrie();
+	LogicTrie(const LogicTrie& other); // Copy constructor
+
+	LogicTrie& operator=(const LogicTrie& other); // assignment op
+
+	LogicTrieNode* root = nullptr;
+	uint64_t currentNodeID = 0;
+
+
+	unsigned int getSize(); // Get size of tree (not O(1))
+	unsigned int countLeaf(); // Get num of leaf nodes (not O(1))
+	LogicTrieNode* newNode(char c);
+
+	// Get node, knowing the ID
+	LogicTrieNode* getNodeKey(int ID);
+	// Print inorder
+	void inorderPrint();
+	// Find min successor node
+	LogicTrieNode* minSuccNode(LogicTrieNode* node, int deleteKey,
+		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
+
+	int minSuccKey = -1; // Minimum successor key placeholder
+
+
+	// Reminders
+	bool snapshotTreeReminder = false; // Snapshot after rotation
+	TrieAnimType animTypeReminder = TrieAnimType::NONE;
+	std::string descriptionReminder = "";
+	// Remind to snapshot tree after insertion/rotation
+	void snapshotTree(int key, std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
+
+
+	///// ANIMATION EVENTS
+	// Returns copy of the whole tree
+	// LogicTrieNode* leftRotate(LogicTrieNode*& node, 
+	// 	std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
+	// LogicTrieNode* rightRotate(LogicTrieNode*& node, 
+	// 	std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
+	LogicTrieNode* generateInsertEvents(LogicTrieNode*& node, int key, 
+		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
+	LogicTrieNode* generateDeleteEvents(LogicTrieNode*& node, int key, 
+		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
+
+
+private:
+	void clear(LogicTrieNode*& node);
+
+	// Helper functions for animation events generation
+	void setSnapshotReminder(TrieAnimType animType, std::string desc);
+	void clearSnapshotReminder();
+
+
+	///// Helper functions (other)
+	LogicTrieNode* copyTree(const LogicTrieNode* node); // Return copy of tree
+
+	unsigned int getSizeHelper(LogicTrieNode* node);
+	void         countLeafHelper(LogicTrieNode* node, unsigned int& totalCnt);
+	// Get node, knowing the key
+	LogicTrieNode* getNodeKeyHelper(int key, LogicTrieNode* node);
+	// Print inorder
+	void inorderPrintHelper(LogicTrieNode* node);
+	// Get minimum node of subtree
+	LogicTrieNode* minValueNode(LogicTrieNode* node, int deleteKey,
+		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
+};

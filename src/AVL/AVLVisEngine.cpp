@@ -647,7 +647,7 @@ void AVLVisEngine::generateRecursiveVisNodePos(std::map<int, VisualAVLNode>& vis
 	layerY++;
 	generateRecursiveVisNodePos(visualNodes, node->left, xPos, dx, layerY);
 	layerY--;
-	visualNodes[node->key] = VisualAVLNode(node->key, 0, node->height,
+	visualNodes[node->key] = VisualAVLNode(node->key, node->height, 
 		sf::Vector2f(originPos.x + xPos, originPos.y + layerY * nodeLayerSpacing)
 	);
 	xPos += dx;
@@ -678,7 +678,7 @@ void AVLVisEngine::drawNode(std::vector<std::unique_ptr<sf::Drawable>>& drawable
 	nodeKeyText->setPosition(nodeCircle->getPosition());
 	nodeKeyText->setPosition(round(nodeKeyText->getPosition()));
 	// Draw height text
-	auto nodeHeightText = std::make_unique<sf::Text>(*fontPtr, std::to_string(visNode.oldHeight), nodeHeightTextFontSize);
+	auto nodeHeightText = std::make_unique<sf::Text>(*fontPtr, std::to_string(visNode.height), nodeHeightTextFontSize);
 	localBounds = nodeHeightText->getLocalBounds();
 	nodeHeightText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
 	nodeHeightText->setFillColor(normalNodeHeightColor);
@@ -745,7 +745,7 @@ void AVLVisEngine::drawLerpNode(std::vector<std::unique_ptr<sf::Drawable>>& draw
 	nodeKeyText->setPosition(nodeCircle->getPosition());
 	nodeKeyText->setPosition(round(nodeKeyText->getPosition()));
 	// Draw height text
-	auto nodeHeightText = std::make_unique<sf::Text>(*fontPtr, std::to_string(visNode1.oldHeight), nodeHeightTextFontSize);
+	auto nodeHeightText = std::make_unique<sf::Text>(*fontPtr, std::to_string(visNode1.height), nodeHeightTextFontSize);
 	localBounds = nodeHeightText->getLocalBounds();
 	nodeHeightText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
 	nodeHeightText->setFillColor(normalNodeHeightColor);

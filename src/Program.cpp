@@ -14,6 +14,7 @@ Program::Program()
 	, visEngine_SLL(window, textFont)
 	, visEngine_Hash(&window, &textFont)
 	, visEngine_AVL(&window, &textFont)
+	, visEngine_Trie(&window, &textFont)
 {
 	window.requestFocus();
 	window.setFramerateLimit(FRAMERATE_LIMIT);
