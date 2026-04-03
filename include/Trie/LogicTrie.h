@@ -52,7 +52,7 @@ public:
 	// 	std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
 	bool generateSearchEvents(std::string word, 
 		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
-	LogicTrieNode* generateInsertEvents(LogicTrieNode*& node, int key, 
+	LogicTrieNode* generateInsertEvents(std::string word, 
 		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
 	LogicTrieNode* generateDeleteEvents(LogicTrieNode*& node, int key, 
 		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);

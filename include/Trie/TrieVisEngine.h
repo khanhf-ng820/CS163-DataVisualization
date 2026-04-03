@@ -150,7 +150,8 @@ private:
 	// Draw lerped tree when inserting a node
 	void drawLerpTreeInsertNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
 		std::map<int, VisualTrieNode>& visualNodes1, LogicTrie& logicTree1,
-		std::map<int, VisualTrieNode>& visualNodes2, LogicTrie& logicTree2);
+		std::map<int, VisualTrieNode>& visualNodes2, LogicTrie& logicTree2,
+		uint64_t nodeInsertID);
 	// Draw lerped tree when deleting a node
 	void drawLerpTreeDeleteNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
 		std::map<int, VisualTrieNode>& visualNodes1, LogicTrie& logicTree1,

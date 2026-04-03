@@ -38,7 +38,7 @@ std::vector<TrieAnimStep> TrieVisEngine::getEventsSearch(std::string word) {
 	oldTreeSnapshots.clear();
 	oldTreeSnapshots.push_back(tree);
 
-	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before searching word: \"" + word + "\"", {}));
+	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before searching word: \"" + word + "\"", {}, 0, 0));
 	tree.generateSearchEvents(word, events, oldTreeSnapshots);
 
 	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
@@ -49,27 +49,25 @@ std::vector<TrieAnimStep> TrieVisEngine::getEventsSearch(std::string word) {
 
 
 
-// // -- INSERTION --
-// std::vector<TrieAnimStep> TrieVisEngine::getEventsInsert(std::string word) {
-// 	std::vector<TrieAnimStep> events;
-// 	oldTreeSnapshots.clear();
-// 	oldTreeSnapshots.push_back(tree);
-// 	tree.inorderPrint(); // DEBUG
+// -- INSERTION --
+std::vector<TrieAnimStep> TrieVisEngine::getEventsInsert(std::string word) {
+	std::vector<TrieAnimStep> events;
+	oldTreeSnapshots.clear();
+	oldTreeSnapshots.push_back(tree);
 
-// 	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before inserting key " + std::to_string(key), {}, key, 0));
-// 	// Insert node into tree and get animation events
-// 	tree.root = tree.generateInsertEvents(tree.root, key, events, oldTreeSnapshots);
-// 	// Remind to snapshot tree after insertion/rotation
-// 	tree.snapshotTree(key, events, oldTreeSnapshots);
+	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before inserting word: \"" + word + "\"", {}, 0, oldTreeSnapshots.size() - 1));
+	// Insert node into tree and get animation events
+	LogicTrieNode* lastInsertedNode = tree.generateInsertEvents(word, events, oldTreeSnapshots);
+	// // Remind to snapshot tree after insertion/rotation
+	// tree.snapshotTree(key, events, oldTreeSnapshots);
 
-// 	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting key " + std::to_string(key), {}, key, -1));
+	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting word: \"" + word + "\"", {}, lastInsertedNode->getID(), -1));
 
-// 	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
-// 	tree.inorderPrint(); // DEBUG
-// 	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
+	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
+	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
 
-// 	return events;
-// }
+	return events;
+}
 
 
 
@@ -197,96 +195,62 @@ void TrieVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>&
 
 
 
-// // --- INSERT MODE ---
-// void TrieVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, TrieAnimStep eventTrie) {
-// 	groupsOldVisualNodes.clear();
-// 	size_t numOfOldTreeSnapshots = oldTreeSnapshots.size();
-// 	groupsOldVisualNodes.resize(numOfOldTreeSnapshots);
-// 	generateAllVisNodePos(visualNodesCur, tree);
-// 	for (int i = 0; i < numOfOldTreeSnapshots; i++) {
-// 		generateAllVisNodePos(groupsOldVisualNodes[i], oldTreeSnapshots[i]);
-// 	}
-// 	std::cerr << "numOfOldTreeSnapshots = " << numOfOldTreeSnapshots << ", "; // DEBUG
+// --- INSERT MODE ---
+void TrieVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, TrieAnimStep eventTrie) {
+	groupsOldVisualNodes.clear();
+	size_t numOfOldTreeSnapshots = oldTreeSnapshots.size();
+	groupsOldVisualNodes.resize(numOfOldTreeSnapshots);
+	generateAllVisNodePos(visualNodesCur, tree);
+	for (int i = 0; i < numOfOldTreeSnapshots; i++) {
+		generateAllVisNodePos(groupsOldVisualNodes[i], oldTreeSnapshots[i]);
+	}
+	std::cerr << "numOfOldTreeSnapshots = " << numOfOldTreeSnapshots << ", "; // DEBUG
 
-// 	std::map<int, VisualTrieNode>& oldVisualNodes =
-// 		(eventTrie.oldTreeSnapshotIndex == -1) ? visualNodesCur : groupsOldVisualNodes[eventTrie.oldTreeSnapshotIndex];
-// 	LogicTrie& oldTreeSnapshot =
-// 		(eventTrie.oldTreeSnapshotIndex == -1) ? tree : oldTreeSnapshots[eventTrie.oldTreeSnapshotIndex];
+	std::map<int, VisualTrieNode>& oldVisualNodes =
+		(eventTrie.oldTreeSnapshotIndex == -1) ? visualNodesCur : groupsOldVisualNodes[eventTrie.oldTreeSnapshotIndex];
+	LogicTrie& oldTreeSnapshot =
+		(eventTrie.oldTreeSnapshotIndex == -1) ? tree : oldTreeSnapshots[eventTrie.oldTreeSnapshotIndex];
 
-// 	// Draw the tree
-// 	switch (eventTrie.type) {
-// 	case TrieAnimType::ROTATE_RIGHT_LL:
-// 	case TrieAnimType::ROTATE_LEFT_RR:
-// 	case TrieAnimType::ROTATE_LEFT_LR:
-// 	case TrieAnimType::ROTATE_RIGHT_LR:
-// 	case TrieAnimType::ROTATE_LEFT_RL:
-// 	case TrieAnimType::ROTATE_RIGHT_RL:
-// 		// Tree rotations animation
-// 		drawLerpTree(drawableList,
-// 			groupsOldVisualNodes[eventTrie.oldTreeSnapshotIndex - 1],
-// 			oldTreeSnapshots[eventTrie.oldTreeSnapshotIndex - 1],
-// 			oldVisualNodes, oldTreeSnapshot
-// 		);
-// 		break;
-// 	case TrieAnimType::INSERT_NODE:
-// 		// Node insertion animation
-// 		drawLerpTreeInsertNode(drawableList,
-// 			groupsOldVisualNodes[eventTrie.oldTreeSnapshotIndex - 1],
-// 			oldTreeSnapshots[eventTrie.oldTreeSnapshotIndex - 1],
-// 			oldVisualNodes, oldTreeSnapshot
-// 		);
-// 		break;
-// 	default:
-// 		drawStillTree(drawableList, oldVisualNodes, oldTreeSnapshot);
-// 	}
+	// Draw the tree
+	switch (eventTrie.type) {
+	case TrieAnimType::INSERT_NODE:
+		// Node insertion animation
+		drawLerpTreeInsertNode(drawableList,
+			groupsOldVisualNodes[eventTrie.oldTreeSnapshotIndex - 1],
+			oldTreeSnapshots[eventTrie.oldTreeSnapshotIndex - 1],
+			oldVisualNodes, oldTreeSnapshot, 
+			eventTrie.curID
+		);
+		break;
+	default:
+		drawStillTree(drawableList, oldVisualNodes, oldTreeSnapshot);
+	}
 
-// 	// Draw highlighting circle
-// 	switch (eventTrie.type) {
-// 	case TrieAnimType::HIGHLIGHT_NODE:
-// 	case TrieAnimType::HIGHLIGHT_NODE_UPDATE_HEIGHT:
-// 		drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
-// 		break;
-// 	case TrieAnimType::HIGHLIGHT_FOUND_NODE:
-// 	// case TrieAnimType::INSERT_NODE: // Highlight inserted node when at inserting event
-// 		drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, true);
-// 		break;
-// 	case TrieAnimType::MOVE_HIGHLIGHT_LEFT_DOWN:
-// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->left)
-// 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->left->key].position, fract(time)),
-// 				false);
-// 		else
-// 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
-// 		break;
-// 	case TrieAnimType::MOVE_HIGHLIGHT_LEFT_UP:
-// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->left)
-// 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->left->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
-// 				false);
-// 		else
-// 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
-// 		break;
-// 	case TrieAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN:
-// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->right)
-// 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->right->key].position, fract(time)),
-// 				false);
-// 		else
-// 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
-// 		break;
-// 	case TrieAnimType::MOVE_HIGHLIGHT_RIGHT_UP:
-// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->right)
-// 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->right->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
-// 				false);
-// 		else
-// 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
-// 		break;
-// 	case TrieAnimType::NONE:
-// 	default:
-// 		break;
-// 	}
-// }
+	// Draw highlighting circle
+	switch (eventTrie.type) {
+	case TrieAnimType::HIGHLIGHT_NODE:
+		drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
+		break;
+	case TrieAnimType::HIGHLIGHT_FOUND_NODE:
+	// case TrieAnimType::INSERT_NODE: // Highlight inserted node when at inserting event
+		drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, true);
+		break;
+	case TrieAnimType::MOVE_HIGHLIGHT_DOWN:
+		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->getChild(eventTrie.charLink)) {
+			drawHighlightCircle(drawableList,
+				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, 
+							  oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->getChild(eventTrie.charLink)->getID()].position, 
+							  fract(time)),
+				false);
+		} else {
+			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
+		}
+		break;
+	case TrieAnimType::NONE:
+	default:
+		break;
+	}
+}
 
 
 
@@ -570,10 +534,10 @@ void TrieVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 
 
 
-	// if (visMode == TrieVisMode::INSERT) {
-	// 	// INSERT MODE
-	// 	addNodeDrawablesInsert(drawableList, eventTrie);
-	// 	// drawPseudocodeWindow(eventTrie);
+	if (visMode == TrieVisMode::INSERT) {
+		// INSERT MODE
+		addNodeDrawablesInsert(drawableList, eventTrie);
+		// drawPseudocodeWindow(eventTrie);
 	// } else if (visMode == TrieVisMode::REMOVE) {
 	// 	// REMOVE MODE
 	// 	addNodeDrawablesDelete(drawableList, eventTrie);
@@ -582,11 +546,11 @@ void TrieVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 	// 	// UPDATE MODE
 	// 	addNodeDrawablesUpdate(drawableList, eventTrie);
 	// 	// drawPseudocodeWindow(eventTrie);
-	// } else {
+	} else {
 		// SEARCH MODE
 		addNodeDrawables(drawableList, eventTrie);
 		// drawPseudocodeWindow(eventTrie);
-	// }
+	}
 
 
 
@@ -756,14 +720,14 @@ void TrieVisEngine::drawLerpNode(std::vector<std::unique_ptr<sf::Drawable>>& dra
 	nodeCircle->setOutlineThickness(nodeOutlineThickness);
 	nodeCircle->setPosition(easeInOutLerp(visNode1.position, visNode2.position, fract(time)));
 	// Draw key text
-	auto nodeKeyText = std::make_unique<sf::Text>(*fontPtr, std::to_string(visNode1.key), nodeKeyTextFontSize);
+	auto nodeKeyText = std::make_unique<sf::Text>(*fontPtr, std::string(1, visNode1.key), nodeKeyTextFontSize);
 	sf::FloatRect localBounds = nodeKeyText->getLocalBounds();
 	nodeKeyText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
 	nodeKeyText->setFillColor(normalNodeKeyColor);
 	nodeKeyText->setPosition(nodeCircle->getPosition());
 	nodeKeyText->setPosition(round(nodeKeyText->getPosition()));
 	// // Draw height text
-	// auto nodeHeightText = std::make_unique<sf::Text>(*fontPtr, std::to_string(visNode1.height), nodeHeightTextFontSize);
+	// auto nodeHeightText = std::make_unique<sf::Text>(*fontPtr, std::to_string(visNode.height), nodeHeightTextFontSize);
 	// localBounds = nodeHeightText->getLocalBounds();
 	// nodeHeightText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
 	// nodeHeightText->setFillColor(normalNodeHeightColor);
@@ -775,46 +739,45 @@ void TrieVisEngine::drawLerpNode(std::vector<std::unique_ptr<sf::Drawable>>& dra
 	// drawableList.push_back(std::move(nodeHeightText));
 }
 
-// // Draw lerped tree edges (arrows)
-// void TrieVisEngine::drawLerpTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicTrieNode* root,
-// 	std::map<int, VisualTrieNode>& visualNodes1, std::map<int, VisualTrieNode>& visualNodes2) {
-// 	if (!root) return;
-// 	drawLerpTreeEdges(drawableList, root->left, visualNodes1, visualNodes2);
-// 	drawLerpTreeEdges(drawableList, root->right, visualNodes1, visualNodes2);
-// 	if (root->left) {
-// 		sf::Vector2f start = easeInOutLerp(visualNodes1[root->key].position, visualNodes2[root->key].position, fract(time));
-// 		sf::Vector2f end = easeInOutLerp(visualNodes1[root->left->key].position, visualNodes2[root->left->key].position, fract(time));
-// 		drawNodeArrow(drawableList, start, end);
-// 	}
-// 	if (root->right) {
-// 		sf::Vector2f start = easeInOutLerp(visualNodes1[root->key].position, visualNodes2[root->key].position, fract(time));
-// 		sf::Vector2f end = easeInOutLerp(visualNodes1[root->right->key].position, visualNodes2[root->right->key].position, fract(time));
-// 		drawNodeArrow(drawableList, start, end);
-// 	}
-// }
+// Draw lerped tree edges (arrows)
+void TrieVisEngine::drawLerpTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicTrieNode* root,
+	std::map<int, VisualTrieNode>& visualNodes1, std::map<int, VisualTrieNode>& visualNodes2) {
+	if (!root) return;
+	for (int i = 0; i < TRIE_ALPHABET_SIZE; i++)
+		drawLerpTreeEdges(drawableList, root->children[i], visualNodes1, visualNodes2);
+	for (int i = 0; i < TRIE_ALPHABET_SIZE; i++) {
+		if (!root->children[i]) continue;
+		sf::Vector2f start = easeInOutLerp(visualNodes1[root->getID()].position, visualNodes2[root->getID()].position, fract(time));
+		sf::Vector2f end = easeInOutLerp(visualNodes1[root->children[i]->getID()].position, 
+										 visualNodes2[root->children[i]->getID()].position, 
+										 fract(time));
+		drawNodeArrow(drawableList, start, end);
+	}
+}
 
-// // Draw lerped tree (nodes and edges)
-// void TrieVisEngine::drawLerpTree(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
-// 	std::map<int, VisualTrieNode>& visualNodes1, LogicTrie& logicTree1,
-// 	std::map<int, VisualTrieNode>& visualNodes2, LogicTrie& logicTree2) {
-// 	drawLerpTreeEdges(drawableList, logicTree2.root, visualNodes1, visualNodes2);
-// 	for (const auto& [key, visNode2] : visualNodes2) {
-// 		drawLerpNode(drawableList, visualNodes1[key], visNode2);
-// 	}
-// }
+// Draw lerped tree (nodes and edges)
+void TrieVisEngine::drawLerpTree(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
+	std::map<int, VisualTrieNode>& visualNodes1, LogicTrie& logicTree1,
+	std::map<int, VisualTrieNode>& visualNodes2, LogicTrie& logicTree2) {
+	drawLerpTreeEdges(drawableList, logicTree2.root, visualNodes1, visualNodes2);
+	for (const auto& [ID, visNode2] : visualNodes2) {
+		drawLerpNode(drawableList, visualNodes1[ID], visNode2);
+	}
+}
 
-// // Draw lerped tree when inserting a node
-// void TrieVisEngine::drawLerpTreeInsertNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
-// 	std::map<int, VisualTrieNode>& visualNodes1, LogicTrie& logicTree1,
-// 	std::map<int, VisualTrieNode>& visualNodes2, LogicTrie& logicTree2) {
-// 	LogicTrie logicTreeBefore = logicTree2;
-// 	std::map<int, VisualTrieNode> visualNodesBefore = visualNodes2;
-// 	for (const auto& [key, visNode1] : visualNodes1) {
-// 		visualNodesBefore[key].position = visNode1.position;
-// 	}
-// 	visualNodesBefore[keyToInsert].position = originPos + newNodeStartPos;
-// 	drawLerpTree(drawableList, visualNodesBefore, logicTreeBefore, visualNodes2, logicTree2);
-// }
+// Draw lerped tree when inserting a node
+void TrieVisEngine::drawLerpTreeInsertNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
+	std::map<int, VisualTrieNode>& visualNodes1, LogicTrie& logicTree1,
+	std::map<int, VisualTrieNode>& visualNodes2, LogicTrie& logicTree2,
+	uint64_t nodeInsertID) {
+	LogicTrie logicTreeBefore = logicTree2;
+	std::map<int, VisualTrieNode> visualNodesBefore = visualNodes2;
+	for (const auto& [ID, visNode1] : visualNodes1) {
+		visualNodesBefore[ID].position = visNode1.position;
+	}
+	visualNodesBefore[nodeInsertID].position = originPos + newNodeStartPos;
+	drawLerpTree(drawableList, visualNodesBefore, logicTreeBefore, visualNodes2, logicTree2);
+}
 
 // // Draw lerped tree when deleting a node
 // void TrieVisEngine::drawLerpTreeDeleteNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
