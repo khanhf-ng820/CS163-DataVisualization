@@ -157,7 +157,7 @@ void Program::displayVisTrieScreenGUI() {
 	}
 	ImGui::EndDisabled();
 	ImGui::SameLine();
-	if (ImGui::Button("Pause/Unpause")) {
+	if (ImGui::Button(visEngine_Trie.animPaused ? "Play" : "Pause")) {
 		visEngine_Trie.animPaused = !visEngine_Trie.animPaused;
 		visEngine_Trie.targetTime = visEngine_Trie.time;
 	}
@@ -173,10 +173,6 @@ void Program::displayVisTrieScreenGUI() {
 		visEngine_Trie.skipToFinalState();
 	}
 	ImGui::EndDisabled();
-	if (visEngine_Trie.animPaused) {
-		// ImGui::SameLine();
-		ImGui::Text("Paused");
-	}
 
 	ImGui::Separator();
 

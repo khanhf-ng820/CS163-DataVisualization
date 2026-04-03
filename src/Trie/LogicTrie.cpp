@@ -133,7 +133,7 @@ LogicTrieNode* LogicTrie::generateInsertEvents(std::string word, std::vector<Tri
 
 	for (const char& c : word) {
 		if (node->getChild(c) == nullptr) {
-			std::string eventDescription = "Child \'" + std::string(1, c) + "\' does not exist. Creating child " + std::string(1, c);
+			std::string eventDescription = "Child \'" + std::string(1, c) + "\' does not exist. Creating child \'" + std::string(1, c) + "\'";
 			events.push_back(TrieAnimStep(TrieAnimType::NONE, eventDescription, {}, node->getID(), treeSnapshots.size() - 1));
 
 			node->getChild(c) = newNode(c);

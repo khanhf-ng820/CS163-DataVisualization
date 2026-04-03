@@ -274,7 +274,7 @@ void Program::displayVisSLLScreenGUI() {
 	}
 	ImGui::EndDisabled();
 	ImGui::SameLine();
-	if (ImGui::Button("Pause/Unpause")) {
+	if (ImGui::Button(visEngine_SLL.animPaused ? "Play" : "Pause")) {
 		visEngine_SLL.animPaused = !visEngine_SLL.animPaused;
 		visEngine_SLL.targetTime = visEngine_SLL.time;
 	}
@@ -290,12 +290,11 @@ void Program::displayVisSLLScreenGUI() {
 		visEngine_SLL.skipToFinalState();
 	}
 	ImGui::EndDisabled();
-	if (visEngine_SLL.animPaused) {
-		// ImGui::SameLine();
-		ImGui::Text("Paused");
-	}
 
 	ImGui::Separator();
+
+
+
 
 	// -- SEARCH OPERATION --
 	ImGui::BeginDisabled(visEngine_SLL.animInProgress);

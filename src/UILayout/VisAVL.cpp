@@ -157,7 +157,7 @@ void Program::displayVisAVLScreenGUI() {
 	}
 	ImGui::EndDisabled();
 	ImGui::SameLine();
-	if (ImGui::Button("Pause/Unpause")) {
+	if (ImGui::Button(visEngine_AVL.animPaused ? "Play" : "Pause")) {
 		visEngine_AVL.animPaused = !visEngine_AVL.animPaused;
 		visEngine_AVL.targetTime = visEngine_AVL.time;
 	}
@@ -173,12 +173,9 @@ void Program::displayVisAVLScreenGUI() {
 		visEngine_AVL.skipToFinalState();
 	}
 	ImGui::EndDisabled();
-	if (visEngine_AVL.animPaused) {
-		// ImGui::SameLine();
-		ImGui::Text("Paused");
-	}
 
 	ImGui::Separator();
+
 
 
 	// -- SEARCH OPERATION --

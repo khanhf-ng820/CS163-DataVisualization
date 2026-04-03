@@ -715,7 +715,7 @@ void TrieVisEngine::drawLerpNode(std::vector<std::unique_ptr<sf::Drawable>>& dra
 	// Draw circle
 	auto nodeCircle = std::make_unique<sf::CircleShape>(nodeCircleRadius);
 	nodeCircle->setOrigin({nodeCircle->getRadius(), nodeCircle->getRadius()}); 
-	nodeCircle->setFillColor(sf::Color::Transparent);
+	nodeCircle->setFillColor(visNode1.isEndOfWord ? normalNodeEOW_BGColor : sf::Color::Transparent);
 	nodeCircle->setOutlineColor(normalNodeColor);
 	nodeCircle->setOutlineThickness(nodeOutlineThickness);
 	nodeCircle->setPosition(easeInOutLerp(visNode1.position, visNode2.position, fract(time)));

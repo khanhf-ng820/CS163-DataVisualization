@@ -157,7 +157,7 @@ void Program::displayVisHashScreenGUI() {
 	}
 	ImGui::EndDisabled();
 	ImGui::SameLine();
-	if (ImGui::Button("Pause/Unpause")) {
+	if (ImGui::Button(visEngine_Hash.animPaused ? "Play" : "Pause")) {
 		visEngine_Hash.animPaused = !visEngine_Hash.animPaused;
 		visEngine_Hash.targetTime = visEngine_Hash.time;
 	}
@@ -173,10 +173,6 @@ void Program::displayVisHashScreenGUI() {
 		visEngine_Hash.skipToFinalState();
 	}
 	ImGui::EndDisabled();
-	if (visEngine_Hash.animPaused) {
-		// ImGui::SameLine();
-		ImGui::Text("Paused");
-	}
 
 	ImGui::Separator();
 
