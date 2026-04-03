@@ -31,6 +31,7 @@ enum class TrieVisMode {
 class TrieVisEngine : public AnimPlayer {
 public:
 	TrieVisEngine(sf::RenderWindow* window, sf::Font* font); // Empty, size 0 Trie tree
+	~TrieVisEngine(); // Delete all dynamically allocated memory
 
 	// Reset all properties to get ready for visualize new action
 	void resetParams();
@@ -57,19 +58,20 @@ public:
 
 
 	///// Parameters for Input in ImGui
-	int keyToSearch = -1;      // Searching
-	int keyToSearchInput = 0;
+	constexpr static size_t TEXT_INPUT_BUF_SIZE = 64;
+	std::string wordToSearch;      // Searching
+	char*       wordToSearchInput = new char[TEXT_INPUT_BUF_SIZE];
 
-	int keyToInsert = -1;      // Inserting
-	int keyToInsertInput = 0;
+	std::string wordToInsert;      // Inserting
+	char*       wordToInsertInput = new char[TEXT_INPUT_BUF_SIZE];
 
-	int keyToRemove = -1;      // Removing
-	int keyToRemoveInput = 0;
+	std::string wordToRemove;      // Removing
+	char*       wordToRemoveInput = new char[TEXT_INPUT_BUF_SIZE];
 
-	int oldKeyToUpdate = -1;      // Updating
-	int oldKeyToUpdateInput = 0;
-	int newKeyToUpdate = -1;
-	int newKeyToUpdateInput = 0;
+	std::string oldWordToUpdate;      // Updating
+	char*       oldWordToUpdateInput = new char[TEXT_INPUT_BUF_SIZE];
+	std::string newWordToUpdate;
+	char*       newWordToUpdateInput = new char[TEXT_INPUT_BUF_SIZE];
 
 
 	// Methods and properties for animating steps
@@ -77,10 +79,10 @@ public:
 
 
 	///// ALGORITHMS
-	std::vector<TrieAnimStep> getEventsSearch(int key);
-	std::vector<TrieAnimStep> getEventsInsert(int key);
-	std::vector<TrieAnimStep> getEventsDelete(int key);
-	std::vector<TrieAnimStep> getEventsUpdate(int oldKey, int newKey);
+	std::vector<TrieAnimStep> getEventsSearch(std::string word);
+	std::vector<TrieAnimStep> getEventsInsert(std::string word);
+	std::vector<TrieAnimStep> getEventsDelete(std::string word);
+	std::vector<TrieAnimStep> getEventsUpdate(std::string oldWord, std::string newWord);
 
 
 	LogicTrie tree; // Final state of tree
@@ -96,18 +98,18 @@ public:
 	static constexpr sf::Vector2f newNodeStartPos       = {50, 50};
 	static constexpr sf::Vector2f descriptionTextPos    = {50, 10};
 	static constexpr int          descriptionFontSize   = 15;
-	static constexpr float        nodeCircleRadius      = 25;
+	static constexpr float        nodeCircleRadius      = 20;
 	static constexpr float        nodeOutlineThickness  = 2;
 	static constexpr int          nodeKeyTextFontSize   = 15;
 	static constexpr int          nodeHeightTextFontSize = 12;
-	static constexpr float        nodeLayerSpacing      = 100;
+	static constexpr float        nodeLayerSpacing      = 60;
 	static constexpr float        highlightCircleThickness = 5;
 	static constexpr float        arrowHeadSideLen      = 8;
 	static constexpr float        canvasLeftMargin      = 100;
 
 	static constexpr sf::Color    normalNodeColor         = sf::Color::Black;
 	static constexpr sf::Color    normalNodeKeyColor      = sf::Color::Blue;
-	static constexpr sf::Color    normalNodeHeightColor   = sf::Color(6, 64, 43, 255);
+	static constexpr sf::Color    normalNodeEOW_BGColor   = sf::Color(144, 238, 144, 127);
 	static constexpr sf::Color    highlightCircleColor    = sf::Color::Green;
 	static constexpr sf::Color    highlightFoundCircleColor = sf::Color::Red;
 

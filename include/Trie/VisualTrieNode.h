@@ -13,11 +13,13 @@
 class VisualTrieNode {
 public:
 	VisualTrieNode();
-	explicit VisualTrieNode(uint64_t id, char key);
-	VisualTrieNode(uint64_t id, char key, sf::Vector2f position);
+	VisualTrieNode(uint64_t id, char key, bool isEndOfWord);
+	VisualTrieNode(uint64_t id, char key, bool isEndOfWord, sf::Vector2f position);
 
 	uint64_t getID() const;
 	char key = 'a';
+	bool isEndOfWord = false;
+
 	sf::Vector2f position = {0, 0};
 
 private:

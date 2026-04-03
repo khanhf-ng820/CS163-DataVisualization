@@ -5,12 +5,17 @@
 LogicTrie::LogicTrie() {
 	///// EXAMPLE TREE
 	///// ONLY FOR TESTING, WILL DELETE LATER
-	root = nullptr;
+	// root = newNode('-');
 
-	root = newNode('a');
-	root->getChild('p') = newNode('p');
-	root->getChild('p')->getChild('p') = newNode('p');
-	root->getChild('p')->getChild('t') = newNode('t');
+	// Inserts 'apt', 'apps', 'apple'
+	root = newNode('-');
+	root->getChild('a') = newNode('a');
+	root->getChild('a')->getChild('p') = newNode('p');
+	root->getChild('a')->getChild('p')->getChild('p') = newNode('p');
+	root->getChild('a')->getChild('p')->getChild('t') = newNode('t', true);
+	root->getChild('a')->getChild('p')->getChild('p')->getChild('s') = newNode('s', true);
+	root->getChild('a')->getChild('p')->getChild('p')->getChild('l') = newNode('l');
+	root->getChild('a')->getChild('p')->getChild('p')->getChild('l')->getChild('e') = newNode('e', true);
 }
 
 LogicTrie::~LogicTrie() {
@@ -39,6 +44,11 @@ LogicTrieNode* LogicTrie::newNode(char c) {
 	return new LogicTrieNode(currentNodeID++, c);
 }
 
+LogicTrieNode* LogicTrie::newNode(char c, bool isEndOfWord) {
+	return new LogicTrieNode(currentNodeID++, c, isEndOfWord);
+}
+
+
 unsigned int LogicTrie::getSize() {
 	return getSizeHelper(root);
 }
@@ -49,10 +59,10 @@ unsigned int LogicTrie::countLeaf() {
 	return totalCnt;
 }
 
-// // Get node, knowing the key
-// LogicTrieNode* LogicTrie::getNodeKey(int key) {
-// 	return getNodeKeyHelper(key, root);
-// }
+// Get node, knowing the ID
+LogicTrieNode* LogicTrie::getNodeID(uint64_t ID) {
+	return getNodeIDHelper(ID, root);
+}
 
 // // Print inorder
 // void LogicTrie::inorderPrint() {
@@ -71,8 +81,8 @@ unsigned int LogicTrie::countLeaf() {
 
 
 
-// ///// ANIMATION EVENTS
-// // Remind to snapshot tree after insertion/rotation
+///// ANIMATION EVENTS /////
+// Remind to snapshot tree after each insertion/rotation
 // void LogicTrie::snapshotTree(int key, std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots) {
 // 	if (snapshotTreeReminder) {
 // 		treeSnapshots.push_back(*this);
@@ -85,27 +95,33 @@ unsigned int LogicTrie::countLeaf() {
 // }
 
 
-// LogicTrieNode* LogicTrie::leftRotate(LogicTrieNode*& node, std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots) {
-// 	LogicTrieNode* rightChild = node->right;
-// 	LogicTrieNode* rightleftChild = rightChild->left;
-// 	rightChild->left = node;
-// 	node->right = rightleftChild;
-// 	setHeight(node);
-// 	setHeight(rightChild);
-// 	// treeSnapshots.push_back(*this);
-// 	return rightChild;
-// }
+// -- SEARCHING --
+bool LogicTrie::generateSearchEvents(std::string word, std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots) {
+	LogicTrieNode* node = root;
+	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Looking at root node", {}, root->getID()));
 
-// LogicTrieNode* LogicTrie::rightRotate(LogicTrieNode*& node, std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots) {
-// 	LogicTrieNode* leftChild = node->left;
-// 	LogicTrieNode* leftrightChild = leftChild->right;
-// 	leftChild->right = node;
-// 	node->left = leftrightChild;
-// 	setHeight(node);
-// 	setHeight(leftChild);
-// 	// treeSnapshots.push_back(*this);
-// 	return leftChild;
-// }
+	for (const char& c : word) {
+		if (node->getChild(c) == nullptr) {
+			events.push_back(TrieAnimStep(TrieAnimType::NONE, "Child " + std::string(1, c) + " does not exist. Word does not exist.", {}, node->getID()));
+			return false;
+		}
+		if (node != root) {
+			events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Looking at node " + std::string(1, node->key), {}, node->getID()));
+		}
+		events.push_back(TrieAnimStep(TrieAnimType::MOVE_HIGHLIGHT_DOWN, "Going down to " + std::string(1, c) + " child", {}, node->getID()));
+		events.back().charLink = c;
+
+		node = node->getChild(c);
+	}
+
+	if (node->isEndOfWord) {
+		events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Found node " + std::string(1, node->key) + ", reached end of string, isEndOfWord is true. Word found.", {}, node->getID()));
+	} else {
+		events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Found node " + std::string(1, node->key) + ", reached end of string, isEndOfWord is false. Word does not exist.", {}, node->getID()));
+	}
+
+	return node->isEndOfWord;
+}
 
 
 
@@ -361,15 +377,16 @@ void LogicTrie::countLeafHelper(LogicTrieNode* node, unsigned int& totalCnt) {
 	if (isLeaf) totalCnt++;
 }
 
-// // Get node, knowing the key
-// LogicTrieNode* LogicTrie::getNodeKeyHelper(int key, LogicTrieNode* node) {
-// 	if (!node) return nullptr;
-// 	if (node->key > key) {
-// 		return getNodeKeyHelper(key, node->left);
-// 	} else if (node->key < key) {
-// 		return getNodeKeyHelper(key, node->right);
-// 	} else return node;
-// }
+// Get node, knowing the ID
+LogicTrieNode* LogicTrie::getNodeIDHelper(uint64_t ID, LogicTrieNode* node) {
+	if (!node) return nullptr;
+	if (node->getID() == ID) return node;
+	for (int i = 0; i < TRIE_ALPHABET_SIZE; i++) {
+		LogicTrieNode* result = getNodeIDHelper(ID, node->children[i]);
+		if (result) return result;
+	}
+	return nullptr;
+}
 
 // // Print inorder
 // void LogicTrie::inorderPrintHelper(LogicTrieNode* node) {

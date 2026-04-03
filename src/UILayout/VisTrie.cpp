@@ -29,27 +29,27 @@ void Program::displayVisTrieScreenSFML() {
 		if (!visEngine_Trie.animPaused)
 			visEngine_Trie.increaseTime();
 		break;
-	// // ----- SEARCH MODE -----
-	// case TrieVisMode::SEARCH:
-	// 	// visEngine_Trie.eventList = visEngine_Trie.getEventsSearch(visEngine_Trie.keyToSearch);
-	// 	visEngine_Trie.createDrawables(
-	// 		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
-	// 	);
-	// 	sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
+	// ----- SEARCH MODE -----
+	case TrieVisMode::SEARCH:
+		// visEngine_Trie.eventList = visEngine_Trie.getEventsSearch(visEngine_Trie.keyToSearch);
+		visEngine_Trie.createDrawables(
+			sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
 
-	// 	// If not paused, just increase / decrease time
-	// 	if (visEngine_Trie.animPaused) {
-	// 		if (visEngine_Trie.time < visEngine_Trie.targetTime) {
-	// 			visEngine_Trie.increaseTime();
-	// 			visEngine_Trie.time = std::min(visEngine_Trie.time, visEngine_Trie.targetTime);
-	// 		} else if (visEngine_Trie.time > visEngine_Trie.targetTime) {
-	// 			visEngine_Trie.decreaseTime();
-	// 			visEngine_Trie.time = std::max(visEngine_Trie.time, visEngine_Trie.targetTime);
-	// 		}
-	// 	} else {
-	// 		visEngine_Trie.increaseTime();
-	// 	}
-	// 	break;
+		// If not paused, just increase / decrease time
+		if (visEngine_Trie.animPaused) {
+			if (visEngine_Trie.time < visEngine_Trie.targetTime) {
+				visEngine_Trie.increaseTime();
+				visEngine_Trie.time = std::min(visEngine_Trie.time, visEngine_Trie.targetTime);
+			} else if (visEngine_Trie.time > visEngine_Trie.targetTime) {
+				visEngine_Trie.decreaseTime();
+				visEngine_Trie.time = std::max(visEngine_Trie.time, visEngine_Trie.targetTime);
+			}
+		} else {
+			visEngine_Trie.increaseTime();
+		}
+		break;
 	// // ----- INSERT MODE -----
 	// case TrieVisMode::INSERT:
 	// 	// visEngine_Trie.eventList = visEngine_Trie.getEventsInsert(visEngine_Trie.keyToInsert);
@@ -181,27 +181,30 @@ void Program::displayVisTrieScreenGUI() {
 	ImGui::Separator();
 
 
-	// // -- SEARCH OPERATION --
-	// ImGui::BeginDisabled(visEngine_Trie.animInProgress);
-	// ImGui::Text("Enter key of slot to search:");
-	// ImGui::InputInt("Key to search", &visEngine_Trie.keyToSearchInput);
-	// // float f;
-	// // ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+	// -- SEARCH OPERATION --
+	ImGui::BeginDisabled(visEngine_Trie.animInProgress);
+	ImGui::Text("Enter word to search (lowercase a-z):");
+	// float f;
+	// ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+	ImGui::InputText("Word to search", visEngine_Trie.wordToSearchInput, 
+		sizeof(visEngine_Trie.wordToSearchInput),
+		ImGuiInputTextFlags_CallbackCharFilter,
+		FilterCallbackLowercaseAZ);
 
-	// if (ImGui::Button("Search")) {
-	// 	visEngine_Trie.keyToSearch = visEngine_Trie.keyToSearchInput;
-	// 	visEngine_Trie.visMode = TrieVisMode::SEARCH;
+	if (ImGui::Button("Search")) {
+		visEngine_Trie.wordToSearch = visEngine_Trie.wordToSearchInput;
+		visEngine_Trie.visMode = TrieVisMode::SEARCH;
 
-	// 	visEngine_Trie.resetParams();
-	// 	visEngine_Trie.animPaused = false; // Auto un-pause
+		visEngine_Trie.resetParams();
+		visEngine_Trie.animPaused = false; // Auto un-pause
 
-	// 	// Generate events
-	// 	visEngine_Trie.eventList = visEngine_Trie.getEventsSearch(visEngine_Trie.keyToSearch);
-	// 	std::cout << "search Trie tree cool, " << visEngine_Trie.eventList.size() << " events" << std::endl; // DEBUG
-	// }
-	// ImGui::EndDisabled();
+		// Generate events
+		visEngine_Trie.eventList = visEngine_Trie.getEventsSearch(visEngine_Trie.wordToSearch);
+		std::cout << "search Trie tree cool, " << visEngine_Trie.eventList.size() << " events" << std::endl; // DEBUG
+	}
+	ImGui::EndDisabled();
 
-	// ImGui::Separator();
+	ImGui::Separator();
 
 
 	// // -- INSERT OPERATION --

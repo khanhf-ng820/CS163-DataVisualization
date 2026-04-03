@@ -23,9 +23,10 @@ public:
 	unsigned int getSize(); // Get size of tree (not O(1))
 	unsigned int countLeaf(); // Get num of leaf nodes (not O(1))
 	LogicTrieNode* newNode(char c);
+	LogicTrieNode* newNode(char c, bool isEndOfWord);
 
 	// Get node, knowing the ID
-	LogicTrieNode* getNodeKey(int ID);
+	LogicTrieNode* getNodeID(uint64_t ID);
 	// Print inorder
 	void inorderPrint();
 	// Find min successor node
@@ -49,6 +50,8 @@ public:
 	// 	std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
 	// LogicTrieNode* rightRotate(LogicTrieNode*& node, 
 	// 	std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
+	bool generateSearchEvents(std::string word, 
+		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
 	LogicTrieNode* generateInsertEvents(LogicTrieNode*& node, int key, 
 		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
 	LogicTrieNode* generateDeleteEvents(LogicTrieNode*& node, int key, 
@@ -68,8 +71,8 @@ private:
 
 	unsigned int getSizeHelper(LogicTrieNode* node);
 	void         countLeafHelper(LogicTrieNode* node, unsigned int& totalCnt);
-	// Get node, knowing the key
-	LogicTrieNode* getNodeKeyHelper(int key, LogicTrieNode* node);
+	// Get node, knowing the ID (helper function)
+	LogicTrieNode* getNodeIDHelper(uint64_t ID, LogicTrieNode* node);
 	// Print inorder
 	void inorderPrintHelper(LogicTrieNode* node);
 	// Get minimum node of subtree

@@ -15,7 +15,7 @@
 class LogicTrieNode {
 public:
 	LogicTrieNode();
-	explicit LogicTrieNode(uint64_t id, char key);
+	LogicTrieNode(uint64_t id, char key);
 	LogicTrieNode(uint64_t id, char key, bool isEndOfWord);
 	explicit LogicTrieNode(const LogicTrieNode*& node);
 

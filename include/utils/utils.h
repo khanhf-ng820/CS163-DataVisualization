@@ -18,7 +18,7 @@ static inline constexpr float EPSILON_TIME = 1e-6;
 
 
 
-// Math / Vector utility functions
+// Math / sf::Vector utility functions
 inline const float fract(float f) { return f - floor(f); }
 
 inline const sf::Vector2f round(sf::Vector2f vec) {
@@ -53,6 +53,9 @@ inline const std::string trim(const std::string& str) {
 
 
 
+
+
+// std::vector utility functions
 inline const bool vecContains(std::vector<int> vec, int str) {
 	return std::find(vec.begin(), vec.end(), str) != vec.end();
 }

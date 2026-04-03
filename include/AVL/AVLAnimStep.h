@@ -44,7 +44,7 @@ public:
 	bool hasCurKey = false; // Whether anim step considers the current node
 	int curKey = -1; // Key of current node (highlighted node)
 	int oldTreeSnapshotIndex = -1; // Index of old tree snapshot
-	// (if transitioning from tree index A to B, the int is B)
+	// (if transitioning from tree index A to B, the variable is B)
 	// (-1 means current tree)
 
 	// Whether this step happens at/after when copying minimum successor node

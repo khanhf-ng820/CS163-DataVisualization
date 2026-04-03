@@ -8,6 +8,15 @@ TrieVisEngine::TrieVisEngine(sf::RenderWindow* window, sf::Font* font)
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {}
 
+// Delete all dynamically allocated memory
+TrieVisEngine::~TrieVisEngine() {
+	delete[] wordToSearchInput;
+	delete[] wordToInsertInput;
+	delete[] wordToRemoveInput;
+	delete[] oldWordToUpdateInput;
+	delete[] newWordToUpdateInput;
+}
+
 
 
 
@@ -22,39 +31,26 @@ void TrieVisEngine::resetParams() {
 
 
 
-// ///// --- LOGICAL ALGORITHMS AND EVENTS --- /////
-// // -- SEARCHING --
-// void TrieVisEngine::getEventsSearchStep(std::vector<TrieAnimStep>& events, LogicTrieNode* root, int key) {
-// 	if (!root) {
-// 		events.push_back(TrieAnimStep(TrieAnimType::NONE, "Found null node, element not found.", {}));
-// 		return;
-// 	}
-// 	if (root->key == key) {
-// 		events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(root->key), {}, root->key));
-// 		events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Found element " + std::to_string(key), {}, root->key));
-// 		return;
-// 	} else if (root->key > key) {
-// 		events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(root->key), {}, root->key));
-// 		events.push_back(TrieAnimStep(TrieAnimType::MOVE_HIGHLIGHT_LEFT_DOWN, "Looking at left subtree of node " + std::to_string(root->key), {}, root->key));
-// 		getEventsSearchStep(events, root->left, key);
-// 	} else {
-// 		events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(root->key), {}, root->key));
-// 		events.push_back(TrieAnimStep(TrieAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN, "Looking at right subtree of node " + std::to_string(root->key), {}, root->key));
-// 		getEventsSearchStep(events, root->right, key);
-// 	}
-// }
+///// --- LOGICAL ALGORITHMS AND EVENTS --- /////
+// -- SEARCHING --
+std::vector<TrieAnimStep> TrieVisEngine::getEventsSearch(std::string word) {
+	std::vector<TrieAnimStep> events;
+	oldTreeSnapshots.clear();
+	oldTreeSnapshots.push_back(tree);
 
-// std::vector<TrieAnimStep> TrieVisEngine::getEventsSearch(int key) {
-// 	std::vector<TrieAnimStep> events;
-// 	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before searching key " + std::to_string(key), {}));
-// 	getEventsSearchStep(events, tree.root, key);
-// 	return events;
-// }
+	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before searching word: \"" + word + "\"", {}));
+	tree.generateSearchEvents(word, events, oldTreeSnapshots);
+
+	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
+	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
+
+	return events;
+}
 
 
 
 // // -- INSERTION --
-// std::vector<TrieAnimStep> TrieVisEngine::getEventsInsert(int key) {
+// std::vector<TrieAnimStep> TrieVisEngine::getEventsInsert(std::string word) {
 // 	std::vector<TrieAnimStep> events;
 // 	oldTreeSnapshots.clear();
 // 	oldTreeSnapshots.push_back(tree);
@@ -78,7 +74,7 @@ void TrieVisEngine::resetParams() {
 
 
 // // -- DELETION --
-// std::vector<TrieAnimStep> TrieVisEngine::getEventsDelete(int key) {
+// std::vector<TrieAnimStep> TrieVisEngine::getEventsDelete(std::string word) {
 // 	std::vector<TrieAnimStep> events;
 // 	oldTreeSnapshots.clear();
 // 	oldTreeSnapshots.push_back(tree);
@@ -181,14 +177,16 @@ void TrieVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>&
 	case TrieAnimType::HIGHLIGHT_FOUND_NODE:
 		drawHighlightCircle(drawableList, visualNodesCur[eventTrie.curID].position, true);
 		break;
-	// case TrieAnimType::MOVE_HIGHLIGHT_DOWN:
-	// 	if (tree.getNodeKey(eventTrie.curID) && tree.getNodeKey(eventTrie.curID)->getChild(eventTrie.charLink))
-	// 		drawHighlightCircle(drawableList,
-	// 			easeInOutLerp(visualNodesCur[eventTrie.curID].position, visualNodesCur[tree.getNodeKey(eventTrie.curID)->getChild(eventTrie.charLink)->key].position, fract(time)),
-	// 			false);
-	// 	else
-	// 		drawHighlightCircle(drawableList, visualNodesCur[eventTrie.curID].position, false);
-	// 	break;
+	case TrieAnimType::MOVE_HIGHLIGHT_DOWN:
+		if (tree.getNodeID(eventTrie.curID) && tree.getNodeID(eventTrie.curID)->getChild(eventTrie.charLink))
+			drawHighlightCircle(drawableList,
+				easeInOutLerp(visualNodesCur[eventTrie.curID].position, 
+							  visualNodesCur[tree.getNodeID(eventTrie.curID)->getChild(eventTrie.charLink)->getID()].position, 
+							  fract(time)),
+				false);
+		else
+			drawHighlightCircle(drawableList, visualNodesCur[eventTrie.curID].position, false);
+		break;
 	case TrieAnimType::NONE:
 	default:
 		break;
@@ -253,33 +251,33 @@ void TrieVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>&
 // 		drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, true);
 // 		break;
 // 	case TrieAnimType::MOVE_HIGHLIGHT_LEFT_DOWN:
-// 		if (oldTreeSnapshot.getNodeKey(eventTrie.curID) && oldTreeSnapshot.getNodeKey(eventTrie.curID)->left)
+// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->left)
 // 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeKey(eventTrie.curID)->left->key].position, fract(time)),
+// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->left->key].position, fract(time)),
 // 				false);
 // 		else
 // 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
 // 		break;
 // 	case TrieAnimType::MOVE_HIGHLIGHT_LEFT_UP:
-// 		if (oldTreeSnapshot.getNodeKey(eventTrie.curID) && oldTreeSnapshot.getNodeKey(eventTrie.curID)->left)
+// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->left)
 // 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeKey(eventTrie.curID)->left->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
+// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->left->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
 // 				false);
 // 		else
 // 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
 // 		break;
 // 	case TrieAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN:
-// 		if (oldTreeSnapshot.getNodeKey(eventTrie.curID) && oldTreeSnapshot.getNodeKey(eventTrie.curID)->right)
+// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->right)
 // 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeKey(eventTrie.curID)->right->key].position, fract(time)),
+// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->right->key].position, fract(time)),
 // 				false);
 // 		else
 // 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
 // 		break;
 // 	case TrieAnimType::MOVE_HIGHLIGHT_RIGHT_UP:
-// 		if (oldTreeSnapshot.getNodeKey(eventTrie.curID) && oldTreeSnapshot.getNodeKey(eventTrie.curID)->right)
+// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->right)
 // 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeKey(eventTrie.curID)->right->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
+// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->right->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
 // 				false);
 // 		else
 // 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
@@ -369,33 +367,33 @@ void TrieVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>&
 // 		drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, true);
 // 		break;
 // 	case TrieAnimType::MOVE_HIGHLIGHT_LEFT_DOWN:
-// 		if (oldTreeSnapshot.getNodeKey(eventTrie.curID) && oldTreeSnapshot.getNodeKey(eventTrie.curID)->left)
+// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->left)
 // 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeKey(eventTrie.curID)->left->key].position, fract(time)),
+// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->left->key].position, fract(time)),
 // 				false);
 // 		else
 // 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
 // 		break;
 // 	case TrieAnimType::MOVE_HIGHLIGHT_LEFT_UP:
-// 		if (oldTreeSnapshot.getNodeKey(eventTrie.curID) && oldTreeSnapshot.getNodeKey(eventTrie.curID)->left)
+// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->left)
 // 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeKey(eventTrie.curID)->left->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
+// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->left->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
 // 				false);
 // 		else
 // 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
 // 		break;
 // 	case TrieAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN:
-// 		if (oldTreeSnapshot.getNodeKey(eventTrie.curID) && oldTreeSnapshot.getNodeKey(eventTrie.curID)->right)
+// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->right)
 // 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeKey(eventTrie.curID)->right->key].position, fract(time)),
+// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->right->key].position, fract(time)),
 // 				false);
 // 		else
 // 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
 // 		break;
 // 	case TrieAnimType::MOVE_HIGHLIGHT_RIGHT_UP:
-// 		if (oldTreeSnapshot.getNodeKey(eventTrie.curID) && oldTreeSnapshot.getNodeKey(eventTrie.curID)->right)
+// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->right)
 // 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeKey(eventTrie.curID)->right->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
+// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->right->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
 // 				false);
 // 		else
 // 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
@@ -493,33 +491,33 @@ void TrieVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>&
 // 		drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, true);
 // 		break;
 // 	case TrieAnimType::MOVE_HIGHLIGHT_LEFT_DOWN:
-// 		if (oldTreeSnapshot.getNodeKey(eventTrie.curID) && oldTreeSnapshot.getNodeKey(eventTrie.curID)->left)
+// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->left)
 // 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeKey(eventTrie.curID)->left->key].position, fract(time)),
+// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->left->key].position, fract(time)),
 // 				false);
 // 		else
 // 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
 // 		break;
 // 	case TrieAnimType::MOVE_HIGHLIGHT_LEFT_UP:
-// 		if (oldTreeSnapshot.getNodeKey(eventTrie.curID) && oldTreeSnapshot.getNodeKey(eventTrie.curID)->left)
+// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->left)
 // 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeKey(eventTrie.curID)->left->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
+// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->left->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
 // 				false);
 // 		else
 // 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
 // 		break;
 // 	case TrieAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN:
-// 		if (oldTreeSnapshot.getNodeKey(eventTrie.curID) && oldTreeSnapshot.getNodeKey(eventTrie.curID)->right)
+// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->right)
 // 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeKey(eventTrie.curID)->right->key].position, fract(time)),
+// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->right->key].position, fract(time)),
 // 				false);
 // 		else
 // 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
 // 		break;
 // 	case TrieAnimType::MOVE_HIGHLIGHT_RIGHT_UP:
-// 		if (oldTreeSnapshot.getNodeKey(eventTrie.curID) && oldTreeSnapshot.getNodeKey(eventTrie.curID)->right)
+// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->right)
 // 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeKey(eventTrie.curID)->right->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
+// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->right->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
 // 				false);
 // 		else
 // 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
@@ -622,18 +620,17 @@ void TrieVisEngine::generateAllVisNodePos(std::map<int, VisualTrieNode>& visualN
 	generateAllVisNodePosYHelper(visualNodes, logicTree, logicTree.root);
 }
 
+
 void TrieVisEngine::generateAllVisNodePosXHelper(std::map<int, VisualTrieNode>& visualNodes, LogicTrie& logicTree, LogicTrieNode* root) {
 	visualNodes.clear();
 	unsigned int size = logicTree.countLeaf();
 	float xPos = canvasLeftMargin;
 	float dx = (windowPtr->getSize().x - 2 * canvasLeftMargin) / (size > 1 ? size-1 : 1);
-	// int layerY = 0;
 	// Prevent nodes overlapping
 	if (dx < 2 * nodeCircleRadius) dx = 2 * nodeCircleRadius;
 
 	generateRecursiveVisNodePosX(visualNodes, root, xPos, dx);
 }
-
 
 void TrieVisEngine::generateRecursiveVisNodePosX(std::map<int, VisualTrieNode>& visualNodes, LogicTrieNode* node, float& xPos, float dx) {
 	if (!node) return;
@@ -642,7 +639,7 @@ void TrieVisEngine::generateRecursiveVisNodePosX(std::map<int, VisualTrieNode>& 
 		generateRecursiveVisNodePosX(visualNodes, node->children[i], xPos, dx);
 	float nodePosX = 0;
 	if (!node->isLeaf()) {
-		size_t childrenCnt = 0;
+		unsigned int childrenCnt = 0;
 		for (int i = 0; i < TRIE_ALPHABET_SIZE; i++) {
 			if (!node->children[i]) continue;
 			nodePosX += visualNodes[node->children[i]->getID()].position.x;
@@ -652,7 +649,7 @@ void TrieVisEngine::generateRecursiveVisNodePosX(std::map<int, VisualTrieNode>& 
 	} else {
 		nodePosX = originPos.x + xPos;
 	}
-	visualNodes[node->getID()] = VisualTrieNode(node->getID(), node->key, 
+	visualNodes[node->getID()] = VisualTrieNode(node->getID(), node->key, node->isEndOfWord, 
 		sf::Vector2f(nodePosX, originPos.y)
 	);
 	if (node->isLeaf())
@@ -663,15 +660,10 @@ void TrieVisEngine::generateRecursiveVisNodePosX(std::map<int, VisualTrieNode>& 
 void TrieVisEngine::generateAllVisNodePosYHelper(std::map<int, VisualTrieNode>& visualNodes, LogicTrie& logicTree, LogicTrieNode* root) {
 	// visualNodes.clear();
 	unsigned int size = logicTree.countLeaf();
-	// float xPos = canvasLeftMargin;
-	// float dx = (windowPtr->getSize().x - 2 * canvasLeftMargin) / (size > 1 ? size-1 : 1);
 	int layerY = 0;
-	// Prevent nodes overlapping
-	// if (dx < 2 * nodeCircleRadius) dx = 2 * nodeCircleRadius;
 
 	generateRecursiveVisNodePosY(visualNodes, root, layerY);
 }
-
 
 void TrieVisEngine::generateRecursiveVisNodePosY(std::map<int, VisualTrieNode>& visualNodes, LogicTrieNode* node, int& layerY) {
 	if (!node) return;
@@ -687,13 +679,14 @@ void TrieVisEngine::generateRecursiveVisNodePosY(std::map<int, VisualTrieNode>& 
 
 
 
+
 ///// --- DRAWING FUNCTIONS ---
 // Draw a node (a circle with the key as text inside it)
 void TrieVisEngine::drawNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const VisualTrieNode& visNode) {
 	// Draw circle
 	auto nodeCircle = std::make_unique<sf::CircleShape>(nodeCircleRadius);
 	nodeCircle->setOrigin({nodeCircle->getRadius(), nodeCircle->getRadius()}); 
-	nodeCircle->setFillColor(sf::Color::Transparent);
+	nodeCircle->setFillColor(visNode.isEndOfWord ? normalNodeEOW_BGColor : sf::Color::Transparent);
 	nodeCircle->setOutlineColor(normalNodeColor);
 	nodeCircle->setOutlineThickness(nodeOutlineThickness);
 	nodeCircle->setPosition(visNode.position);
