@@ -71,27 +71,27 @@ void Program::displayVisTrieScreenSFML() {
 			visEngine_Trie.increaseTime();
 		}
 		break;
-	// // ----- REMOVE MODE -----
-	// case TrieVisMode::REMOVE:
-	// 	// visEngine_Trie.eventList = visEngine_Trie.getEventsRemove(visEngine_Trie.keyToRemove);
-	// 	visEngine_Trie.createDrawables(
-	// 		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
-	// 	);
-	// 	sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
+	// ----- REMOVE MODE -----
+	case TrieVisMode::REMOVE:
+		// visEngine_Trie.eventList = visEngine_Trie.getEventsRemove(visEngine_Trie.keyToRemove);
+		visEngine_Trie.createDrawables(
+			sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
 
-	// 	// If not paused, just increase / decrease time
-	// 	if (visEngine_Trie.animPaused) {
-	// 		if (visEngine_Trie.time < visEngine_Trie.targetTime) {
-	// 			visEngine_Trie.increaseTime();
-	// 			visEngine_Trie.time = std::min(visEngine_Trie.time, visEngine_Trie.targetTime);
-	// 		} else if (visEngine_Trie.time > visEngine_Trie.targetTime) {
-	// 			visEngine_Trie.decreaseTime();
-	// 			visEngine_Trie.time = std::max(visEngine_Trie.time, visEngine_Trie.targetTime);
-	// 		}
-	// 	} else {
-	// 		visEngine_Trie.increaseTime();
-	// 	}
-	// 	break;
+		// If not paused, just increase / decrease time
+		if (visEngine_Trie.animPaused) {
+			if (visEngine_Trie.time < visEngine_Trie.targetTime) {
+				visEngine_Trie.increaseTime();
+				visEngine_Trie.time = std::min(visEngine_Trie.time, visEngine_Trie.targetTime);
+			} else if (visEngine_Trie.time > visEngine_Trie.targetTime) {
+				visEngine_Trie.decreaseTime();
+				visEngine_Trie.time = std::max(visEngine_Trie.time, visEngine_Trie.targetTime);
+			}
+		} else {
+			visEngine_Trie.increaseTime();
+		}
+		break;
 	// // ----- UPDATE MODE -----
 	// case TrieVisMode::UPDATE:
 	// 	// visEngine_Trie.eventList = visEngine_Trie.getEventsUpdate(visEngine_Trie.oldKeyToUpdate, visEngine_Trie.newKeyToUpdate);
@@ -228,25 +228,28 @@ void Program::displayVisTrieScreenGUI() {
 	ImGui::Separator();
 
 
-	// // -- REMOVE OPERATION --
-	// ImGui::BeginDisabled(visEngine_Trie.animInProgress);
-	// ImGui::Text("Enter key of slot to remove:");
-	// ImGui::InputInt("Key to remove", &visEngine_Trie.keyToRemoveInput);
+	// -- REMOVE OPERATION --
+	ImGui::BeginDisabled(visEngine_Trie.animInProgress);
+	ImGui::Text("Enter word to remove (lowercase a-z):");
+	ImGui::InputText("Word to remove", visEngine_Trie.wordToRemoveInput, 
+		sizeof(visEngine_Trie.wordToRemoveInput),
+		ImGuiInputTextFlags_CallbackCharFilter,
+		FilterCallbackLowercaseAZ);
 
-	// if (ImGui::Button("Remove")) {
-	// 	visEngine_Trie.keyToRemove = visEngine_Trie.keyToRemoveInput;
-	// 	visEngine_Trie.visMode = TrieVisMode::REMOVE;
+	if (ImGui::Button("Remove")) {
+		visEngine_Trie.wordToRemove = visEngine_Trie.wordToRemoveInput;
+		visEngine_Trie.visMode = TrieVisMode::REMOVE;
 
-	// 	visEngine_Trie.resetParams();
-	// 	visEngine_Trie.animPaused = false; // Auto un-pause
+		visEngine_Trie.resetParams();
+		visEngine_Trie.animPaused = false; // Auto un-pause
 
-	// 	// Generate events
-	// 	visEngine_Trie.eventList = visEngine_Trie.getEventsDelete(visEngine_Trie.keyToRemove);
-	// 	std::cout << "remove Trie tree cool" << std::endl; // DEBUG
-	// }
-	// ImGui::EndDisabled();
+		// Generate events
+		visEngine_Trie.eventList = visEngine_Trie.getEventsDelete(visEngine_Trie.wordToRemove);
+		std::cout << "remove Trie tree cool" << std::endl; // DEBUG
+	}
+	ImGui::EndDisabled();
 
-	// ImGui::Separator();
+	ImGui::Separator();
 
 
 	// // -- UPDATE OPERATION --

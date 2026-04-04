@@ -62,6 +62,9 @@ LogicAVLNode* LogicAVLTree::minSuccNode(LogicAVLNode* node, int deleteKey,
 
 
 
+
+
+
 ///// ANIMATION EVENTS
 // Remind to snapshot tree after insertion/rotation
 void LogicAVLTree::snapshotTree(int key, std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots) {
@@ -97,6 +100,8 @@ LogicAVLNode* LogicAVLTree::rightRotate(LogicAVLNode*& node, std::vector<AVLAnim
 	// treeSnapshots.push_back(*this);
 	return leftChild;
 }
+
+
 
 
 
@@ -172,6 +177,8 @@ LogicAVLNode* LogicAVLTree::generateInsertEvents(LogicAVLNode*& node, int key, s
 	}
 	return node;
 }
+
+
 
 
 

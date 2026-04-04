@@ -19,13 +19,12 @@ TrieVisEngine::~TrieVisEngine() {
 
 
 
-
-
 // Reset all properties to get ready for visualize new action
 ///// MAKE SURE TO RESET ALL NECESSARY PROPERTIES
 void TrieVisEngine::resetParams() {
 	resetAnimParams();
 }
+
 
 
 
@@ -71,36 +70,20 @@ std::vector<TrieAnimStep> TrieVisEngine::getEventsInsert(std::string word) {
 
 
 
-// // -- DELETION --
-// std::vector<TrieAnimStep> TrieVisEngine::getEventsDelete(std::string word) {
-// 	std::vector<TrieAnimStep> events;
-// 	oldTreeSnapshots.clear();
-// 	oldTreeSnapshots.push_back(tree);
-// 	tree.inorderPrint(); // DEBUG
+// -- DELETION --
+std::vector<TrieAnimStep> TrieVisEngine::getEventsDelete(std::string word) {
+	std::vector<TrieAnimStep> events;
+	oldTreeSnapshots.clear();
+	oldTreeSnapshots.push_back(tree);
 
-// 	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before deleting key " + std::to_string(key), {}, key, 0));
-// 	// Delete node into tree and get animation events
-// 	tree.root = tree.generateDeleteEvents(tree.root, key, events, oldTreeSnapshots);
-// 	// Remind to snapshot tree after deletion/rotation
-// 	tree.snapshotTree(key, events, oldTreeSnapshots);
+	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before deleting word: \"" + word + "\"", {}, 0, oldTreeSnapshots.size() -1));
+	tree.generateDeleteEvents(word, events, oldTreeSnapshots);
 
-// 	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Finished deleting key " + std::to_string(key), {}, key, oldTreeSnapshots.size() -1));
+	std::cerr << "Done generating deletion events!" << std::endl; // DEBUG
+	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
 
-// 	// Change 'afterCopyMinimumSucc' property of each anim event
-// 	bool copiedMinSucc = false;
-// 	for (auto& event : events) {
-// 		if (event.type == TrieAnimType::COPY_KEY_FROM_MIN_SUCC)
-// 			copiedMinSucc = true;
-// 		if (copiedMinSucc)
-// 			event.afterCopyMinimumSucc = true;
-// 	}
-
-// 	std::cerr << "Done generating deletion events!" << std::endl; // DEBUG
-// 	tree.inorderPrint(); // DEBUG
-// 	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
-
-// 	return events;
-// }
+	return events;
+}
 
 
 
@@ -256,117 +239,64 @@ void TrieVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawa
 
 
 
-// // --- DELETE MODE ---
-// void TrieVisEngine::addNodeDrawablesDelete(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, TrieAnimStep eventTrie) {
-// 	groupsOldVisualNodes.clear();
-// 	size_t numOfOldTreeSnapshots = oldTreeSnapshots.size();
-// 	groupsOldVisualNodes.resize(numOfOldTreeSnapshots);
+// --- DELETE MODE ---
+void TrieVisEngine::addNodeDrawablesDelete(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, TrieAnimStep eventTrie) {
+	groupsOldVisualNodes.clear();
+	size_t numOfOldTreeSnapshots = oldTreeSnapshots.size();
+	groupsOldVisualNodes.resize(numOfOldTreeSnapshots);
 
-// 	// Generate all visual nodes, new and old
-// 	generateAllVisNodePos(visualNodesCur, tree);
-// 	// Check if afterCopyMinimumSucc is true
-// 	if (visualNodesCur.count(keyToRemove)) {
-// 		if (eventTrie.afterCopyMinimumSucc) {
-// 			visualNodesCur[keyToRemove].key = tree.minSuccKey;
-// 		} else {
-// 			visualNodesCur[keyToRemove].key = keyToRemove;
-// 		}
-// 	}
-// 	for (int i = 0; i < numOfOldTreeSnapshots; i++) {
-// 		generateAllVisNodePos(groupsOldVisualNodes[i], oldTreeSnapshots[i]);
-// 		// Check if afterCopyMinimumSucc is true
-// 		if (groupsOldVisualNodes[i].count(keyToRemove)) {
-// 			if (eventTrie.afterCopyMinimumSucc) {
-// 				groupsOldVisualNodes[i][keyToRemove].key = tree.minSuccKey;
-// 			} else {
-// 				groupsOldVisualNodes[i][keyToRemove].key = keyToRemove;
-// 			}
-// 		}
-// 	}
-// 	std::cerr << "numOfOldTreeSnapshots = " << numOfOldTreeSnapshots << ", "; // DEBUG
+	// Generate all visual nodes, new and old
+	generateAllVisNodePos(visualNodesCur, tree);
+	for (int i = 0; i < numOfOldTreeSnapshots; i++) {
+		generateAllVisNodePos(groupsOldVisualNodes[i], oldTreeSnapshots[i]);
+	}
+	std::cerr << "numOfOldTreeSnapshots = " << numOfOldTreeSnapshots << ", "; // DEBUG
 
-// 	// Find old visual nodes and old tree snapshot
-// 	std::map<int, VisualTrieNode>& oldVisualNodes =
-// 		(eventTrie.oldTreeSnapshotIndex == -1) ? visualNodesCur : groupsOldVisualNodes[eventTrie.oldTreeSnapshotIndex];
-// 	LogicTrie& oldTreeSnapshot =
-// 		(eventTrie.oldTreeSnapshotIndex == -1) ? tree : oldTreeSnapshots[eventTrie.oldTreeSnapshotIndex];
+	// Find old visual nodes and old tree snapshot
+	std::map<int, VisualTrieNode>& oldVisualNodes =
+		(eventTrie.oldTreeSnapshotIndex == -1) ? visualNodesCur : groupsOldVisualNodes[eventTrie.oldTreeSnapshotIndex];
+	LogicTrie& oldTreeSnapshot =
+		(eventTrie.oldTreeSnapshotIndex == -1) ? tree : oldTreeSnapshots[eventTrie.oldTreeSnapshotIndex];
 
-// 	// Draw the tree
-// 	switch (eventTrie.type) {
-// 	case TrieAnimType::ROTATE_RIGHT_LL:
-// 	case TrieAnimType::ROTATE_LEFT_RR:
-// 	case TrieAnimType::ROTATE_LEFT_LR:
-// 	case TrieAnimType::ROTATE_RIGHT_LR:
-// 	case TrieAnimType::ROTATE_LEFT_RL:
-// 	case TrieAnimType::ROTATE_RIGHT_RL:
-// 		// Tree rotations animation
-// 		drawLerpTree(drawableList,
-// 			groupsOldVisualNodes[eventTrie.oldTreeSnapshotIndex - 1],
-// 			oldTreeSnapshots[eventTrie.oldTreeSnapshotIndex - 1],
-// 			oldVisualNodes, oldTreeSnapshot
-// 		);
-// 		break;
-// 	case TrieAnimType::DELETE_LEAF_NODE:
-// 	case TrieAnimType::DELETE_NODE_ONE_CHILD:
-// 		// Node deletion animation
-// 		drawLerpTreeDeleteNode(drawableList,
-// 			groupsOldVisualNodes[eventTrie.oldTreeSnapshotIndex - 1],
-// 			oldTreeSnapshots[eventTrie.oldTreeSnapshotIndex - 1],
-// 			oldVisualNodes, oldTreeSnapshot
-// 		);
-// 		break;
-// 	default:
-// 		drawStillTree(drawableList, oldVisualNodes, oldTreeSnapshot);
-// 	}
+	// Draw the tree
+	switch (eventTrie.type) {
+	case TrieAnimType::DELETE_LEAF_NODE:
+		// Node deletion animation
+		drawLerpTreeDeleteNode(drawableList,
+			groupsOldVisualNodes[eventTrie.oldTreeSnapshotIndex - 1],
+			oldTreeSnapshots[eventTrie.oldTreeSnapshotIndex - 1],
+			oldVisualNodes, oldTreeSnapshot,
+			eventTrie.curID
+		);
+		break;
+	default:
+		drawStillTree(drawableList, oldVisualNodes, oldTreeSnapshot);
+	}
 
-// 	// Draw highlighting circle
-// 	switch (eventTrie.type) {
-// 	case TrieAnimType::HIGHLIGHT_NODE:
-// 	case TrieAnimType::HIGHLIGHT_NODE_UPDATE_HEIGHT:
-// 	case TrieAnimType::COPY_KEY_FROM_MIN_SUCC:
-// 		drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
-// 		break;
-// 	case TrieAnimType::HIGHLIGHT_FOUND_NODE:
-// 	// case TrieAnimType::INSERT_NODE: // Highlight inserted node when at inserting event
-// 		drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, true);
-// 		break;
-// 	case TrieAnimType::MOVE_HIGHLIGHT_LEFT_DOWN:
-// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->left)
-// 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->left->key].position, fract(time)),
-// 				false);
-// 		else
-// 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
-// 		break;
-// 	case TrieAnimType::MOVE_HIGHLIGHT_LEFT_UP:
-// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->left)
-// 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->left->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
-// 				false);
-// 		else
-// 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
-// 		break;
-// 	case TrieAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN:
-// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->right)
-// 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->right->key].position, fract(time)),
-// 				false);
-// 		else
-// 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
-// 		break;
-// 	case TrieAnimType::MOVE_HIGHLIGHT_RIGHT_UP:
-// 		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->right)
-// 			drawHighlightCircle(drawableList,
-// 				easeInOutLerp(oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->right->key].position, oldVisualNodes[eventTrie.curID].position, fract(time)),
-// 				false);
-// 		else
-// 			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
-// 		break;
-// 	case TrieAnimType::NONE:
-// 	default:
-// 		break;
-// 	}
-// }
+	// Draw highlighting circle
+	switch (eventTrie.type) {
+	case TrieAnimType::HIGHLIGHT_NODE:
+		drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
+		break;
+	case TrieAnimType::HIGHLIGHT_FOUND_NODE:
+		drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, true);
+		break;
+	case TrieAnimType::MOVE_HIGHLIGHT_DOWN:
+		if (oldTreeSnapshot.getNodeID(eventTrie.curID) && oldTreeSnapshot.getNodeID(eventTrie.curID)->getChild(eventTrie.charLink)) {
+			drawHighlightCircle(drawableList,
+				easeInOutLerp(oldVisualNodes[eventTrie.curID].position, 
+							  oldVisualNodes[oldTreeSnapshot.getNodeID(eventTrie.curID)->getChild(eventTrie.charLink)->getID()].position, 
+							  fract(time)),
+				false);
+		} else {
+			drawHighlightCircle(drawableList, oldVisualNodes[eventTrie.curID].position, false);
+		}
+		break;
+	case TrieAnimType::NONE:
+	default:
+		break;
+	}
+}
 
 
 
@@ -538,10 +468,10 @@ void TrieVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 		// INSERT MODE
 		addNodeDrawablesInsert(drawableList, eventTrie);
 		// drawPseudocodeWindow(eventTrie);
-	// } else if (visMode == TrieVisMode::REMOVE) {
-	// 	// REMOVE MODE
-	// 	addNodeDrawablesDelete(drawableList, eventTrie);
-	// 	// drawPseudocodeWindow(eventTrie);
+	} else if (visMode == TrieVisMode::REMOVE) {
+		// REMOVE MODE
+		addNodeDrawablesDelete(drawableList, eventTrie);
+		// drawPseudocodeWindow(eventTrie);
 	// } else if (visMode == TrieVisMode::UPDATE) {
 	// 	// UPDATE MODE
 	// 	addNodeDrawablesUpdate(drawableList, eventTrie);
@@ -779,19 +709,20 @@ void TrieVisEngine::drawLerpTreeInsertNode(std::vector<std::unique_ptr<sf::Drawa
 	drawLerpTree(drawableList, visualNodesBefore, logicTreeBefore, visualNodes2, logicTree2);
 }
 
-// // Draw lerped tree when deleting a node
-// void TrieVisEngine::drawLerpTreeDeleteNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
-// 	std::map<int, VisualTrieNode>& visualNodes1, LogicTrie& logicTree1,
-// 	std::map<int, VisualTrieNode>& visualNodes2, LogicTrie& logicTree2) {
-// 	LogicTrie logicTreeBefore = logicTree2;
-// 	std::map<int, VisualTrieNode> visualNodesBefore = visualNodes2;
-// 	for (const auto& [key, visNode1] : visualNodes1) {
-// 		if (key != keyToRemove)
-// 			visualNodesBefore[key].position = visNode1.position;
-// 	}
-// 	// visualNodesBefore[keyToRemove].position = originPos + newNodeStartPos;
-// 	drawLerpTree(drawableList, visualNodesBefore, logicTreeBefore, visualNodes2, logicTree2);
-// }
+// Draw lerped tree when deleting a node
+void TrieVisEngine::drawLerpTreeDeleteNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
+	std::map<int, VisualTrieNode>& visualNodes1, LogicTrie& logicTree1,
+	std::map<int, VisualTrieNode>& visualNodes2, LogicTrie& logicTree2,
+	uint64_t nodeRemoveID) {
+	LogicTrie logicTreeBefore = logicTree2;
+	std::map<int, VisualTrieNode> visualNodesBefore = visualNodes2;
+	for (const auto& [ID, visNode1] : visualNodes1) {
+		if (ID != nodeRemoveID)
+			visualNodesBefore[ID].position = visNode1.position;
+	}
+	// visualNodesBefore[nodeRemoveID].position = originPos + newNodeStartPos;
+	drawLerpTree(drawableList, visualNodesBefore, logicTreeBefore, visualNodes2, logicTree2);
+}
 
 
 

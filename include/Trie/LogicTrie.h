@@ -50,18 +50,26 @@ public:
 	// 	std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
 	// LogicTrieNode* rightRotate(LogicTrieNode*& node, 
 	// 	std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
+	// Returns bool whether word exists or not
 	bool generateSearchEvents(std::string word, 
 		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
+	// Return the last inserted node with isEndOfWord = true
 	LogicTrieNode* generateInsertEvents(std::string word, 
 		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
-	LogicTrieNode* generateDeleteEvents(LogicTrieNode*& node, int key, 
+	// Returns root of subtree
+	void generateDeleteEvents(std::string word, 
 		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
 
 
 private:
 	void clear(LogicTrieNode*& node);
 
-	// Helper functions for animation events generation
+
+	///// Helper functions for animation events generation
+	bool deleteSuccessful = false;
+	LogicTrieNode* generateDeleteEventsHelper(LogicTrieNode*& node, std::string word, int depth, 
+		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
+
 	void setSnapshotReminder(TrieAnimType animType, std::string desc);
 	void clearSnapshotReminder();
 
