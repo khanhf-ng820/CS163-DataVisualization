@@ -64,16 +64,20 @@ LogicTrieNode* LogicTrie::getNodeID(uint64_t ID) {
 	return getNodeIDHelper(ID, root);
 }
 
-// // Print inorder
-// void LogicTrie::inorderPrint() {
-// 	inorderPrintHelper(root);
-// }
+// Check if word exists (plain version of generateSearchEvents)
+bool LogicTrie::wordExists(std::string word) {
+	LogicTrieNode* node = root;
 
-// // Find min successor node
-// LogicTrieNode* LogicTrie::minSuccNode(LogicTrieNode* node, int deleteKey,
-// 	std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots) {
-// 	return node ? minValueNode(node->right, deleteKey, events, treeSnapshots) : nullptr;
-// }
+	for (const char& c : word) {
+		if (node->getChild(c) == nullptr) {
+			return false;
+		}
+
+		node = node->getChild(c);
+	}
+
+	return node->isEndOfWord;
+}
 
 
 
@@ -93,7 +97,6 @@ LogicTrieNode* LogicTrie::getNodeID(uint64_t ID) {
 // 		clearSnapshotReminder();
 // 	}
 // }
-
 
 // -- SEARCHING --
 bool LogicTrie::generateSearchEvents(std::string word, std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots) {
@@ -307,24 +310,3 @@ LogicTrieNode* LogicTrie::getNodeIDHelper(uint64_t ID, LogicTrieNode* node) {
 	}
 	return nullptr;
 }
-
-// // Print inorder
-// void LogicTrie::inorderPrintHelper(LogicTrieNode* node) {
-// 	if (!node) return;
-// 	inorderPrintHelper(node->left);
-// 	std::cout << node->key << " ";
-// 	inorderPrintHelper(node->right);
-// }
-
-// // Get minimum node of subtree
-// LogicTrieNode* LogicTrie::minValueNode(LogicTrieNode* node, int deleteKey, std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots) {
-// 	LogicTrieNode* cur = node;
-// 	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Finding the leftmost node of right subtree of node " + std::to_string(deleteKey), {}, cur->key, treeSnapshots.size() - 1));
-// 	while (cur && cur->left) {
-// 		LogicTrieNode* oldCur = cur;
-// 		cur = cur->left;
-// 		if (cur)
-// 			events.push_back(TrieAnimStep(TrieAnimType::MOVE_HIGHLIGHT_LEFT_DOWN, "Finding the leftmost node of right subtree of node " + std::to_string(deleteKey), {}, oldCur->key, treeSnapshots.size() - 1));
-// 	}
-// 	return cur;
-// }

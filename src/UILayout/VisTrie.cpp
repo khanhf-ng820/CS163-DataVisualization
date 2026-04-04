@@ -92,27 +92,27 @@ void Program::displayVisTrieScreenSFML() {
 			visEngine_Trie.increaseTime();
 		}
 		break;
-	// // ----- UPDATE MODE -----
-	// case TrieVisMode::UPDATE:
-	// 	// visEngine_Trie.eventList = visEngine_Trie.getEventsUpdate(visEngine_Trie.oldKeyToUpdate, visEngine_Trie.newKeyToUpdate);
-	// 	visEngine_Trie.createDrawables(
-	// 		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
-	// 	);
-	// 	sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
+	// ----- UPDATE MODE -----
+	case TrieVisMode::UPDATE:
+		// visEngine_Trie.eventList = visEngine_Trie.getEventsUpdate(visEngine_Trie.oldKeyToUpdate, visEngine_Trie.newKeyToUpdate);
+		visEngine_Trie.createDrawables(
+			sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
+		);
+		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
 
-	// 	// If not paused, just increase / decrease time
-	// 	if (visEngine_Trie.animPaused) {
-	// 		if (visEngine_Trie.time < visEngine_Trie.targetTime) {
-	// 			visEngine_Trie.increaseTime();
-	// 			visEngine_Trie.time = std::min(visEngine_Trie.time, visEngine_Trie.targetTime);
-	// 		} else if (visEngine_Trie.time > visEngine_Trie.targetTime) {
-	// 			visEngine_Trie.decreaseTime();
-	// 			visEngine_Trie.time = std::max(visEngine_Trie.time, visEngine_Trie.targetTime);
-	// 		}
-	// 	} else {
-	// 		visEngine_Trie.increaseTime();
-	// 	}
-	// 	break;
+		// If not paused, just increase / decrease time
+		if (visEngine_Trie.animPaused) {
+			if (visEngine_Trie.time < visEngine_Trie.targetTime) {
+				visEngine_Trie.increaseTime();
+				visEngine_Trie.time = std::min(visEngine_Trie.time, visEngine_Trie.targetTime);
+			} else if (visEngine_Trie.time > visEngine_Trie.targetTime) {
+				visEngine_Trie.decreaseTime();
+				visEngine_Trie.time = std::max(visEngine_Trie.time, visEngine_Trie.targetTime);
+			}
+		} else {
+			visEngine_Trie.increaseTime();
+		}
+		break;
 	default:
 		break;
 	}
@@ -252,29 +252,35 @@ void Program::displayVisTrieScreenGUI() {
 	ImGui::Separator();
 
 
-	// // -- UPDATE OPERATION --
-	// ImGui::BeginDisabled(visEngine_Trie.animInProgress);
-	// ImGui::Text("Enter keys to update:");
-	// ImGui::InputInt("Old key", &visEngine_Trie.oldKeyToUpdateInput);
-	// ImGui::InputInt("New key", &visEngine_Trie.newKeyToUpdateInput);
+	// -- UPDATE OPERATION --
+	ImGui::BeginDisabled(visEngine_Trie.animInProgress);
+	ImGui::Text("Enter words to update (lowercase a-z):");
+	ImGui::InputText("Old word", visEngine_Trie.oldWordToUpdateInput, 
+		sizeof(visEngine_Trie.oldWordToUpdateInput),
+		ImGuiInputTextFlags_CallbackCharFilter,
+		FilterCallbackLowercaseAZ);
+	ImGui::InputText("New word", visEngine_Trie.newWordToUpdateInput, 
+		sizeof(visEngine_Trie.newWordToUpdateInput),
+		ImGuiInputTextFlags_CallbackCharFilter,
+		FilterCallbackLowercaseAZ);
 
-	// bool updatable = (visEngine_Trie.tree.getNodeKey(visEngine_Trie.oldKeyToUpdateInput) != nullptr);
-	// ImGui::BeginDisabled(!updatable);
-	// if (ImGui::Button("Update")) {
-	// 	visEngine_Trie.keyToRemove = visEngine_Trie.oldKeyToUpdateInput;
-	// 	visEngine_Trie.keyToInsert = visEngine_Trie.newKeyToUpdateInput;
-	// 	visEngine_Trie.visMode = TrieVisMode::UPDATE;
+	bool updatable = visEngine_Trie.tree.wordExists(std::string(visEngine_Trie.oldWordToUpdateInput));
+	ImGui::BeginDisabled(!updatable);
+	if (ImGui::Button("Update")) {
+		visEngine_Trie.oldWordToUpdate = visEngine_Trie.oldWordToUpdateInput;
+		visEngine_Trie.newWordToUpdate = visEngine_Trie.newWordToUpdateInput;
+		visEngine_Trie.visMode = TrieVisMode::UPDATE;
 
-	// 	visEngine_Trie.resetParams();
-	// 	visEngine_Trie.animPaused = false; // Auto un-pause
+		visEngine_Trie.resetParams();
+		visEngine_Trie.animPaused = false; // Auto un-pause
 
-	// 	// Generate events
-	// 	// visEngine_Trie.update(visEngine_Trie.keyToRemove, visEngine_Trie.keyToInsert);
-	// 	visEngine_Trie.eventList = visEngine_Trie.getEventsUpdate(visEngine_Trie.keyToRemove, visEngine_Trie.keyToInsert);
-	// 	std::cout << "update Trie tree cool" << std::endl; // DEBUG
-	// }
-	// ImGui::EndDisabled();
-	// ImGui::EndDisabled();
+		// Generate events
+		// visEngine_Trie.update(visEngine_Trie.oldWordToUpdate, visEngine_Trie.newWordToUpdate);
+		visEngine_Trie.eventList = visEngine_Trie.getEventsUpdate(visEngine_Trie.oldWordToUpdate, visEngine_Trie.newWordToUpdate);
+		std::cout << "update Trie tree cool" << std::endl; // DEBUG
+	}
+	ImGui::EndDisabled();
+	ImGui::EndDisabled();
 
 
 

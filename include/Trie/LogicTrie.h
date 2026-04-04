@@ -27,13 +27,8 @@ public:
 
 	// Get node, knowing the ID
 	LogicTrieNode* getNodeID(uint64_t ID);
-	// Print inorder
-	void inorderPrint();
-	// Find min successor node
-	LogicTrieNode* minSuccNode(LogicTrieNode* node, int deleteKey,
-		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
-
-	int minSuccKey = -1; // Minimum successor key placeholder
+	// Check if word exists (plain version of generateSearchEvents)
+	bool wordExists(std::string word);
 
 
 	// Reminders
@@ -45,18 +40,12 @@ public:
 
 
 	///// ANIMATION EVENTS
-	// Returns copy of the whole tree
-	// LogicTrieNode* leftRotate(LogicTrieNode*& node, 
-	// 	std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
-	// LogicTrieNode* rightRotate(LogicTrieNode*& node, 
-	// 	std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
 	// Returns bool whether word exists or not
 	bool generateSearchEvents(std::string word, 
 		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
 	// Return the last inserted node with isEndOfWord = true
 	LogicTrieNode* generateInsertEvents(std::string word, 
 		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
-	// Returns root of subtree
 	void generateDeleteEvents(std::string word, 
 		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
 
@@ -81,9 +70,4 @@ private:
 	void         countLeafHelper(LogicTrieNode* node, unsigned int& totalCnt);
 	// Get node, knowing the ID (helper function)
 	LogicTrieNode* getNodeIDHelper(uint64_t ID, LogicTrieNode* node);
-	// Print inorder
-	void inorderPrintHelper(LogicTrieNode* node);
-	// Get minimum node of subtree
-	LogicTrieNode* minValueNode(LogicTrieNode* node, int deleteKey,
-		std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
 };
