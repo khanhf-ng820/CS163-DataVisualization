@@ -28,9 +28,14 @@ enum class TrieVisMode {
 
 
 
+// REMEMBER:
+// Drawing SFML: The center of the window is now (0, 0) coordinates
+// Drawing GUI: The top-left of the window is (0, 0) coordinates
 class TrieVisEngine : public AnimPlayer {
 public:
-	TrieVisEngine(sf::RenderWindow* window, sf::Font* font); // Empty, size 0 Trie tree
+	TrieVisEngine(sf::RenderWindow* window, sf::Font* font); // Empty, size 0 Trie
+	TrieVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font); // Randomized Trie
+	TrieVisEngine(std::vector<std::string>& words, sf::RenderWindow* window, sf::Font* font); // Custom data Trie
 	~TrieVisEngine(); // Delete all dynamically allocated memory
 
 	// Reset all properties to get ready for visualize new action
@@ -57,21 +62,20 @@ public:
 	// int curIndex = -1; // Index of slot currently animating
 
 
-	///// Parameters for Input in ImGui
-	constexpr static size_t TEXT_INPUT_BUF_SIZE = 64;
+	///// Buffers for Input in ImGui
 	std::string wordToSearch;      // Searching
-	char*       wordToSearchInput = new char[TEXT_INPUT_BUF_SIZE];
+	char        wordToSearchInput[TRIE_TEXT_INPUT_BUF_SIZE];
 
 	std::string wordToInsert;      // Inserting
-	char*       wordToInsertInput = new char[TEXT_INPUT_BUF_SIZE];
+	char        wordToInsertInput[TRIE_TEXT_INPUT_BUF_SIZE];
 
 	std::string wordToRemove;      // Removing
-	char*       wordToRemoveInput = new char[TEXT_INPUT_BUF_SIZE];
+	char        wordToRemoveInput[TRIE_TEXT_INPUT_BUF_SIZE];
 
 	std::string oldWordToUpdate;      // Updating
-	char*       oldWordToUpdateInput = new char[TEXT_INPUT_BUF_SIZE];
+	char        oldWordToUpdateInput[TRIE_TEXT_INPUT_BUF_SIZE];
 	std::string newWordToUpdate;
-	char*       newWordToUpdateInput = new char[TEXT_INPUT_BUF_SIZE];
+	char        newWordToUpdateInput[TRIE_TEXT_INPUT_BUF_SIZE];
 
 
 	// Methods and properties for animating steps
@@ -115,6 +119,7 @@ public:
 
 
 private:
+	void initInputBuffers();
 	void refreshOriginPos();
 	// Helper algorithm functions
 	void getEventsSearchStep(std::vector<TrieAnimStep>& events, LogicTrieNode* root, int key);

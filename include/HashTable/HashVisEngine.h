@@ -29,6 +29,9 @@ enum class HashVisMode {
 };
 
 
+// REMEMBER:
+// Drawing SFML: The center of the window is now (0, 0) coordinates
+// Drawing GUI: The top-left of the window is (0, 0) coordinates
 class HashVisEngine : public AnimPlayer {
 public:
 	HashVisEngine(sf::RenderWindow* window, sf::Font* font); // Empty, size 0 hash table

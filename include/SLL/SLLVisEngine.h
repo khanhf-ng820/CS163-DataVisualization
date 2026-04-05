@@ -29,6 +29,9 @@ enum class SLLVisMode {
 };
 
 
+// REMEMBER:
+// Drawing SFML: The center of the window is now (0, 0) coordinates
+// Drawing GUI: The top-left of the window is (0, 0) coordinates
 class SLLVisEngine : public SLLAlgoEngine {
 public:
 	// using SLLAlgoEngine::SLLAlgoEngine;

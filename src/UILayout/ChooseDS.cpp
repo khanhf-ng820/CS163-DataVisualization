@@ -304,31 +304,34 @@ void Program::displayChooseDSMenuScreenGUI() {
 			break;
 		}
 	} else if (dataInitOption == DATA_INIT_CUSTOM) {
+		///// --- MUST FINISH ALL 6 DATA STRUCTURES --- /////
 		std::string dataString; // String of entered data
 		switch (chosenDSType) {
 		case DSType::SINGLY_LINKED_LIST:
-			ImGui::InputTextMultiline("##CustomDataSLL", customDataSLLbuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
+			ImGui::InputTextMultiline("##CustomDataSLL", customDataSLLbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			dataString = std::string(customDataSLLbuf);
 			invalidDataCustom = !validDataSLLString(dataString);
 			break;
 		case DSType::HASH_TABLE:
-			ImGui::InputTextMultiline("##CustomDataHash", customDataHashbuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
+			ImGui::InputTextMultiline("##CustomDataHash", customDataHashbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			dataString = std::string(customDataHashbuf);
 			invalidDataCustom = !validDataHashTableString(dataString);
 			break;
 		case DSType::AVL_TREE:
-			ImGui::InputTextMultiline("##CustomDataAVL", customDataAVLbuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
+			ImGui::InputTextMultiline("##CustomDataAVL", customDataAVLbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			dataString = std::string(customDataAVLbuf);
 			invalidDataCustom = !validDataAVLString(dataString);
 			break;
 		case DSType::TRIE_TREE:
-			ImGui::InputTextMultiline("##CustomDataTrie", customDataTriebuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
+			ImGui::InputTextMultiline("##CustomDataTrie", customDataTriebuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			dataString = std::string(customDataTriebuf);
+			invalidDataCustom = !validDataTrieString(dataString);
 			break;
 		case DSType::MST_GRAPH:
-			ImGui::InputTextMultiline("##CustomDataMST", customDataMSTbuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
+			ImGui::InputTextMultiline("##CustomDataMST", customDataMSTbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			break;
 		case DSType::DIJKSTRA_GRAPH:
-			ImGui::InputTextMultiline("##CustomDataDijkstra", customDataDijkstrabuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
+			ImGui::InputTextMultiline("##CustomDataDijkstra", customDataDijkstrabuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			break;
 		default:
 			break;
@@ -382,7 +385,10 @@ void Program::displayChooseDSMenuScreenGUI() {
 			}
 			break;
 		case DSType::TRIE_TREE:
-			programState = ProgramState::VIS_TRIE_SCREEN;
+			invalidDataFromFile = !initTrie(dataInitOption);
+			if (!invalidDataFromFile) {
+				programState = ProgramState::VIS_TRIE_SCREEN;
+			}
 			break;
 		case DSType::MST_GRAPH:
 			programState = ProgramState::VIS_MST_SCREEN;

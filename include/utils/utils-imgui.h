@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <cctype>
 
+#include "utils/utils.h"
+
 
 
 
@@ -21,7 +23,7 @@ inline static int FilterCallbackLowercaseAZ(ImGuiInputTextCallbackData* data) {
 		char c = (char)data->EventChar;
 
 		// Allow only letters and numbers
-		if (!(c >= 'a' && c <= 'z'))
+		if (!isValidTrieChar(c))
 			return 1; // Reject character
 	}
 	return 0;

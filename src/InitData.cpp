@@ -1,4 +1,4 @@
-#include "initData.h"
+#include "InitData.h"
 
 
 
@@ -158,7 +158,7 @@ bool Program::initAVL(const int dataInitOption) {
 		}
 
 		AVLData = getDataAVLString(dataString);
-		visEngine_AVL = AVLVisEngine(&window, &textFont, AVLData);
+		visEngine_AVL = AVLVisEngine(AVLData, &window, &textFont);
 
 		return true;
 	case DATA_INIT_FROM_FILE: // Data from file
@@ -174,16 +174,70 @@ bool Program::initAVL(const int dataInitOption) {
 		}
 
 		AVLData = getDataAVLFile(AVL_dataFile);
-		visEngine_AVL = AVLVisEngine(&window, &textFont, AVLData);
+		visEngine_AVL = AVLVisEngine(AVLData, &window, &textFont);
 
 		AVL_dataFile.close(); // Close the data file
 		return true;
 	case DATA_INIT_RANDOMIZED: // Randomized data
-		visEngine_AVL = AVLVisEngine(&window, &textFont, rng);
+		visEngine_AVL = AVLVisEngine(rng, &window, &textFont);
 		return true;
 	case DATA_INIT_EMPTY: // Empty data
 	default:
 		visEngine_AVL = AVLVisEngine(&window, &textFont);
+		return true;
+	}
+}
+
+
+
+
+
+///// TRIE (26-ARY TREE) /////
+bool Program::initTrie(const int dataInitOption) {
+	bool validData; // Whether data from file/string is valid
+	std::string dataString; // String of data
+	std::vector<std::string> trieData; // Data to be initialized into Trie
+
+	switch (dataInitOption) {
+	case DATA_INIT_CUSTOM: // Custom data as string
+		dataString = std::string(customDataTriebuf);
+		validData = validDataTrieString(dataString);
+
+		if (!validData) {
+			//// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+			std::cout << "Invalid data string. Something went wrong!!" << std::endl; // Invalid data
+
+			visEngine_Trie = TrieVisEngine(&window, &textFont);
+			return false;
+		}
+
+		trieData = getDataTrieString(dataString);
+		visEngine_Trie = TrieVisEngine(trieData, &window, &textFont);
+
+		return true;
+	case DATA_INIT_FROM_FILE: // Data from file
+		trie_dataFile.open(TRIE_DATA_FILEPATH); // Open data file
+		validData = validDataTrieFile(trie_dataFile);
+
+		if (!validData) {
+			std::cout << "Invalid data file. Check the .txt data file and try again." << std::endl; // Invalid data
+
+			visEngine_Trie = TrieVisEngine(&window, &textFont);
+			trie_dataFile.close(); // Close the data file
+			return false;
+		}
+
+		trieData = getDataTrieFile(trie_dataFile);
+		visEngine_Trie = TrieVisEngine(trieData, &window, &textFont);
+
+		trie_dataFile.close(); // Close the data file
+		return true;
+	case DATA_INIT_RANDOMIZED: // Randomized data
+		visEngine_Trie = TrieVisEngine(rng, &window, &textFont);
+		return true;
+	case DATA_INIT_EMPTY: // Empty data
+	default:
+		visEngine_Trie = TrieVisEngine(&window, &textFont);
 		return true;
 	}
 }

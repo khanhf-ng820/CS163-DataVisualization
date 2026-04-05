@@ -284,22 +284,6 @@ void Program::displayVisTrieScreenGUI() {
 
 
 
-	// const char* items[] = { "Option 1", "Option 2", "Option 3", "Option 4" };
-	// static int current_item = 0;
-	// if (ImGui::BeginCombo("##mycombo", items[current_item])) { // Pass the "current" item name as the preview
-	// 	for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
-	// 		bool is_selected = (current_item == n);
-	// 		if (ImGui::Selectable(items[n], is_selected)) {
-	// 			current_item = n;
-	// 		}
-
-	// 		// Set the initial focus when opening the combo (scrolling + keyboard navigation)
-	// 		if (is_selected) {
-	// 			ImGui::SetItemDefaultFocus();
-	// 		}
-	// 	}
-	// 	ImGui::EndCombo();
-	// }
 	ImGui::End();
 }
 

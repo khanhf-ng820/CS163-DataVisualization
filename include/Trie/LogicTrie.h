@@ -29,14 +29,16 @@ public:
 	LogicTrieNode* getNodeID(uint64_t ID);
 	// Check if word exists (plain version of generateSearchEvents)
 	bool wordExists(std::string word);
+	// Insert a word to init data (plain version of generateInsertEvents)
+	void insertWord(std::string word);
 
 
-	// Reminders
-	bool snapshotTreeReminder = false; // Snapshot after rotation
-	TrieAnimType animTypeReminder = TrieAnimType::NONE;
-	std::string descriptionReminder = "";
-	// Remind to snapshot tree after insertion/rotation
-	void snapshotTree(int key, std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
+	// // Reminders
+	// bool snapshotTreeReminder = false; // Snapshot after rotation
+	// TrieAnimType animTypeReminder = TrieAnimType::NONE;
+	// std::string descriptionReminder = "";
+	// // Remind to snapshot tree after insertion/rotation
+	// void snapshotTree(int key, std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots);
 
 
 	///// ANIMATION EVENTS

@@ -6,6 +6,7 @@ LogicTrieNode::LogicTrieNode() {}
 
 LogicTrieNode::LogicTrieNode(uint64_t id, char key)
 	: id(id), key(key), children(TRIE_ALPHABET_SIZE, nullptr)
+	, isEndOfWord(false)
 {}
 
 LogicTrieNode::LogicTrieNode(uint64_t id, char key, bool isEndOfWord)

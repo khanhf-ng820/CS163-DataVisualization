@@ -79,7 +79,7 @@ void LogicAVLTree::snapshotTree(int key, std::vector<AVLAnimStep>& events, std::
 }
 
 
-LogicAVLNode* LogicAVLTree::leftRotate(LogicAVLNode*& node, std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots) {
+LogicAVLNode* LogicAVLTree::leftRotate(LogicAVLNode*& node) {
 	LogicAVLNode* rightChild = node->right;
 	LogicAVLNode* rightleftChild = rightChild->left;
 	rightChild->left = node;
@@ -90,7 +90,7 @@ LogicAVLNode* LogicAVLTree::leftRotate(LogicAVLNode*& node, std::vector<AVLAnimS
 	return rightChild;
 }
 
-LogicAVLNode* LogicAVLTree::rightRotate(LogicAVLNode*& node, std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots) {
+LogicAVLNode* LogicAVLTree::rightRotate(LogicAVLNode*& node) {
 	LogicAVLNode* leftChild = node->left;
 	LogicAVLNode* leftrightChild = leftChild->right;
 	leftChild->right = node;
@@ -145,33 +145,33 @@ LogicAVLNode* LogicAVLTree::generateInsertEvents(LogicAVLNode*& node, int key, s
 	// Rotation when unbalanced
 	// Left Left
 	if (balance > 1 && getBalance(node->left) >= 0) {
-		LogicAVLNode* rotatedRoot = rightRotate(node, events, treeSnapshots);
+		LogicAVLNode* rotatedRoot = rightRotate(node);
 		setSnapshotReminder(AVLAnimType::ROTATE_RIGHT_LL, "Single Rotate Right (LL)");
 		return rotatedRoot;
 	}
 	// Right Right
 	if (balance < -1 && getBalance(node->right) <= 0) {
-		LogicAVLNode* rotatedRoot = leftRotate(node, events, treeSnapshots);
+		LogicAVLNode* rotatedRoot = leftRotate(node);
 		setSnapshotReminder(AVLAnimType::ROTATE_LEFT_RR, "Single Rotate Left (RR)");
 		return rotatedRoot;
 	}
 	// Left Right
 	if (balance > 1 && getBalance(node->left) < 0) {
-		node->left = leftRotate(node->left, events, treeSnapshots);
+		node->left = leftRotate(node->left);
 		treeSnapshots.push_back(*this);
 		events.push_back(AVLAnimStepOldTreeIndex(AVLAnimType::ROTATE_LEFT_LR, "Double Rotate (LR), rotate left", {}, treeSnapshots.size() - 1));
 		
-		LogicAVLNode* rotatedRoot = rightRotate(node, events, treeSnapshots);
+		LogicAVLNode* rotatedRoot = rightRotate(node);
 		setSnapshotReminder(AVLAnimType::ROTATE_RIGHT_LR, "Double Rotate (LR), rotate right");
 		return rotatedRoot;
 	}
 	// Right Left
 	if (balance < -1 && getBalance(node->right) > 0) {
-		node->right = rightRotate(node->right, events, treeSnapshots);
+		node->right = rightRotate(node->right);
 		treeSnapshots.push_back(*this);
 		events.push_back(AVLAnimStepOldTreeIndex(AVLAnimType::ROTATE_RIGHT_RL, "Double Rotate (RL), rotate right", {}, treeSnapshots.size() - 1));
 
-		LogicAVLNode* rotatedRoot = leftRotate(node, events, treeSnapshots);
+		LogicAVLNode* rotatedRoot = leftRotate(node);
 		setSnapshotReminder(AVLAnimType::ROTATE_LEFT_RL, "Double Rotate (RL), rotate left");
 		return rotatedRoot;
 	}
@@ -261,33 +261,33 @@ LogicAVLNode* LogicAVLTree::generateDeleteEvents(LogicAVLNode*& node, int key, s
 	// Rotation when unbalanced
 	// Left Left
 	if (balance > 1 && getBalance(node->left) >= 0) {
-		LogicAVLNode* rotatedRoot = rightRotate(node, events, treeSnapshots);
+		LogicAVLNode* rotatedRoot = rightRotate(node);
 		setSnapshotReminder(AVLAnimType::ROTATE_RIGHT_LL, "Single Rotate Right (LL)");
 		return rotatedRoot;
 	}
 	// Right Right
 	if (balance < -1 && getBalance(node->right) <= 0) {
-		LogicAVLNode* rotatedRoot = leftRotate(node, events, treeSnapshots);
+		LogicAVLNode* rotatedRoot = leftRotate(node);
 		setSnapshotReminder(AVLAnimType::ROTATE_LEFT_RR, "Single Rotate Left (RR)");
 		return rotatedRoot;
 	}
 	// Left Right
 	if (balance > 1 && getBalance(node->left) < 0) {
-		node->left = leftRotate(node->left, events, treeSnapshots);
+		node->left = leftRotate(node->left);
 		treeSnapshots.push_back(*this);
 		events.push_back(AVLAnimStepOldTreeIndex(AVLAnimType::ROTATE_LEFT_LR, "Double Rotate (LR), rotate left", {}, treeSnapshots.size() - 1));
 		
-		LogicAVLNode* rotatedRoot = rightRotate(node, events, treeSnapshots);
+		LogicAVLNode* rotatedRoot = rightRotate(node);
 		setSnapshotReminder(AVLAnimType::ROTATE_RIGHT_LR, "Double Rotate (LR), rotate right");
 		return rotatedRoot;
 	}
 	// Right Left
 	if (balance < -1 && getBalance(node->right) > 0) {
-		node->right = rightRotate(node->right, events, treeSnapshots);
+		node->right = rightRotate(node->right);
 		treeSnapshots.push_back(*this);
 		events.push_back(AVLAnimStepOldTreeIndex(AVLAnimType::ROTATE_RIGHT_RL, "Double Rotate (RL), rotate right", {}, treeSnapshots.size() - 1));
 
-		LogicAVLNode* rotatedRoot = leftRotate(node, events, treeSnapshots);
+		LogicAVLNode* rotatedRoot = leftRotate(node);
 		setSnapshotReminder(AVLAnimType::ROTATE_LEFT_RL, "Double Rotate (RL), rotate left");
 		return rotatedRoot;
 	}
@@ -313,6 +313,55 @@ void LogicAVLTree::clear(LogicAVLNode*& node) {
 	delete node;
 	node = nullptr;
 }
+
+// No events, snapshots
+LogicAVLNode* LogicAVLTree::insertKey(LogicAVLNode*& node, int key) {
+	if (!node) {
+		std::cerr << "(INIT) INSERTED NEW NODE" << std::endl; // DEBUG
+		return new LogicAVLNode(key);
+	}
+
+	if (key < node->key) {
+		node->left = insertKey(node->left, key);
+	} else if (key > node->key) {
+		node->right = insertKey(node->right, key);
+	}
+
+	// Update the balance factor and balance the tree
+	setHeight(node);
+
+	// Unwinding recursion, balancing the tree
+	int balance = getBalance(node);
+	// Rotation when unbalanced
+	// Left Left
+	if (balance > 1 && getBalance(node->left) >= 0) {
+		LogicAVLNode* rotatedRoot = rightRotate(node);
+		return rotatedRoot;
+	}
+	// Right Right
+	if (balance < -1 && getBalance(node->right) <= 0) {
+		LogicAVLNode* rotatedRoot = leftRotate(node);
+		return rotatedRoot;
+	}
+	// Left Right
+	if (balance > 1 && getBalance(node->left) < 0) {
+		node->left = leftRotate(node->left);
+		
+		LogicAVLNode* rotatedRoot = rightRotate(node);
+		return rotatedRoot;
+	}
+	// Right Left
+	if (balance < -1 && getBalance(node->right) > 0) {
+		node->right = rightRotate(node->right);
+
+		LogicAVLNode* rotatedRoot = leftRotate(node);
+		return rotatedRoot;
+	}
+	return node;
+}
+
+
+
 
 
 void LogicAVLTree::setSnapshotReminder(AVLAnimType animType, std::string desc) {

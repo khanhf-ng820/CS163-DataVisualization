@@ -6,15 +6,47 @@
 TrieVisEngine::TrieVisEngine(sf::RenderWindow* window, sf::Font* font)
 	: windowPtr(window), fontPtr(font)
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
-{}
+{
+	initInputBuffers();
+}
+
+TrieVisEngine::TrieVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font)
+	: windowPtr(window), fontPtr(font)
+	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
+{
+	initInputBuffers();
+	std::uniform_int_distribution<size_t> size_distrib(TRIE_INIT_MIN_SIZE, TRIE_INIT_MAX_SIZE);
+	std::uniform_int_distribution<size_t> wordLen_distrib(TRIE_INIT_WORD_MIN_LENGTH, TRIE_INIT_WORD_MAX_LENGTH);
+	std::uniform_int_distribution<char> char_distrib(TRIE_RANDOM_DISTRIB_KEY_MIN, TRIE_RANDOM_DISTRIB_KEY_MAX);
+
+	size_t wordCount = size_distrib(rng);
+	for (size_t i = 0; i < wordCount; i++) {
+		size_t wordLen = wordLen_distrib(rng);
+		std::string wordInit(wordLen, 'a');
+		for (char& c : wordInit)
+			c = char_distrib(rng);
+		tree.insertWord(wordInit);
+	}
+}
+
+TrieVisEngine::TrieVisEngine(std::vector<std::string>& words, sf::RenderWindow* window, sf::Font* font)
+	: windowPtr(window), fontPtr(font)
+	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
+{
+	initInputBuffers();
+	size_t wordCount = words.size();
+	for (size_t i = 0; i < wordCount; i++) {
+		tree.insertWord(words[i]);
+	}
+}
 
 // Delete all dynamically allocated memory
 TrieVisEngine::~TrieVisEngine() {
-	delete[] wordToSearchInput;
-	delete[] wordToInsertInput;
-	delete[] wordToRemoveInput;
-	delete[] oldWordToUpdateInput;
-	delete[] newWordToUpdateInput;
+	// delete[] wordToSearchInput;
+	// delete[] wordToInsertInput;
+	// delete[] wordToRemoveInput;
+	// delete[] oldWordToUpdateInput;
+	// delete[] newWordToUpdateInput;
 }
 
 
@@ -701,6 +733,16 @@ void TrieVisEngine::drawNodeArrow(std::vector<std::unique_ptr<sf::Drawable>>& dr
 }
 
 
+
+
+
+void TrieVisEngine::initInputBuffers() {
+	wordToSearchInput[0] = '\0';
+	wordToInsertInput[0] = '\0';
+	wordToRemoveInput[0] = '\0';
+	oldWordToUpdateInput[0] = '\0';
+	newWordToUpdateInput[0] = '\0';
+}
 
 void TrieVisEngine::refreshOriginPos() {
 	originPos = originPosDisplacement - sf::Vector2f(windowPtr->getSize()) / 2.f;

@@ -9,22 +9,21 @@ LogicTrie::LogicTrie() {
 
 	// Inserts 'apt', 'apps', 'apple'
 	root = newNode('-');
-	root->getChild('a') = newNode('a');
-	root->getChild('a')->getChild('p') = newNode('p');
-	root->getChild('a')->getChild('p')->getChild('p') = newNode('p');
-	root->getChild('a')->getChild('p')->getChild('t') = newNode('t', true);
-	root->getChild('a')->getChild('p')->getChild('p')->getChild('s') = newNode('s', true);
-	root->getChild('a')->getChild('p')->getChild('p')->getChild('l') = newNode('l');
-	root->getChild('a')->getChild('p')->getChild('p')->getChild('l')->getChild('e') = newNode('e', true);
+	// root->getChild('a') = newNode('a');
+	// root->getChild('a')->getChild('p') = newNode('p');
+	// root->getChild('a')->getChild('p')->getChild('p') = newNode('p');
+	// root->getChild('a')->getChild('p')->getChild('t') = newNode('t', true);
+	// root->getChild('a')->getChild('p')->getChild('p')->getChild('s') = newNode('s', true);
+	// root->getChild('a')->getChild('p')->getChild('p')->getChild('l') = newNode('l');
+	// root->getChild('a')->getChild('p')->getChild('p')->getChild('l')->getChild('e') = newNode('e', true);
 }
 
 LogicTrie::~LogicTrie() {
 	clear(root);
-	root = nullptr;
 }
 
 LogicTrie::LogicTrie(const LogicTrie& other)
-	: root(nullptr)
+	: root(nullptr), currentNodeID(other.currentNodeID)
 {
 	if (!other.root) return;
 	root = copyTree(other.root);
@@ -34,6 +33,7 @@ LogicTrie& LogicTrie::operator=(const LogicTrie& other) {
 	if (this != &other) {
 		LogicTrie tempTree(other);
 		std::swap(root, tempTree.root);
+		std::swap(currentNodeID, tempTree.currentNodeID);
 	}
 	return *this;
 }
@@ -77,6 +77,21 @@ bool LogicTrie::wordExists(std::string word) {
 	}
 
 	return node->isEndOfWord;
+}
+
+// Insert a word to init data (plain version of generateInsertEvents)
+void LogicTrie::insertWord(std::string word) {
+	LogicTrieNode* node = root;
+
+	for (const char& c : word) {
+		if (node->getChild(c) == nullptr) {
+			node->getChild(c) = newNode(c);
+		}
+
+		node = node->getChild(c);
+	}
+
+	node->isEndOfWord = true;
 }
 
 

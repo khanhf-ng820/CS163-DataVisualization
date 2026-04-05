@@ -8,7 +8,7 @@ AVLVisEngine::AVLVisEngine(sf::RenderWindow* window, sf::Font* font)
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {}
 
-AVLVisEngine::AVLVisEngine(sf::RenderWindow* window, sf::Font* font, std::mt19937& rng)
+AVLVisEngine::AVLVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font)
 	: windowPtr(window), fontPtr(font)
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {
@@ -18,18 +18,16 @@ AVLVisEngine::AVLVisEngine(sf::RenderWindow* window, sf::Font* font, std::mt1993
 	unsigned int initTreeSize = size_distrib(rng);
 	for (int i = 0; i < initTreeSize; i++) {
 		int initKey = key_distrib(rng);
-		std::vector<AVLAnimStep> eventsTemp = getEventsInsert(initKey);
-		oldTreeSnapshots.clear();
+		tree.root = tree.insertKey(tree.root, initKey);
 	}
 }
 
-AVLVisEngine::AVLVisEngine(sf::RenderWindow* window, sf::Font* font, std::vector<int>& numbers)
+AVLVisEngine::AVLVisEngine(std::vector<int>& numbers, sf::RenderWindow* window, sf::Font* font)
 	: windowPtr(window), fontPtr(font)
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {
 	for (const int& initKey : numbers) {
-		std::vector<AVLAnimStep> eventsTemp = getEventsInsert(initKey);
-		oldTreeSnapshots.clear();
+		tree.root = tree.insertKey(tree.root, initKey);
 	}
 }
 

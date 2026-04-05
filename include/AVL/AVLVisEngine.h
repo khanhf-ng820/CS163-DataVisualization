@@ -27,12 +27,14 @@ enum class AVLVisMode {
 };
 
 
-
+// REMEMBER:
+// Drawing SFML: The center of the window is now (0, 0) coordinates
+// Drawing GUI: The top-left of the window is (0, 0) coordinates
 class AVLVisEngine : public AnimPlayer {
 public:
 	AVLVisEngine(sf::RenderWindow* window, sf::Font* font); // Empty, size 0 AVL tree
-	AVLVisEngine(sf::RenderWindow* window, sf::Font* font, std::mt19937& rng); // Randomized AVL tree
-	AVLVisEngine(sf::RenderWindow* window, sf::Font* font, std::vector<int>& numbers); // Custom data AVL tree
+	AVLVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font); // Randomized AVL tree
+	AVLVisEngine(std::vector<int>& numbers, sf::RenderWindow* window, sf::Font* font); // Custom data AVL tree
 
 	// Reset all properties to get ready for visualize new action
 	void resetParams();
