@@ -256,10 +256,11 @@ void Program::displayChooseDSMenuScreenGUI() {
 
 	bool invalidDataCustom = false; // To print error messages when invalid data
 
-	// --- MUST FINISH ALL 6 DATA STRUCTURES ---
+	///// --- MUST FINISH ALL 6 DATA STRUCTURES --- /////
 	if (dataInitOption == DATA_INIT_EMPTY) {
 		switch (chosenDSType) {
 		case DSType::HASH_TABLE:
+			// Input HashTable size and modulo integer
 			ImGui::Dummy(ImVec2(ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight()));
 			ImGui::InputScalar(SIZE_INPUT_WARNING_STRING.c_str(), 
 				ImGuiDataType_U32, &initHashTableSizeBuf);
@@ -282,6 +283,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 	} else if (dataInitOption == DATA_INIT_RANDOMIZED) {
 		switch (chosenDSType) {
 		case DSType::HASH_TABLE:
+			// Input HashTable size and modulo integer
 			ImGui::Dummy(ImVec2(ImGui::GetTextLineHeight(), ImGui::GetTextLineHeight()));
 			ImGui::InputScalar(SIZE_INPUT_WARNING_STRING.c_str(), 
 				ImGuiDataType_U32, &initHashTableSizeBuf);
@@ -316,6 +318,8 @@ void Program::displayChooseDSMenuScreenGUI() {
 			break;
 		case DSType::AVL_TREE:
 			ImGui::InputTextMultiline("##CustomDataAVL", customDataAVLbuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
+			dataString = std::string(customDataAVLbuf);
+			invalidDataCustom = !validDataAVLString(dataString);
 			break;
 		case DSType::TRIE_TREE:
 			ImGui::InputTextMultiline("##CustomDataTrie", customDataTriebuf, CUSTOM_DATA_BUF_SIZE-1, ImVec2(-1.0f, 200.0f));
@@ -357,7 +361,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 		std::cout << DSVectors[current_DS_item].c_str() <<" "<<  dataInitOption << std::endl; // DEBUG
 
 		// Change program mode
-		// --- MUST FINISH ALL 6 DATA STRUCTURES ---
+		///// --- MUST FINISH ALL 6 DATA STRUCTURES --- /////
 		switch (chosenDSType) {
 		case DSType::SINGLY_LINKED_LIST:
 			invalidDataFromFile = !initSLL(dataInitOption);
@@ -372,7 +376,10 @@ void Program::displayChooseDSMenuScreenGUI() {
 			}
 			break;
 		case DSType::AVL_TREE:
-			programState = ProgramState::VIS_AVL_SCREEN;
+			invalidDataFromFile = !initAVL(dataInitOption);
+			if (!invalidDataFromFile) {
+				programState = ProgramState::VIS_AVL_SCREEN;
+			}
 			break;
 		case DSType::TRIE_TREE:
 			programState = ProgramState::VIS_TRIE_SCREEN;

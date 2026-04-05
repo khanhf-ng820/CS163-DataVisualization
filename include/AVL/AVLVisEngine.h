@@ -31,6 +31,8 @@ enum class AVLVisMode {
 class AVLVisEngine : public AnimPlayer {
 public:
 	AVLVisEngine(sf::RenderWindow* window, sf::Font* font); // Empty, size 0 AVL tree
+	AVLVisEngine(sf::RenderWindow* window, sf::Font* font, std::mt19937& rng); // Randomized AVL tree
+	AVLVisEngine(sf::RenderWindow* window, sf::Font* font, std::vector<int>& numbers); // Custom data AVL tree
 
 	// Reset all properties to get ready for visualize new action
 	void resetParams();

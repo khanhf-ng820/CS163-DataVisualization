@@ -11,9 +11,11 @@ HashVisEngine::HashVisEngine(sf::RenderWindow* window, sf::Font* font)
 {
 	// *** FOR TESTING ONLY, WILL DELETE LATER ***
 	table.resize(tableSize);
-	for (int i = 0; i < tableSize/2; i++)
-		table[i] = TableSlot(i, i);
-	for (int i = tableSize/2; i < tableSize; i++)
+	// for (int i = 0; i < tableSize/2; i++)
+	// 	table[i] = TableSlot(i, i);
+	// for (int i = tableSize/2; i < tableSize; i++)
+	// 	table[i] = TableSlot(i);
+	for (int i = 0; i < tableSize; i++)
 		table[i] = TableSlot(i);
 }
 

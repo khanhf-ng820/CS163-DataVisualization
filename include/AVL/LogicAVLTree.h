@@ -1,4 +1,5 @@
 #pragma once
+#include "AVL/const.h"
 #include "AVL/LogicAVLNode.h"
 #include "AVL/VisualAVLNode.h"
 #include "AVL/AVLAnimStep.h"

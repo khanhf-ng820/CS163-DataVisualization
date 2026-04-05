@@ -5,28 +5,28 @@
 // --- Open data structure .txt files
 void Program::createAndOpen(const fs::path dataFilePath) {
 	fs::create_directories(dataFilePath.parent_path());
-	SLL_dataFile = std::ifstream(dataFilePath);
-	if (!SLL_dataFile) {
+	std::ifstream dataFile = std::ifstream(dataFilePath);
+	if (!dataFile) {
 		std::ofstream createFile(dataFilePath);
 		createFile.close();
 		std::cout << "-- Created file" << dataFilePath << std::endl; // DEBUG
-		// SLL_dataFile.open(dataFilePath, std::ios::in | std::ios::out);
+		// dataFile.open(dataFilePath, std::ios::in | std::ios::out);
 	} else {
 		std::cout << "-- " << dataFilePath << " file exists" << std::endl; // DEBUG
 	}
-	SLL_dataFile.close();
+	dataFile.close();
 }
 
 
 
 
 
-// --- Initialize data structures
+// --- Initialize data structures ---
 ///// SINGLY LINKED LIST /////
 bool Program::initSLL(const int dataInitOption) {
 	bool validData; // Whether data from file/string is valid
 	std::string dataString; // String of data
-	std::vector<int> SLLData; // Data to be initialized into HashTable
+	std::vector<int> SLLData; // Data to be initialized into SLL
 
 	switch (dataInitOption) {
 	case DATA_INIT_CUSTOM: // Custom data as string
@@ -130,6 +130,60 @@ bool Program::initHashTable(const int dataInitOption) {
 	case DATA_INIT_EMPTY: // Empty data
 	default:
 		visEngine_Hash = HashVisEngine(initHashTableSizeBuf, initHashTableSizeBuf, &window, &textFont);
+		return true;
+	}
+}
+
+
+
+
+
+///// AVL TREE /////
+bool Program::initAVL(const int dataInitOption) {
+	bool validData; // Whether data from file/string is valid
+	std::string dataString; // String of data
+	std::vector<int> AVLData; // Data to be initialized into AVL Tree
+
+	switch (dataInitOption) {
+	case DATA_INIT_CUSTOM: // Custom data as string
+		dataString = std::string(customDataAVLbuf);
+		validData = validDataAVLString(dataString);
+
+		if (!validData) {
+			//// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+			std::cout << "Invalid data string. Something went wrong!!" << std::endl; // Invalid data
+
+			visEngine_AVL = AVLVisEngine(&window, &textFont);
+			return false;
+		}
+
+		AVLData = getDataAVLString(dataString);
+		visEngine_AVL = AVLVisEngine(&window, &textFont, AVLData);
+
+		return true;
+	case DATA_INIT_FROM_FILE: // Data from file
+		AVL_dataFile.open(AVL_DATA_FILEPATH); // Open data file
+		validData = validDataAVLFile(AVL_dataFile);
+
+		if (!validData) {
+			std::cout << "Invalid data file. Check the .txt data file and try again." << std::endl; // Invalid data
+
+			visEngine_AVL = AVLVisEngine(&window, &textFont);
+			AVL_dataFile.close(); // Close the data file
+			return false;
+		}
+
+		AVLData = getDataAVLFile(AVL_dataFile);
+		visEngine_AVL = AVLVisEngine(&window, &textFont, AVLData);
+
+		AVL_dataFile.close(); // Close the data file
+		return true;
+	case DATA_INIT_RANDOMIZED: // Randomized data
+		visEngine_AVL = AVLVisEngine(&window, &textFont, rng);
+		return true;
+	case DATA_INIT_EMPTY: // Empty data
+	default:
+		visEngine_AVL = AVLVisEngine(&window, &textFont);
 		return true;
 	}
 }
