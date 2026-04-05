@@ -17,14 +17,14 @@ TrieVisEngine::TrieVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Fo
 	initInputBuffers();
 	std::uniform_int_distribution<size_t> size_distrib(TRIE_INIT_MIN_SIZE, TRIE_INIT_MAX_SIZE);
 	std::uniform_int_distribution<size_t> wordLen_distrib(TRIE_INIT_WORD_MIN_LENGTH, TRIE_INIT_WORD_MAX_LENGTH);
-	std::uniform_int_distribution<char> char_distrib(TRIE_RANDOM_DISTRIB_KEY_MIN, TRIE_RANDOM_DISTRIB_KEY_MAX);
+	std::uniform_int_distribution<int> char_distrib(TRIE_RANDOM_DISTRIB_KEY_MIN, TRIE_RANDOM_DISTRIB_KEY_MAX);
 
 	size_t wordCount = size_distrib(rng);
 	for (size_t i = 0; i < wordCount; i++) {
 		size_t wordLen = wordLen_distrib(rng);
 		std::string wordInit(wordLen, 'a');
 		for (char& c : wordInit)
-			c = char_distrib(rng);
+			c = static_cast<char>(char_distrib(rng));
 		tree.insertWord(wordInit);
 	}
 }
