@@ -15,12 +15,14 @@
 #include "HashTable/HashVisEngine.h"
 #include "AVL/AVLVisEngine.h"
 #include "Trie/TrieVisEngine.h"
+#include "Graph/Dijkstra/DijkstraVisEngine.h"
 
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <map>
+#include <algorithm>
 #include <filesystem>
 #include <random>
 #include <chrono>
@@ -107,10 +109,10 @@ public:
 	void finishVisMSTScreen() {};
 
 	// Display Dijkstra visualization screen
-	void initVisDijkstraScreen() {};
-	void displayVisDijkstraScreenSFML() {};
-	void displayVisDijkstraScreenGUI() {};
-	void finishVisDijkstraScreen() {};
+	void initVisDijkstraScreen();
+	void displayVisDijkstraScreenSFML();
+	void displayVisDijkstraScreenGUI();
+	void finishVisDijkstraScreen();
 
 
 
@@ -159,7 +161,8 @@ private:
 	SLLVisEngine visEngine_SLL; // Engine for visualizing SLL
 	HashVisEngine visEngine_Hash; // Engine for visualizing Hash Table
 	AVLVisEngine visEngine_AVL; // Engine for visualizing AVL Tree
-	TrieVisEngine visEngine_Trie; // Engine for visualizing AVL Tree
+	TrieVisEngine visEngine_Trie; // Engine for visualizing Trie
+	DijkstraVisEngine visEngine_Dijkstra; // Engine for visualizing Dijkstra's algorithm
 
 
 

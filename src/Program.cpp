@@ -15,6 +15,7 @@ Program::Program()
 	, visEngine_Hash(&window, &textFont)
 	, visEngine_AVL(&window, &textFont)
 	, visEngine_Trie(&window, &textFont)
+	, visEngine_Dijkstra(10, &window, &textFont)
 {
 	window.requestFocus();
 	window.setFramerateLimit(FRAMERATE_LIMIT);

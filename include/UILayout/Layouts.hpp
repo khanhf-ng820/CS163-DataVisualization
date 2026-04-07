@@ -9,4 +9,6 @@
 #include "UILayout/VisAVL.h"
 #include "UILayout/VisTrie.h"
 
+#include "UILayout/VisDijkstra.h"
+
 ///// REMEMBER TO INCLUDE ALL HEADER FILES IN 'UILayout/'
