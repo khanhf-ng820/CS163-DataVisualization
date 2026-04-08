@@ -142,10 +142,15 @@ private:
 	// Random number generator
 	std::mt19937 rng;
 
+	// Function to calculate zoom factor of view
+	float calculateZoomFactor();
+
 	bool init_imgui_successful = true;
-	bool draggingCanvas = false; // If mouse is dragging canvas
 	bool allowDragCanvas = false; // Allow dragging canvas (remember to set false)
+	bool draggingCanvas = false; // If mouse is dragging canvas
 	sf::Vector2f lastWorldPos; // Position of last dragged view
+	
+	bool draggingGraphVertex = false;
 
 
 	// Initializing data structure from files

@@ -19,10 +19,18 @@ static inline constexpr float EPSILON_TIME = 1e-6;
 
 
 ///// Math / sf::Vector utility functions
+static inline constexpr double PI_CONST = 3.14159265358979323846;
+
 inline const float fract(float f) { return f - floor(f); }
 
 inline const sf::Vector2f round(sf::Vector2f vec) {
 	return sf::Vector2f(round(vec.x), round(vec.y));
+}
+
+inline const sf::Vector2f limitMag(sf::Vector2f vec, float maxMag) {
+	if (vec.lengthSquared() > maxMag * maxMag)
+		vec = vec.normalized() * maxMag;
+	return vec;
 }
 
 inline const sf::Vector2f lerp(sf::Vector2f v1, sf::Vector2f v2, float k)  {

@@ -18,7 +18,7 @@ public:
 
 
 	std::vector<std::vector<Edge>> adjList;
-	std::vector<VisualGraphVertex> visualVertices;
+	// std::vector<VisualGraphVertex> visualVertices;
 
 
 	// Get number of nodes (O(1))

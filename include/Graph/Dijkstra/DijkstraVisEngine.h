@@ -39,7 +39,14 @@ public:
 	// Reset all properties to get ready for visualize new action
 	void resetParams();
 
-	// Draw nodes: Iterate through linked list and draw nodes
+
+	// Keeps track of which node is dragged
+	int draggedVertexID = -1;
+	void getDraggedVertexID(sf::Vector2f mousePos, sf::Vector2f viewDisplacement, float viewZoomFactor);
+	void resetDraggedVertexID();
+	void dragVertexByMouse(sf::Vector2f mousePos, sf::Vector2f viewDisplacement, float viewZoomFactor);
+
+	// Draw nodes: Iterate through graph and draw nodes
 	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, DijkstraAnimStep eventDijkstra);
 	void drawPseudocodeWindow(DijkstraAnimStep eventDijkstra);
 	// Draw nodes and links, depending on eventList
@@ -61,19 +68,6 @@ public:
 	///// Buffers for Input in ImGui
 	int startVertexID = 0;         // Run Dijkstra
 	int startVertexIDInput = 0;
-	// int wordToSearch = 0;      // Searching
-	// int wordToSearchInput = -1;
-
-	// int wordToInsert = 0;      // Inserting
-	// int wordToInsertInput = -1;
-
-	// int wordToRemove = 0;      // Removing
-	// int wordToRemoveInput = -1;
-
-	// int oldWordToUpdate = 0;      // Updating
-	// int oldWordToUpdateInput = -1;
-	// int newWordToUpdate;
-	// int newWordToUpdateInput = -1;
 
 
 	// Methods and properties for animating steps
@@ -82,18 +76,14 @@ public:
 
 	///// ALGORITHMS
 	std::vector<DijkstraAnimStep> getEventsDijkstra(int startVertex);
-	// std::vector<DijkstraAnimStep> getEventsSearch(std::string word);
-	// std::vector<DijkstraAnimStep> getEventsInsert(std::string word);
-	// std::vector<DijkstraAnimStep> getEventsDelete(std::string word);
-	// std::vector<DijkstraAnimStep> getEventsUpdate(std::string oldWord, std::string newWord);
 
 
 	LogicGraphDijkstra graph; // Final state of graph
 	// Old Logical Dijkstra graphs
 	std::vector<LogicGraphDijkstra> oldGraphSnapshots;
 
-	// std::vector<std::map<int, VisualGraphVertex>> groupsOldVisualNodes; // Visual nodes from old graphs (from oldest to newest)
-	std::map<int, VisualGraphVertex> visualNodesCur; // Visual nodes for CURRENT TREE
+	// std::vector<std::vector<VisualGraphVertex>> groupsOldVisualNodes; // Visual nodes from old graphs (from oldest to newest)
+	std::vector<VisualGraphVertex> visualNodesCur; // Visual nodes for CURRENT GRAPH
 
 
 
@@ -104,8 +94,9 @@ public:
 	static constexpr int          descriptionFontSize   = 15;
 	static constexpr float        nodeCircleRadius      = 20;
 	static constexpr float        nodeOutlineThickness  = 2;
-	static constexpr int          nodeIDTextFontSize   = 15;
+	static constexpr int          nodeIDTextFontSize    = 15;
 	static constexpr int          nodeHeightTextFontSize = 12;
+	static constexpr int          edgeWeightTextFontSize = 14;
 	static constexpr float        nodeLayerSpacing      = 60;
 	static constexpr float        highlightCircleThickness = 5;
 	static constexpr float        arrowHeadSideLen      = 8;
@@ -113,7 +104,8 @@ public:
 
 	static constexpr sf::Color    normalNodeColor         = sf::Color::Black;
 	static constexpr sf::Color    normalNodeKeyColor      = sf::Color::Blue;
-	static constexpr sf::Color    normalNodeEOW_BGColor   = sf::Color(144, 238, 144, 127);
+	static constexpr sf::Color    draggedNodeColor        = sf::Color(255, 116, 108, 102);
+	static constexpr sf::Color    weightTextColor         = sf::Color::Red;
 	static constexpr sf::Color    highlightCircleColor    = sf::Color::Green;
 	static constexpr sf::Color    highlightFoundCircleColor = sf::Color::Red;
 	static constexpr sf::Color    highlightCodeColor      = sf::Color::Green;
@@ -124,14 +116,18 @@ private:
 	// // Helper algorithm functions
 	// void getEventsSearchStep(std::vector<DijkstraAnimStep>& events, LogicDijkstraNode* root, int key);
 
-	// Set correct positions for ALL VISUAL nodes (uses inorder positioning)
-	// void generateAllVisNodePos(LogicDijkstra& logicTree);
+	// Set initial positions for ALL VISUAL NODES (evenly spaced in circle)
 	void generateAllVisNodePos(LogicGraphDijkstra& logicGraph);
-	// Helper functions for generateAllVisNodePos
-	// void generateAllVisNodePosHelper(LogicDijkstra& logicTree, LogicDijkstraNode* root);
-	// void generateRecursiveVisNodePos(LogicDijkstraNode* node, float& xPos, float dx);
-	// void generateAllVisNodePosYHelper(LogicDijkstra& logicTree, LogicDijkstraNode* root);
-	// void generateRecursiveVisNodePosY(LogicDijkstraNode* node, int& layerY);
+
+	// Properties/Constants to draw graph (force-directed)
+	double k = 1; // = sqrt((width * height) / n);
+	float centerAttractionConstant = 0.003f;
+	float temperature = 20.f;
+	float timeStep = 0.001f; // To scale force to move nodes
+
+	// Update positions (based on force-directed graph drawing)
+	// Fruchterman-Reingold algorithm
+	void updateNodePositions();
 
 
 	// Draw a node (a circle with the key as text inside it)
@@ -148,24 +144,24 @@ private:
 	// void drawLerpNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const VisualGraphVertex& visNode1, const VisualGraphVertex& visNode2);
 	// // Draw lerped graph edges (straight lines)
 	// void drawLerpTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicDijkstraNode* root,
-	// 	std::map<int, VisualGraphVertex>& visualNodes1, std::map<int, VisualGraphVertex>& visualNodes2);
+	// 	std::vector<VisualGraphVertex>& visualNodes1, std::vector<VisualGraphVertex>& visualNodes2);
 	// // Draw lerped graph (nodes and edges)
 	// void drawLerpTree(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
-	// 	std::map<int, VisualGraphVertex>& visualNodes1, LogicDijkstra& logicTree1,
-	// 	std::map<int, VisualGraphVertex>& visualNodes2, LogicDijkstra& logicTree2);
+	// 	std::vector<VisualGraphVertex>& visualNodes1, LogicDijkstra& logicTree1,
+	// 	std::vector<VisualGraphVertex>& visualNodes2, LogicDijkstra& logicTree2);
 	// // Draw lerped graph when inserting a node
 	// void drawLerpTreeInsertNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
-	// 	std::map<int, VisualGraphVertex>& visualNodes1, LogicDijkstra& logicTree1,
-	// 	std::map<int, VisualGraphVertex>& visualNodes2, LogicDijkstra& logicTree2,
+	// 	std::vector<VisualGraphVertex>& visualNodes1, LogicDijkstra& logicTree1,
+	// 	std::vector<VisualGraphVertex>& visualNodes2, LogicDijkstra& logicTree2,
 	// 	uint64_t nodeInsertID);
 	// // Draw lerped graph when deleting a node
 	// void drawLerpTreeDeleteNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
-	// 	std::map<int, VisualGraphVertex>& visualNodes1, LogicDijkstra& logicTree1,
-	// 	std::map<int, VisualGraphVertex>& visualNodes2, LogicDijkstra& logicTree2,
+	// 	std::vector<VisualGraphVertex>& visualNodes1, LogicDijkstra& logicTree1,
+	// 	std::vector<VisualGraphVertex>& visualNodes2, LogicDijkstra& logicTree2,
 	// 	uint64_t nodeRemoveID);
 
 
 	// Helper drawing functions
-	// void drawEdgeLine(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end);
-	void drawNodeArrow(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end);
+	void drawEdgeLine(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end);
+	void drawEdgeWeightText(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end, int weight);
 };
