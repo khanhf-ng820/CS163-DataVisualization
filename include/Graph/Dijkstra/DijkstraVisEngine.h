@@ -60,6 +60,7 @@ public:
 
 	DijkstraVisMode visMode = DijkstraVisMode::NONE;
 	std::vector<DijkstraAnimStep> eventList;
+	std::unique_ptr<sfLayout> drawableListDefaultView;
 
 
 	///// Parameters for Visualization

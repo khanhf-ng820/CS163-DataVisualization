@@ -77,7 +77,7 @@ void LogicGraphDijkstra::generateDijkstraEvents(int startVertex, std::vector<Dij
 
 	graphSnapshots.push_back(dijkstraVertices);
 	pqueue.push(dijkstraVertices[startVertex]);
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Before running Dijkstra\'s algorithm", {}, startVertex, -1, graphSnapshots.size() - 1));
+	events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Cost of vertex " + std::to_string(startVertex) + " is 0", {}, startVertex, -1, graphSnapshots.size() - 1));
 
 	while (!pqueue.empty()) {
 		LogicGraphVertexDijkstra cheapestVertex(pqueue.top());

@@ -25,7 +25,12 @@ void Program::displayVisDijkstraScreenSFML() {
 		visEngine_Dijkstra.createDrawables(
 			sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		visEngine_Dijkstra.drawableListDefaultView->displayAll();
+
 		if (!visEngine_Dijkstra.animPaused)
 			visEngine_Dijkstra.increaseTime();
 		break;
@@ -35,7 +40,11 @@ void Program::displayVisDijkstraScreenSFML() {
 		visEngine_Dijkstra.createDrawables(
 			sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		visEngine_Dijkstra.drawableListDefaultView->displayAll();
 
 		// If not paused, just increase / decrease time
 		if (visEngine_Dijkstra.animPaused) {
@@ -119,9 +128,9 @@ void Program::displayVisDijkstraScreenGUI() {
 	ImGui::BeginDisabled(visEngine_Dijkstra.animInProgress);
 	ImGui::Text("Enter starting vertex:");
 	if (ImGui::InputInt("Start vertex", &visEngine_Dijkstra.startVertexIDInput)) {
-	    visEngine_Dijkstra.startVertexIDInput = std::clamp(visEngine_Dijkstra.startVertexIDInput, 
-	    	0, 
-	    	static_cast<int>(visEngine_Dijkstra.graph.getNumVertex()));
+		visEngine_Dijkstra.startVertexIDInput = std::clamp(visEngine_Dijkstra.startVertexIDInput, 
+			0, 
+			static_cast<int>(visEngine_Dijkstra.graph.getNumVertex()));
 	}
 	// float f;
 	// ImGui::SliderFloat("float", &f, 0.0f, 1.0f);

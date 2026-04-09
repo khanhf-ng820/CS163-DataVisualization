@@ -143,6 +143,7 @@ private:
 	std::mt19937 rng;
 
 	// Function to calculate zoom factor of view
+	// Returns the view's zoom factor (zoom in < 1, zoom out > 1)
 	float calculateZoomFactor();
 
 	bool init_imgui_successful = true;

@@ -15,3 +15,8 @@ void sfLayout::displayAll() {
 		window_ptr->draw(*drawable);
 	}
 }
+
+void sfLayout::clear() {
+	drawables.clear();
+	drawables.shrink_to_fit();
+}

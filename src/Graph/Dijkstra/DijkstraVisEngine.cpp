@@ -5,6 +5,7 @@
 
 DijkstraVisEngine::DijkstraVisEngine(unsigned int numVertex, sf::RenderWindow* window, sf::Font* font, sf::View* view)
 	: windowPtr(window), fontPtr(font), viewPtr(view)
+	, drawableListDefaultView(std::make_unique<sfLayout>(windowPtr))
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 	, graph(numVertex) , visualNodesCur(numVertex)
 {
@@ -16,6 +17,7 @@ DijkstraVisEngine::DijkstraVisEngine(unsigned int numVertex, sf::RenderWindow* w
 
 // DijkstraVisEngine::DijkstraVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font, sf::View* view)
 // 	: windowPtr(window), fontPtr(font), viewPtr(view)
+// 	, drawableListDefaultView(std::make_unique<sfLayout>(windowPtr))
 // 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 // 	, graph(numVertex) , visualNodesCur(numVertex)
 // {
@@ -35,6 +37,7 @@ DijkstraVisEngine::DijkstraVisEngine(unsigned int numVertex, sf::RenderWindow* w
 
 // DijkstraVisEngine::DijkstraVisEngine(std::vector<std::vector<Edge>>& adjList, sf::RenderWindow* window, sf::Font* font, sf::View* view)
 // 	: windowPtr(window), fontPtr(font), viewPtr(view)
+// 	, drawableListDefaultView(std::make_unique<sfLayout>(windowPtr))
 // 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 // 	, graph(numVertex) , visualNodesCur(numVertex)
 // {
@@ -379,6 +382,7 @@ void DijkstraVisEngine::drawPseudocodeWindow(DijkstraAnimStep eventDijkstra) {
 void DijkstraVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList) {
 	refreshOriginPos(); // Refresh properties when window size changes
 	drawableList.clear();
+	drawableListDefaultView->clear();
 
 
 	// If STILL mode, stop here
@@ -423,16 +427,12 @@ void DijkstraVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable
 
 
 	// Display description for algorithm visualization
-	sf::Vector2f currentSize = viewPtr->getSize();
-	float viewZoomFactor = currentSize.x / windowPtr->getSize().x;
-
 	auto descriptionText = std::make_unique<sf::Text>(*fontPtr, eventDijkstra.description, descriptionFontSize);
 	descriptionText->setFillColor(sf::Color::Black);
-	descriptionText->setPosition((originPos - originPosDisplacement + descriptionTextPos
-		+ viewPtr->getCenter()) * viewZoomFactor);
+	descriptionText->setPosition(descriptionTextPos);
 	descriptionText->setPosition(round(descriptionText->getPosition()));
 
-	drawableList.push_back(std::move(descriptionText));
+	drawableListDefaultView->drawables.push_back(std::move(descriptionText));
 
 
 	std::cout << drawableList.size() << ' ' << time << " init done" << std::endl; // DEBUG
