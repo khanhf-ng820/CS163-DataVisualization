@@ -16,13 +16,16 @@ class LogicGraphVertexDijkstra {
 public:
 	LogicGraphVertexDijkstra();
 	explicit LogicGraphVertexDijkstra(int id);
-	LogicGraphVertexDijkstra(int id, int dist, int prevVertex);
+	LogicGraphVertexDijkstra(int id, int cost, int prevVertex);
 	explicit LogicGraphVertexDijkstra(const LogicGraphVertexDijkstra& v);
 
 	int getID() const;
 
-	int dist = 0;  // Best distance to start vertex
+	int cost = INT_MAX;  // Best cost to the start vertex
 	int prevVertex = -1; // Previous vertex in the shortest path
+
+	// Compare costs
+	bool operator<(const LogicGraphVertexDijkstra& other) const;
 
 private:
 	int id = 0; // Unique ID of a node

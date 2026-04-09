@@ -9,13 +9,15 @@ enum class DijkstraAnimType : unsigned char {
 	NONE,
 	HIGHLIGHT_NODE,
 	HIGHLIGHT_NODE_AND_EDGE,
-	HIGHLIGHT_FOUND_NODE,
-	MOVE_HIGHLIGHT_DOWN,       // vertexID is the parent's ID
+	HIGHLIGHT_UPDATED_NODE,
+	// MOVE_HIGHLIGHT_DOWN,       // vertexID is the parent's ID
 
-	INSERT_NODE,               // Includes highlighting, lerp tree
-	MOVE_HIGHLIGHT_UP,         // vertexID is the parent's ID
+	// INSERT_NODE,               // Includes highlighting, lerp tree
+	// MOVE_HIGHLIGHT_UP,         // vertexID is the parent's ID
 
-	DELETE_LEAF_NODE           // No highlighting
+	// DELETE_LEAF_NODE,          // No highlighting
+
+	UPDATE_NEIGHBOR
 };
 
 

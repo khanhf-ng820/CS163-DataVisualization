@@ -31,9 +31,9 @@ enum class DijkstraVisMode {
 // Drawing GUI: The top-left of the window is (0, 0) coordinates
 class DijkstraVisEngine : public AnimPlayer {
 public:
-	DijkstraVisEngine(unsigned int numVertex, sf::RenderWindow* window, sf::Font* font); // N vertices graph
-	// DijkstraVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font); // Randomized graph
-	DijkstraVisEngine(std::vector<std::vector<Edge>>& adjList, sf::RenderWindow* window, sf::Font* font); // Custom data graph
+	DijkstraVisEngine(unsigned int numVertex, sf::RenderWindow* window, sf::Font* font, sf::View* view); // N vertices graph
+	// DijkstraVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font, sf::View* view); // Randomized graph
+	DijkstraVisEngine(std::vector<std::vector<Edge>>& adjList, sf::RenderWindow* window, sf::Font* font, sf::View* view); // Custom data graph
 	~DijkstraVisEngine(); // Delete all dynamically allocated memory
 
 	// Reset all properties to get ready for visualize new action
@@ -56,6 +56,7 @@ public:
 
 	sf::RenderWindow* windowPtr;
 	sf::Font* fontPtr;
+	sf::View* viewPtr;
 
 	DijkstraVisMode visMode = DijkstraVisMode::NONE;
 	std::vector<DijkstraAnimStep> eventList;
@@ -80,7 +81,7 @@ public:
 
 	LogicGraphDijkstra graph; // Final state of graph
 	// Old Logical Dijkstra graphs
-	std::vector<LogicGraphDijkstra> oldGraphSnapshots;
+	std::vector<std::vector<LogicGraphVertexDijkstra>> oldGraphSnapshots;
 
 	// std::vector<std::vector<VisualGraphVertex>> groupsOldVisualNodes; // Visual nodes from old graphs (from oldest to newest)
 	std::vector<VisualGraphVertex> visualNodesCur; // Visual nodes for CURRENT GRAPH
@@ -92,22 +93,28 @@ public:
 	static constexpr sf::Vector2f newNodeStartPos       = {50, 50};
 	static constexpr sf::Vector2f descriptionTextPos    = {50, 10};
 	static constexpr int          descriptionFontSize   = 15;
+	static constexpr float        canvasLeftMargin      = 100;
+
 	static constexpr float        nodeCircleRadius      = 20;
 	static constexpr float        nodeOutlineThickness  = 2;
 	static constexpr int          nodeIDTextFontSize    = 15;
 	static constexpr int          nodeHeightTextFontSize = 12;
-	static constexpr int          edgeWeightTextFontSize = 14;
+	static constexpr int          nodeInfoTextFontSize  = 12;
 	static constexpr float        nodeLayerSpacing      = 60;
 	static constexpr float        highlightCircleThickness = 5;
+
+	static constexpr int          edgeWeightTextFontSize = 14;
+	static constexpr float        highlightEdgeThickness   = 3;
 	static constexpr float        arrowHeadSideLen      = 8;
-	static constexpr float        canvasLeftMargin      = 100;
 
 	static constexpr sf::Color    normalNodeColor         = sf::Color::Black;
 	static constexpr sf::Color    normalNodeKeyColor      = sf::Color::Blue;
 	static constexpr sf::Color    draggedNodeColor        = sf::Color(255, 116, 108, 102);
 	static constexpr sf::Color    weightTextColor         = sf::Color::Red;
-	static constexpr sf::Color    highlightCircleColor    = sf::Color::Green;
+	static constexpr sf::Color    nodeInfoTextColor       = sf::Color(6, 64, 43, 255);
+	static constexpr sf::Color    highlightCircleColor    = sf::Color::Blue;
 	static constexpr sf::Color    highlightFoundCircleColor = sf::Color::Red;
+	static constexpr sf::Color    highlightEdgeColor      = sf::Color::Blue;
 	static constexpr sf::Color    highlightCodeColor      = sf::Color::Green;
 
 
@@ -131,14 +138,14 @@ private:
 
 
 	// Draw a node (a circle with the key as text inside it)
-	void drawNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const VisualGraphVertex& visVertex, const LogicGraphDijkstra& graphSnapshot);
+	void drawNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const VisualGraphVertex& visVertex, const std::vector<LogicGraphVertexDijkstra>& graphSnapshot);
 	// Draw the highlight circle (a circle highlighting a vertex)
 	void drawHighlightCircle(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f center, bool isHighlighted);
 	// Draw graph edges
 	///// MAKE SURE visualNodes std::map OBJECTS ARE POPULATED FIRST) /////
-	void drawGraphEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicGraphDijkstra& graphSnapshot);
+	void drawGraphEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const std::vector<LogicGraphVertexDijkstra>& graphSnapshot);
 	// Draw a STILL graph (no interpolation between the graph snapshots)
-	void drawStillGraph(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicGraphDijkstra& graphSnapshot);
+	void drawStillGraph(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const std::vector<LogicGraphVertexDijkstra>& graphSnapshot);
 
 	// // Draw lerped node
 	// void drawLerpNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const VisualGraphVertex& visNode1, const VisualGraphVertex& visNode2);
@@ -164,4 +171,5 @@ private:
 	// Helper drawing functions
 	void drawEdgeLine(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end);
 	void drawEdgeWeightText(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end, int weight);
+	void drawHighlightEdge(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end);
 };

@@ -3,6 +3,9 @@
 #include "Graph/Dijkstra/LogicGraphVertexDijkstra.h"
 #include "Graph/Dijkstra/DijkstraAnimStep.h"
 
+#include <queue>
+
+
 
 
 
@@ -22,20 +25,22 @@ public:
 	// LogicGraphVertexDijkstra* getVertexID(int ID);
 	// // Check if word exists (plain version of generateSearchEvents)
 	// bool wordExists(std::string word);
+	// Return snapshot of graph (only the vertices)
+	std::vector<LogicGraphVertexDijkstra> logicVerticesSnapshot() const;
 
 
 
 	///// ANIMATION EVENTS
-	void generateDijkstraEvents(int startVertex, 
-		std::vector<DijkstraAnimStep>& events, std::vector<LogicGraphDijkstra>& treeSnapshots);
+	void generateDijkstraEvents(int startVertex, std::vector<DijkstraAnimStep>& events, 
+		std::vector<std::vector<LogicGraphVertexDijkstra>>& graphSnapshots);
 	// // Returns bool whether word exists or not
 	// bool generateSearchEvents(std::string word, 
-	// 	std::vector<DijkstraAnimStep>& events, std::vector<LogicGraphDijkstra>& treeSnapshots);
+	// 	std::vector<DijkstraAnimStep>& events, std::vector<LogicGraphDijkstra>& graphSnapshots);
 	// // Return the last inserted vertex with isEndOfWord = true
 	// LogicGraphVertexDijkstra* generateInsertEvents(std::string word, 
-	// 	std::vector<DijkstraAnimStep>& events, std::vector<LogicGraphDijkstra>& treeSnapshots);
+	// 	std::vector<DijkstraAnimStep>& events, std::vector<LogicGraphDijkstra>& graphSnapshots);
 	// void generateDeleteEvents(std::string word, 
-	// 	std::vector<DijkstraAnimStep>& events, std::vector<LogicGraphDijkstra>& treeSnapshots);
+	// 	std::vector<DijkstraAnimStep>& events, std::vector<LogicGraphDijkstra>& graphSnapshots);
 
 
 private:
@@ -44,14 +49,14 @@ private:
 
 	// ///// Helper functions for animation events generation
 	// LogicGraphVertex* generateDeleteEventsHelper(LogicGraphVertex*& vertex, std::string word, int depth, 
-	// 	std::vector<DijkstraAnimStep>& events, std::vector<LogicGraph>& treeSnapshots);
+	// 	std::vector<DijkstraAnimStep>& events, std::vector<LogicGraph>& graphSnapshots);
 
 	// void setSnapshotReminder(GraphAnimType animType, std::string desc);
 	// void clearSnapshotReminder();
 
 
 	///// Helper functions (other)
-	// LogicGraphVertex* copyTree(const LogicGraphVertex* vertex); // Return copy of tree
+	// LogicGraphVertex* copyTree(const LogicGraphVertex* vertex); // Return copy of graph
 
 	// unsigned int getSizeHelper(LogicGraphVertex* vertex);
 	// void         countLeafHelper(LogicGraphVertex* vertex, unsigned int& totalCnt);

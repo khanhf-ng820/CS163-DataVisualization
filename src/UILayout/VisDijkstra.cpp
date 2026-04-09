@@ -29,7 +29,7 @@ void Program::displayVisDijkstraScreenSFML() {
 		if (!visEngine_Dijkstra.animPaused)
 			visEngine_Dijkstra.increaseTime();
 		break;
-	// ----- SEARCH MODE -----
+	// ----- DIJKSTRA MODE -----
 	case DijkstraVisMode::DIJKSTRA:
 		// visEngine_Dijkstra.eventList = visEngine_Dijkstra.getEventsSearch(visEngine_Dijkstra.startVertexID);
 		visEngine_Dijkstra.createDrawables(

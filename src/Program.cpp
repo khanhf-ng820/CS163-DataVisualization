@@ -13,7 +13,7 @@ Program::Program()
 	, rng(std::random_device()())
 	, visEngine_SLL(window, textFont), visEngine_Hash(&window, &textFont)
 	, visEngine_AVL(&window, &textFont), visEngine_Trie(&window, &textFont)
-	, visEngine_Dijkstra(10, &window, &textFont)
+	, visEngine_Dijkstra(10, &window, &textFont, &view)
 {
 	window.requestFocus();
 	window.setFramerateLimit(FRAMERATE_LIMIT);
@@ -237,7 +237,7 @@ void Program::mainLoop() {
 			} else if (programState == ProgramState::VIS_DIJKSTRA_SCREEN) {
 				visEngine_Dijkstra.dragVertexByMouse(mousePos, view.getCenter(), calculateZoomFactor());
 			}
-			std::cout << "Dragging node" << std::endl; // DEBUG
+			// std::cout << "Dragging node" << std::endl; // DEBUG
 		}
 
 

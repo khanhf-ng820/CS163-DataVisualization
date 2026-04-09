@@ -9,16 +9,23 @@ LogicGraphVertexDijkstra::LogicGraphVertexDijkstra(int id)
 	: id(id)
 {}
 
-LogicGraphVertexDijkstra::LogicGraphVertexDijkstra(int id, int dist, int prevVertex)
-	: id(id), dist(dist), prevVertex(prevVertex)
+LogicGraphVertexDijkstra::LogicGraphVertexDijkstra(int id, int cost, int prevVertex)
+	: id(id), cost(cost), prevVertex(prevVertex)
 {}
 
 LogicGraphVertexDijkstra::LogicGraphVertexDijkstra(const LogicGraphVertexDijkstra& v)
-	: id(v.getID()), dist(v.dist), prevVertex(v.prevVertex)
+	: id(v.getID()), cost(v.cost), prevVertex(v.prevVertex)
 {}
 
 
 
 int LogicGraphVertexDijkstra::getID() const {
 	return id;
+}
+
+
+
+// Compare costs
+bool LogicGraphVertexDijkstra::operator<(const LogicGraphVertexDijkstra& other) const {
+	return cost > other.cost;
 }

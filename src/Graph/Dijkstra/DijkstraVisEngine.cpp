@@ -3,8 +3,8 @@
 
 
 
-DijkstraVisEngine::DijkstraVisEngine(unsigned int numVertex, sf::RenderWindow* window, sf::Font* font)
-	: windowPtr(window), fontPtr(font)
+DijkstraVisEngine::DijkstraVisEngine(unsigned int numVertex, sf::RenderWindow* window, sf::Font* font, sf::View* view)
+	: windowPtr(window), fontPtr(font), viewPtr(view)
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 	, graph(numVertex) , visualNodesCur(numVertex)
 {
@@ -14,8 +14,8 @@ DijkstraVisEngine::DijkstraVisEngine(unsigned int numVertex, sf::RenderWindow* w
 	}
 }
 
-// DijkstraVisEngine::DijkstraVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font)
-// 	: windowPtr(window), fontPtr(font)
+// DijkstraVisEngine::DijkstraVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font, sf::View* view)
+// 	: windowPtr(window), fontPtr(font), viewPtr(view)
 // 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 // 	, graph(numVertex) , visualNodesCur(numVertex)
 // {
@@ -33,8 +33,8 @@ DijkstraVisEngine::DijkstraVisEngine(unsigned int numVertex, sf::RenderWindow* w
 // 	}
 // }
 
-// DijkstraVisEngine::DijkstraVisEngine(std::vector<std::vector<Edge>>& adjList, sf::RenderWindow* window, sf::Font* font)
-// 	: windowPtr(window), fontPtr(font)
+// DijkstraVisEngine::DijkstraVisEngine(std::vector<std::vector<Edge>>& adjList, sf::RenderWindow* window, sf::Font* font, sf::View* view)
+// 	: windowPtr(window), fontPtr(font), viewPtr(view)
 // 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 // 	, graph(numVertex) , visualNodesCur(numVertex)
 // {
@@ -65,12 +65,12 @@ void DijkstraVisEngine::resetParams() {
 std::vector<DijkstraAnimStep> DijkstraVisEngine::getEventsDijkstra(int startVertex) {
 	std::vector<DijkstraAnimStep> events;
 	oldGraphSnapshots.clear();
-	oldGraphSnapshots.push_back(graph);
+	oldGraphSnapshots.push_back(graph.logicVertices);
 
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::NONE, "Before running Dijkstra\'s algorithm with starting vertex: \"" + std::to_string(startVertex) + "\"", {}, 0, 0));
+	events.push_back(DijkstraAnimStep(DijkstraAnimType::NONE, "Before running Dijkstra\'s algorithm with starting vertex: " + std::to_string(startVertex), {}, -1, -1, 1));
 	graph.generateDijkstraEvents(startVertex, events, oldGraphSnapshots);
 
-	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
+	std::cerr << "Done generating Dijkstra events!" << std::endl; // DEBUG
 	std::cerr << ", size = " << graph.getNumVertex() << std::endl; // DEBUG
 
 	return events;
@@ -90,7 +90,7 @@ std::vector<DijkstraAnimStep> DijkstraVisEngine::getEventsDijkstra(int startVert
 // 	// // Remind to snapshot graph after insertion/rotation
 // 	// graph.snapshotGraph(ID, events, oldGraphSnapshots);
 
-// 	events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting word: \"" + word + "\"", {}, lastInsertedNode->getID(), -1));
+// 	events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_UPDATED_NODE, "Finished inserting word: \"" + word + "\"", {}, lastInsertedNode->getID(), -1));
 
 // 	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
 // 	std::cerr << ", size = " << graph.getNumVertex() << std::endl; // DEBUG
@@ -229,17 +229,35 @@ void DijkstraVisEngine::dragVertexByMouse(sf::Vector2f mousePos, sf::Vector2f vi
 void DijkstraVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, DijkstraAnimStep eventDijkstra) {
 	// generateAllVisNodePos(visualNodesCur, graph);
 	// generateAllVisNodePos(graph);
+	size_t numOfOldGraphSnapshots = oldGraphSnapshots.size();
 
-	drawStillGraph(drawableList, graph);
+	// Generate all visual nodes, new and old
+	// generateAllVisNodePos(graph);
+	// for (int i = 0; i < numOfOldGraphSnapshots; i++) {
+	// 	generateAllVisNodePos(oldGraphSnapshots[i]);
+	// }
+	if (visMode == DijkstraVisMode::DIJKSTRA)
+		std::cerr << "numOfOldGraphSnapshots = " << numOfOldGraphSnapshots << ", "; // DEBUG
+
+	// Find old visual nodes and old graph snapshot
+	std::vector<LogicGraphVertexDijkstra>& oldGraphSnapshot =
+		(eventDijkstra.oldGraphSnapshotIndex == -1) ? graph.logicVertices : oldGraphSnapshots[eventDijkstra.oldGraphSnapshotIndex];
+
+	drawStillGraph(drawableList, oldGraphSnapshot);
 
 	// Draw highlighting circle
 	switch (eventDijkstra.type) {
 	case DijkstraAnimType::HIGHLIGHT_NODE:
 		drawHighlightCircle(drawableList, visualNodesCur[eventDijkstra.vertexID].position, false);
 		break;
-	// case DijkstraAnimType::HIGHLIGHT_FOUND_NODE:
-	// 	drawHighlightCircle(drawableList, visualNodesCur[eventDijkstra.vertexID].position, true);
-	// 	break;
+	case DijkstraAnimType::HIGHLIGHT_UPDATED_NODE:
+		drawHighlightCircle(drawableList, visualNodesCur[eventDijkstra.vertexID].position, true);
+		break;
+	case DijkstraAnimType::UPDATE_NEIGHBOR:
+		drawHighlightCircle(drawableList, visualNodesCur[eventDijkstra.vertexID].position, false);
+		drawHighlightEdge(drawableList, visualNodesCur[eventDijkstra.vertexID].position, visualNodesCur[eventDijkstra.toVertexID].position);
+		drawHighlightCircle(drawableList, visualNodesCur[eventDijkstra.toVertexID].position, true);
+		break;
 	// case DijkstraAnimType::MOVE_HIGHLIGHT_DOWN:
 	// 	if (graph.getNodeID(eventDijkstra.vertexID) && graph.getNodeID(eventDijkstra.vertexID)->getChild(eventDijkstra.charLink))
 	// 		drawHighlightCircle(drawableList,
@@ -277,23 +295,23 @@ void DijkstraVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawabl
 
 // 	// Find old visual nodes and old graph snapshot
 // 	std::vector<VisualDijkstraNode>& oldVisualNodes =
-// 		(eventDijkstra.oldTreeSnapshotIndex == -1) ? visualNodesCur : groupsOldVisualNodes[eventDijkstra.oldTreeSnapshotIndex];
-// 	LogicDijkstra& oldTreeSnapshot =
-// 		(eventDijkstra.oldTreeSnapshotIndex == -1) ? graph : oldGraphSnapshots[eventDijkstra.oldTreeSnapshotIndex];
+// 		(eventDijkstra.oldGraphSnapshotIndex == -1) ? visualNodesCur : groupsOldVisualNodes[eventDijkstra.oldGraphSnapshotIndex];
+// 	LogicDijkstra& oldGraphSnapshot =
+// 		(eventDijkstra.oldGraphSnapshotIndex == -1) ? graph : oldGraphSnapshots[eventDijkstra.oldGraphSnapshotIndex];
 
 // 	// Draw the graph
 // 	switch (eventDijkstra.type) {
 // 	case DijkstraAnimType::INSERT_NODE:
 // 		// Node insertion animation
-// 		drawLerpTreeInsertNode(drawableList,
-// 			groupsOldVisualNodes[eventDijkstra.oldTreeSnapshotIndex - 1],
-// 			oldGraphSnapshots[eventDijkstra.oldTreeSnapshotIndex - 1],
-// 			oldVisualNodes, oldTreeSnapshot, 
+// 		drawLerpGraphInsertNode(drawableList,
+// 			groupsOldVisualNodes[eventDijkstra.oldGraphSnapshotIndex - 1],
+// 			oldGraphSnapshots[eventDijkstra.oldGraphSnapshotIndex - 1],
+// 			oldVisualNodes, oldGraphSnapshot, 
 // 			eventDijkstra.vertexID
 // 		);
 // 		break;
 // 	default:
-// 		drawStillTree(drawableList, oldVisualNodes, oldTreeSnapshot);
+// 		drawStillGraph(drawableList, oldVisualNodes, oldGraphSnapshot);
 // 	}
 
 // 	// Draw highlighting circle
@@ -301,15 +319,15 @@ void DijkstraVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawabl
 // 	case DijkstraAnimType::HIGHLIGHT_NODE:
 // 		drawHighlightCircle(drawableList, oldVisualNodes[eventDijkstra.vertexID].position, false);
 // 		break;
-// 	case DijkstraAnimType::HIGHLIGHT_FOUND_NODE:
+// 	case DijkstraAnimType::HIGHLIGHT_UPDATED_NODE:
 // 	// case DijkstraAnimType::INSERT_NODE: // Highlight inserted node when at inserting event
 // 		drawHighlightCircle(drawableList, oldVisualNodes[eventDijkstra.vertexID].position, true);
 // 		break;
 // 	case DijkstraAnimType::MOVE_HIGHLIGHT_DOWN:
-// 		if (oldTreeSnapshot.getNodeID(eventDijkstra.vertexID) && oldTreeSnapshot.getNodeID(eventDijkstra.vertexID)->getChild(eventDijkstra.charLink)) {
+// 		if (oldGraphSnapshot.getNodeID(eventDijkstra.vertexID) && oldGraphSnapshot.getNodeID(eventDijkstra.vertexID)->getChild(eventDijkstra.charLink)) {
 // 			drawHighlightCircle(drawableList,
 // 				easeInOutLerp(oldVisualNodes[eventDijkstra.vertexID].position, 
-// 							  oldVisualNodes[oldTreeSnapshot.getNodeID(eventDijkstra.vertexID)->getChild(eventDijkstra.charLink)->getID()].position, 
+// 							  oldVisualNodes[oldGraphSnapshot.getNodeID(eventDijkstra.vertexID)->getChild(eventDijkstra.charLink)->getID()].position, 
 // 							  fract(time)),
 // 				false);
 // 		} else {
@@ -405,9 +423,13 @@ void DijkstraVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable
 
 
 	// Display description for algorithm visualization
+	sf::Vector2f currentSize = viewPtr->getSize();
+	float viewZoomFactor = currentSize.x / windowPtr->getSize().x;
+
 	auto descriptionText = std::make_unique<sf::Text>(*fontPtr, eventDijkstra.description, descriptionFontSize);
 	descriptionText->setFillColor(sf::Color::Black);
-	descriptionText->setPosition(originPos - originPosDisplacement + descriptionTextPos);
+	descriptionText->setPosition((originPos - originPosDisplacement + descriptionTextPos
+		+ viewPtr->getCenter()) * viewZoomFactor);
 	descriptionText->setPosition(round(descriptionText->getPosition()));
 
 	drawableList.push_back(std::move(descriptionText));
@@ -451,7 +473,7 @@ void DijkstraVisEngine::generateAllVisNodePos(LogicGraphDijkstra& logicGraph) {
 ///// --- DRAWING FUNCTIONS ---
 // Draw a node (a circle with the ID as text inside it)
 void DijkstraVisEngine::drawNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, 
-	const VisualGraphVertex& visVertex, const LogicGraphDijkstra& graphSnapshot) {
+	const VisualGraphVertex& visVertex, const std::vector<LogicGraphVertexDijkstra>& graphSnapshot) {
 	// Draw circle
 	auto nodeCircle = std::make_unique<sf::CircleShape>(nodeCircleRadius);
 	nodeCircle->setOrigin({nodeCircle->getRadius(), nodeCircle->getRadius()}); 
@@ -466,17 +488,31 @@ void DijkstraVisEngine::drawNode(std::vector<std::unique_ptr<sf::Drawable>>& dra
 	nodeIDText->setFillColor(normalNodeKeyColor);
 	nodeIDText->setPosition(nodeCircle->getPosition());
 	nodeIDText->setPosition(round(nodeIDText->getPosition()));
-	// // Draw height text
-	// auto nodeHeightText = std::make_unique<sf::Text>(*fontPtr, std::to_string(visVertex.height), nodeHeightTextFontSize);
-	// localBounds = nodeHeightText->getLocalBounds();
-	// nodeHeightText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
-	// nodeHeightText->setFillColor(normalNodeHeightColor);
-	// nodeHeightText->setPosition(nodeCircle->getPosition() + sf::Vector2f(nodeCircleRadius, -nodeCircleRadius));
-	// nodeHeightText->setPosition(round(nodeHeightText->getPosition()));
+	// Draw cost text
+	auto nodeCostText = std::make_unique<sf::Text>(*fontPtr, 
+		graphSnapshot[visVertex.getID()].cost == INT_MAX ? "INF" : std::to_string(graphSnapshot[visVertex.getID()].cost), 
+		nodeInfoTextFontSize
+	);
+	localBounds = nodeCostText->getLocalBounds();
+	nodeCostText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
+	nodeCostText->setFillColor(nodeInfoTextColor);
+	nodeCostText->setPosition(nodeCircle->getPosition() + sf::Vector2f(0, -nodeCircleRadius) * 0.6f);
+	nodeCostText->setPosition(round(nodeCostText->getPosition()));
+	// Draw previous vertex text
+	auto nodePrevVertText = std::make_unique<sf::Text>(*fontPtr, 
+		graphSnapshot[visVertex.getID()].prevVertex == -1 ? "NULL" : std::to_string(graphSnapshot[visVertex.getID()].prevVertex), 
+		nodeInfoTextFontSize
+	);
+	localBounds = nodePrevVertText->getLocalBounds();
+	nodePrevVertText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
+	nodePrevVertText->setFillColor(nodeInfoTextColor);
+	nodePrevVertText->setPosition(nodeCircle->getPosition() + sf::Vector2f(0, nodeCircleRadius) * 0.6f);
+	nodePrevVertText->setPosition(round(nodePrevVertText->getPosition()));
 
 	drawableList.push_back(std::move(nodeCircle));
 	drawableList.push_back(std::move(nodeIDText));
-	// drawableList.push_back(std::move(nodeHeightText));
+	drawableList.push_back(std::move(nodeCostText));
+	drawableList.push_back(std::move(nodePrevVertText));
 }
 
 
@@ -495,12 +531,13 @@ void DijkstraVisEngine::drawHighlightCircle(std::vector<std::unique_ptr<sf::Draw
 
 // Draw graph edges (arrows)
 void DijkstraVisEngine::drawGraphEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, 
-	const LogicGraphDijkstra& graphSnapshot) {
-	unsigned int numVertex = graphSnapshot.getNumVertex();
+	const std::vector<LogicGraphVertexDijkstra>& graphSnapshot) {
+	unsigned int numVertex = graphSnapshot.size();
 	for (int i = 0; i < numVertex; i++) {
-		for (const auto& [to, weight] : graphSnapshot.adjList[i]) {
+		for (const auto& [to, weight] : graph.adjList[i]) {
 			if (i > to) continue; // Don't draw twice
 			sf::Vector2f start = visualNodesCur[i].position, end = visualNodesCur[to].position;
+
 			drawEdgeLine(drawableList, start, end);
 
 			drawEdgeWeightText(drawableList, start, end, weight);
@@ -510,9 +547,9 @@ void DijkstraVisEngine::drawGraphEdges(std::vector<std::unique_ptr<sf::Drawable>
 
 
 void DijkstraVisEngine::drawStillGraph(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, 
-	const LogicGraphDijkstra& graphSnapshot) {
+	const std::vector<LogicGraphVertexDijkstra>& graphSnapshot) {
 	drawGraphEdges(drawableList, graphSnapshot);
-	unsigned int numVertex = graphSnapshot.getNumVertex();
+	unsigned int numVertex = graphSnapshot.size();
 	for (int ID = 0; ID < numVertex; ID++) {
 		drawNode(drawableList, visualNodesCur[ID], graphSnapshot);
 	}
@@ -550,11 +587,11 @@ void DijkstraVisEngine::drawStillGraph(std::vector<std::unique_ptr<sf::Drawable>
 // }
 
 // // Draw lerped graph edges (arrows)
-// void DijkstraVisEngine::drawLerpTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicDijkstraNode* root,
+// void DijkstraVisEngine::drawLerpGraphEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicDijkstraNode* root,
 // 	std::vector<VisualDijkstraNode>& visualNodes1, std::vector<VisualDijkstraNode>& visualNodes2) {
 // 	if (!root) return;
 // 	for (int i = 0; i < DIJKSTRA_ALPHABET_SIZE; i++)
-// 		drawLerpTreeEdges(drawableList, root->children[i], visualNodes1, visualNodes2);
+// 		drawLerpGraphEdges(drawableList, root->children[i], visualNodes1, visualNodes2);
 // 	for (int i = 0; i < DIJKSTRA_ALPHABET_SIZE; i++) {
 // 		if (!root->children[i]) continue;
 // 		sf::Vector2f start = easeInOutLerp(visualNodes1[root->getID()].position, visualNodes2[root->getID()].position, fract(time));
@@ -566,17 +603,17 @@ void DijkstraVisEngine::drawStillGraph(std::vector<std::unique_ptr<sf::Drawable>
 // }
 
 // // Draw lerped graph (nodes and edges)
-// void DijkstraVisEngine::drawLerpTree(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
+// void DijkstraVisEngine::drawLerpGraph(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
 // 	std::vector<VisualDijkstraNode>& visualNodes1, LogicDijkstra& logicGraph1,
 // 	std::vector<VisualDijkstraNode>& visualNodes2, LogicDijkstra& logicGraph2) {
-// 	drawLerpTreeEdges(drawableList, logicGraph2.root, visualNodes1, visualNodes2);
+// 	drawLerpGraphEdges(drawableList, logicGraph2.root, visualNodes1, visualNodes2);
 // 	for (const auto& [ID, visVertex2] : visualNodes2) {
 // 		drawLerpNode(drawableList, visualNodes1[ID], visVertex2);
 // 	}
 // }
 
 // // Draw lerped graph when inserting a node
-// void DijkstraVisEngine::drawLerpTreeInsertNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
+// void DijkstraVisEngine::drawLerpGraphInsertNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
 // 	std::vector<VisualDijkstraNode>& visualNodes1, LogicDijkstra& logicGraph1,
 // 	std::vector<VisualDijkstraNode>& visualNodes2, LogicDijkstra& logicGraph2,
 // 	uint64_t nodeInsertID) {
@@ -586,11 +623,11 @@ void DijkstraVisEngine::drawStillGraph(std::vector<std::unique_ptr<sf::Drawable>
 // 		visualNodesBefore[ID].position = visVertex1.position;
 // 	}
 // 	visualNodesBefore[nodeInsertID].position = originPos + newNodeStartPos;
-// 	drawLerpTree(drawableList, visualNodesBefore, logicGraphBefore, visualNodes2, logicGraph2);
+// 	drawLerpGraph(drawableList, visualNodesBefore, logicGraphBefore, visualNodes2, logicGraph2);
 // }
 
 // // Draw lerped graph when deleting a node
-// void DijkstraVisEngine::drawLerpTreeDeleteNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
+// void DijkstraVisEngine::drawLerpGraphDeleteNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
 // 	std::vector<VisualDijkstraNode>& visualNodes1, LogicDijkstra& logicGraph1,
 // 	std::vector<VisualDijkstraNode>& visualNodes2, LogicDijkstra& logicGraph2,
 // 	uint64_t nodeRemoveID) {
@@ -601,7 +638,7 @@ void DijkstraVisEngine::drawStillGraph(std::vector<std::unique_ptr<sf::Drawable>
 // 			visualNodesBefore[ID].position = visVertex1.position;
 // 	}
 // 	// visualNodesBefore[nodeRemoveID].position = originPos + newNodeStartPos;
-// 	drawLerpTree(drawableList, visualNodesBefore, logicGraphBefore, visualNodes2, logicGraph2);
+// 	drawLerpGraph(drawableList, visualNodesBefore, logicGraphBefore, visualNodes2, logicGraph2);
 // }
 
 
@@ -611,7 +648,8 @@ void DijkstraVisEngine::drawStillGraph(std::vector<std::unique_ptr<sf::Drawable>
 
 
 // Helper drawing functions
-void DijkstraVisEngine::drawEdgeLine(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end) {
+void DijkstraVisEngine::drawEdgeLine(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, 
+	sf::Vector2f start, sf::Vector2f end) {
 	double radiusAngle = std::atan2(end.y - start.y, end.x - start.x);
 	start += sf::Vector2f(nodeCircleRadius * std::cos(radiusAngle), nodeCircleRadius * std::sin(radiusAngle));
 	end   -= sf::Vector2f(nodeCircleRadius * std::cos(radiusAngle), nodeCircleRadius * std::sin(radiusAngle));
@@ -648,6 +686,7 @@ void DijkstraVisEngine::drawEdgeLine(std::vector<std::unique_ptr<sf::Drawable>>&
 	// drawableList.push_back(std::move(arrowHead));
 }
 
+
 void DijkstraVisEngine::drawEdgeWeightText(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end, int weight) {
 	double radiusAngle = std::atan2(end.y - start.y, end.x - start.x);
 	start += sf::Vector2f(nodeCircleRadius * std::cos(radiusAngle), nodeCircleRadius * std::sin(radiusAngle));
@@ -660,11 +699,33 @@ void DijkstraVisEngine::drawEdgeWeightText(std::vector<std::unique_ptr<sf::Drawa
 	sf::FloatRect localBounds = edgeWeightText->getLocalBounds();
 	edgeWeightText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
 	edgeWeightText->setFillColor(weightTextColor);
-	edgeWeightText->setPosition((start + end) / 2.f);
 	edgeWeightText->setRotation(sf::radians(radiusAngle));
+	edgeWeightText->setPosition((start + end) / 2.f
+		- sf::Vector2f(localBounds.size).rotatedBy(sf::radians(radiusAngle)) / 2.f
+		- sf::Vector2f(3, 3).rotatedBy(sf::radians(radiusAngle)) // Padding between text and line
+	);
 	edgeWeightText->setPosition(round(edgeWeightText->getPosition()));
 
 	drawableList.push_back(std::move(edgeWeightText));
+}
+
+
+void DijkstraVisEngine::drawHighlightEdge(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, 
+	sf::Vector2f start, sf::Vector2f end) {
+	double radiusAngle = std::atan2(end.y - start.y, end.x - start.x);
+	start += sf::Vector2f(nodeCircleRadius * std::cos(radiusAngle), nodeCircleRadius * std::sin(radiusAngle));
+	end   -= sf::Vector2f(nodeCircleRadius * std::cos(radiusAngle), nodeCircleRadius * std::sin(radiusAngle));
+	sf::Vector2f direction = end - start;
+	float length = direction.length();
+	float angle = std::atan2(direction.y, direction.x);
+
+	auto highlightedEdgeLine = std::make_unique<sf::RectangleShape>(sf::Vector2f(length, highlightEdgeThickness));
+	highlightedEdgeLine->setFillColor(highlightEdgeColor);
+	highlightedEdgeLine->setPosition(start);
+	highlightedEdgeLine->setRotation(sf::radians(angle));
+	highlightedEdgeLine->setOrigin({0.f, highlightEdgeThickness / 2.0f});
+
+	drawableList.push_back(std::move(highlightedEdgeLine));
 }
 
 

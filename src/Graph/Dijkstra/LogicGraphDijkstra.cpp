@@ -55,15 +55,51 @@ LogicGraphDijkstra::LogicGraphDijkstra(std::vector<std::vector<Edge>>& adjList)
 
 
 
-void LogicGraphDijkstra::generateDijkstraEvents(int startVertex, 
-	std::vector<DijkstraAnimStep>& events, std::vector<LogicGraphDijkstra>& treeSnapshots) {
-	///// FOR TESTING ONLY, WILL DELETE LATER /////
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::NONE, "Before looking at nodes", {}, -1, -1, -1));
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Looking at node step 1", {}, 0, -1, -1));
+std::vector<LogicGraphVertexDijkstra> LogicGraphDijkstra::logicVerticesSnapshot() const {
+	return logicVertices;
+}
 
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Looking at node step 2", {}, 1, -1, -1));
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Looking at node step 3", {}, 2, -1, -1));
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Looking at node step 4", {}, 3, -1, -1));
 
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Looking at node step 5", {}, 4, -1, -1));
+
+
+
+void LogicGraphDijkstra::generateDijkstraEvents(int startVertex, std::vector<DijkstraAnimStep>& events, 
+	std::vector<std::vector<LogicGraphVertexDijkstra>>& graphSnapshots) {
+	graphSnapshots.push_back(logicVerticesSnapshot());
+	// events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Looking at node step 1", {}, 0, -1, graphSnapshots.size() - 1));
+	// events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Looking at node step 2", {}, 1, -1, graphSnapshots.size() - 1));
+	// events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Looking at node step 3", {}, 2, -1, graphSnapshots.size() - 1));
+
+	std::priority_queue<LogicGraphVertexDijkstra> pqueue;
+	std::vector<LogicGraphVertexDijkstra> dijkstraVertices;
+	dijkstraVertices = logicVertices;
+	dijkstraVertices[startVertex].cost = 0;
+
+	graphSnapshots.push_back(dijkstraVertices);
+	pqueue.push(dijkstraVertices[startVertex]);
+	events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Before running Dijkstra\'s algorithm", {}, startVertex, -1, graphSnapshots.size() - 1));
+
+	while (!pqueue.empty()) {
+		LogicGraphVertexDijkstra cheapestVertex(pqueue.top());
+		pqueue.pop();
+
+		int cheapestVertexID = cheapestVertex.getID();
+		if (cheapestVertex.cost > dijkstraVertices[cheapestVertexID].cost) continue;
+
+		events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Current cheapest vertex in the priority queue: " + std::to_string(cheapestVertexID), {}, cheapestVertexID, -1, graphSnapshots.size() - 1));
+
+		for (const auto& [to, weight] : adjList[cheapestVertexID]) {
+			if (dijkstraVertices[cheapestVertexID].cost + weight < dijkstraVertices[to].cost) {
+				dijkstraVertices[to].cost = dijkstraVertices[cheapestVertexID].cost + weight;
+				dijkstraVertices[to].prevVertex = cheapestVertexID;
+				pqueue.push(dijkstraVertices[to]);
+
+				graphSnapshots.push_back(dijkstraVertices);
+				events.push_back(DijkstraAnimStep(DijkstraAnimType::UPDATE_NEIGHBOR, "Update neighbor " + std::to_string(to) + " of vertex " + std::to_string(cheapestVertexID), {}, cheapestVertexID, to, graphSnapshots.size() - 1));
+			}
+		}
+	}
+
+	graphSnapshots.push_back(dijkstraVertices);
+	events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_UPDATED_NODE, "Looking at node step 5 finish", {}, startVertex, -1, graphSnapshots.size() - 1));
 }
