@@ -65,7 +65,7 @@ std::vector<LogicGraphVertexDijkstra> LogicGraphDijkstra::logicVerticesSnapshot(
 
 void LogicGraphDijkstra::generateDijkstraEvents(int startVertex, std::vector<DijkstraAnimStep>& events, 
 	std::vector<std::vector<LogicGraphVertexDijkstra>>& graphSnapshots) {
-	graphSnapshots.push_back(logicVerticesSnapshot());
+	// graphSnapshots.push_back(logicVerticesSnapshot());
 	// events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Looking at node step 1", {}, 0, -1, graphSnapshots.size() - 1));
 	// events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Looking at node step 2", {}, 1, -1, graphSnapshots.size() - 1));
 	// events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Looking at node step 3", {}, 2, -1, graphSnapshots.size() - 1));
@@ -75,9 +75,13 @@ void LogicGraphDijkstra::generateDijkstraEvents(int startVertex, std::vector<Dij
 	dijkstraVertices = logicVertices;
 	dijkstraVertices[startVertex].cost = 0;
 
-	graphSnapshots.push_back(dijkstraVertices);
 	pqueue.push(dijkstraVertices[startVertex]);
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Cost of vertex " + std::to_string(startVertex) + " is 0", {}, startVertex, -1, graphSnapshots.size() - 1));
+
+	graphSnapshots.push_back(dijkstraVertices);
+	events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Cost of vertex " + std::to_string(startVertex) + " is 0", {3,4}, 
+		startVertex, -1, graphSnapshots.size() - 1));
+	events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Pushing vertex " + std::to_string(startVertex) + " into priority queue", {5}, 
+		startVertex, -1, graphSnapshots.size() - 1));
 
 	while (!pqueue.empty()) {
 		LogicGraphVertexDijkstra cheapestVertex(pqueue.top());
@@ -86,20 +90,34 @@ void LogicGraphDijkstra::generateDijkstraEvents(int startVertex, std::vector<Dij
 		int cheapestVertexID = cheapestVertex.getID();
 		if (cheapestVertex.cost > dijkstraVertices[cheapestVertexID].cost) continue;
 
-		events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Current cheapest vertex in the priority queue: " + std::to_string(cheapestVertexID), {}, cheapestVertexID, -1, graphSnapshots.size() - 1));
+		events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Current cheapest vertex in the priority queue: " + std::to_string(cheapestVertexID), {6,7}, 
+			cheapestVertexID, -1, graphSnapshots.size() - 1));
 
 		for (const auto& [to, weight] : adjList[cheapestVertexID]) {
 			if (dijkstraVertices[cheapestVertexID].cost + weight < dijkstraVertices[to].cost) {
 				dijkstraVertices[to].cost = dijkstraVertices[cheapestVertexID].cost + weight;
-				dijkstraVertices[to].prevVertex = cheapestVertexID;
-				pqueue.push(dijkstraVertices[to]);
 
 				graphSnapshots.push_back(dijkstraVertices);
-				events.push_back(DijkstraAnimStep(DijkstraAnimType::UPDATE_NEIGHBOR, "Update neighbor " + std::to_string(to) + " of vertex " + std::to_string(cheapestVertexID), {}, cheapestVertexID, to, graphSnapshots.size() - 1));
+				events.push_back(DijkstraAnimStep(DijkstraAnimType::UPDATE_NEIGHBOR, "Update cost of neighbor " + std::to_string(to) + " of vertex " + std::to_string(cheapestVertexID), {6,10,11,12}, 
+					cheapestVertexID, to, graphSnapshots.size() - 1));
+
+				dijkstraVertices[to].prevVertex = cheapestVertexID;
+
+				graphSnapshots.push_back(dijkstraVertices);
+				events.push_back(DijkstraAnimStep(DijkstraAnimType::UPDATE_NEIGHBOR, "Update previous vertex of neighbor " + std::to_string(to) + " of vertex " + std::to_string(cheapestVertexID), {6,10,11,13}, 
+					cheapestVertexID, to, graphSnapshots.size() - 1));
+
+				pqueue.push(dijkstraVertices[to]);
+
+				events.push_back(DijkstraAnimStep(DijkstraAnimType::UPDATE_NEIGHBOR, "Pushing neighbor " + std::to_string(to) + " of vertex " + std::to_string(cheapestVertexID) + " into priority queue", {6,10,11,14}, 
+					cheapestVertexID, to, graphSnapshots.size() - 1));
 			}
 		}
 	}
 
 	graphSnapshots.push_back(dijkstraVertices);
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_UPDATED_NODE, "Looking at node step 5 finish", {}, startVertex, -1, graphSnapshots.size() - 1));
+	// events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_UPDATED_NODE, "Looking at node step 5 finish", {15}, 
+	// 	startVertex, -1, graphSnapshots.size() - 1));
+	events.push_back(DijkstraAnimStep(DijkstraAnimType::NONE, "Looking at node step 5 finish", {15}, 
+		-1, -1, graphSnapshots.size() - 1));
 }

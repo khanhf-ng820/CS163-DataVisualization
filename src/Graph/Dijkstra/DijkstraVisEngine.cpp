@@ -70,7 +70,7 @@ std::vector<DijkstraAnimStep> DijkstraVisEngine::getEventsDijkstra(int startVert
 	oldGraphSnapshots.clear();
 	oldGraphSnapshots.push_back(graph.logicVertices);
 
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::NONE, "Before running Dijkstra\'s algorithm with starting vertex: " + std::to_string(startVertex), {}, -1, -1, 1));
+	events.push_back(DijkstraAnimStep(DijkstraAnimType::NONE, "Before running Dijkstra\'s algorithm with starting vertex: " + std::to_string(startVertex), {1,2}, -1, -1, 1));
 	graph.generateDijkstraEvents(startVertex, events, oldGraphSnapshots);
 
 	std::cerr << "Done generating Dijkstra events!" << std::endl; // DEBUG
@@ -352,15 +352,15 @@ void DijkstraVisEngine::drawPseudocodeWindow(DijkstraAnimStep eventDijkstra) {
 	ImGui::Begin("Pseudocode", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
 	switch (visMode) {
-	// case DijkstraVisMode::DIJKSTRA:
-	// 	for (int i = 0; i < DIJKSTRA_CODE_SEARCH.size(); i++) {
-	// 		if (vecContains(eventDijkstra.highlightCodeLineIndex, i))
-	// 			ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
-	// 		ImGui::Text("%s", DIJKSTRA_CODE_SEARCH[i].c_str());
-	// 		if (vecContains(eventDijkstra.highlightCodeLineIndex, i))
-	// 			ImGui::PopStyleColor();
-	// 	}
-	// 	break;
+	case DijkstraVisMode::DIJKSTRA:
+		for (int i = 0; i < DIJKSTRA_PSEUDOCODE.size(); i++) {
+			if (vecContains(eventDijkstra.highlightCodeLineIndex, i))
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", DIJKSTRA_PSEUDOCODE[i].c_str());
+			if (vecContains(eventDijkstra.highlightCodeLineIndex, i))
+				ImGui::PopStyleColor();
+		}
+		break;
 	default:
 		ImGui::Text("(Nothing to visualize.)");
 		break;

@@ -15,7 +15,7 @@
 #include "utils/utils.h"
 #include "AnimPlayer/AnimPlayer.h"
 #include "Graph/Dijkstra/LogicGraphDijkstra.h"
-// #include "Graph/Dijkstra/DijkstraSourceCode.h"
+#include "Graph/Dijkstra/DijkstraPseudocode.h"
 
 
 
@@ -40,7 +40,7 @@ public:
 	void resetParams();
 
 
-	// Keeps track of which node is dragged
+	// Keeps track of which node is dragged, set position of that node
 	int draggedVertexID = -1;
 	void getDraggedVertexID(sf::Vector2f mousePos, sf::Vector2f viewDisplacement, float viewZoomFactor);
 	void resetDraggedVertexID();
