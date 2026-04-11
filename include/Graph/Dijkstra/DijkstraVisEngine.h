@@ -46,9 +46,6 @@ public:
 	void resetDraggedVertexID();
 	void dragVertexByMouse(sf::Vector2f mousePos, sf::Vector2f viewDisplacement, float viewZoomFactor);
 
-	// Draw nodes: Iterate through graph and draw nodes
-	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, DijkstraAnimStep eventDijkstra);
-	void drawPseudocodeWindow(DijkstraAnimStep eventDijkstra);
 	// Draw nodes and links, depending on eventList
 	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
 	void displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout);
@@ -110,7 +107,8 @@ public:
 
 	static constexpr sf::Color    normalNodeColor         = sf::Color::Black;
 	static constexpr sf::Color    normalNodeKeyColor      = sf::Color::Blue;
-	static constexpr sf::Color    draggedNodeColor        = sf::Color(255, 116, 108, 102);
+	static constexpr sf::Color    visitedNodeColor        = sf::Color::Green; // sf::Color(255, 116, 108, 102);
+	static constexpr sf::Color    draggedNodeColor        = sf::Color::Cyan;
 	static constexpr sf::Color    weightTextColor         = sf::Color::Red;
 	static constexpr sf::Color    nodeInfoTextColor       = sf::Color(6, 64, 43, 255);
 	static constexpr sf::Color    highlightCircleColor    = sf::Color::Blue;
@@ -121,6 +119,13 @@ public:
 
 private:
 	void refreshOriginPos();
+
+	// Draw nodes: Iterate through graph and draw nodes
+	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, DijkstraAnimStep eventDijkstra);
+	void drawPseudocodeWindow(DijkstraAnimStep eventDijkstra);
+	// Get string of shortest path of the clicked vertex
+	std::string getShortestPathString(int startVertex, int endVertex);
+
 	// // Helper algorithm functions
 	// void getEventsSearchStep(std::vector<DijkstraAnimStep>& events, LogicDijkstraNode* root, int key);
 

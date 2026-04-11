@@ -70,7 +70,8 @@ std::vector<DijkstraAnimStep> DijkstraVisEngine::getEventsDijkstra(int startVert
 	oldGraphSnapshots.clear();
 	oldGraphSnapshots.push_back(graph.logicVertices);
 
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::NONE, "Before running Dijkstra\'s algorithm with starting vertex: " + std::to_string(startVertex), {1,2}, -1, -1, 1));
+	events.push_back(DijkstraAnimStep(DijkstraAnimType::NONE, "Before running Dijkstra\'s algorithm with starting vertex: " + std::to_string(startVertex), {1,2}, 
+		-1, -1, oldGraphSnapshots.size() - 1));
 	graph.generateDijkstraEvents(startVertex, events, oldGraphSnapshots);
 
 	std::cerr << "Done generating Dijkstra events!" << std::endl; // DEBUG
@@ -354,10 +355,11 @@ void DijkstraVisEngine::drawPseudocodeWindow(DijkstraAnimStep eventDijkstra) {
 	switch (visMode) {
 	case DijkstraVisMode::DIJKSTRA:
 		for (int i = 0; i < DIJKSTRA_PSEUDOCODE.size(); i++) {
-			if (vecContains(eventDijkstra.highlightCodeLineIndex, i))
+			bool highlightLine = vecContains(eventDijkstra.highlightCodeLineIndex, i);
+			if (highlightLine)
 				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
 			ImGui::Text("%s", DIJKSTRA_PSEUDOCODE[i].c_str());
-			if (vecContains(eventDijkstra.highlightCodeLineIndex, i))
+			if (highlightLine)
 				ImGui::PopStyleColor();
 		}
 		break;
@@ -367,6 +369,31 @@ void DijkstraVisEngine::drawPseudocodeWindow(DijkstraAnimStep eventDijkstra) {
 	}
 
 	ImGui::End();
+}
+
+
+std::string DijkstraVisEngine::getShortestPathString(int startVertex, int endVertex) {
+	std::vector<int> path;
+	int currentVertex = endVertex;
+	while (currentVertex >= 0) {
+		path.push_back(currentVertex);
+		currentVertex = oldGraphSnapshots.back()[currentVertex].prevVertex;
+	}
+	std::reverse(path.begin(), path.end());
+
+	if (oldGraphSnapshots.back()[endVertex].prevVertex == -1 && startVertex != endVertex) {
+		return "No path from vertex " + std::to_string(startVertexID) + " to vertex " + std::to_string(endVertex) + "exists.";
+	}
+	std::string shortestPathString = "Shortest path from vertex " + std::to_string(startVertexID) + " to vertex " + std::to_string(endVertex) + ":\n";
+
+	for (int i = 0; i < path.size(); i++) {
+		shortestPathString += std::to_string(path[i]);
+		if (i < static_cast<int>(path.size()) - 1)
+			shortestPathString += ", ";
+		else
+			shortestPathString += ".";
+	}
+	return shortestPathString;
 }
 
 
@@ -427,7 +454,10 @@ void DijkstraVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable
 
 
 	// Display description for algorithm visualization
-	auto descriptionText = std::make_unique<sf::Text>(*fontPtr, eventDijkstra.description, descriptionFontSize);
+	std::string textToDisplay = (eventDijkstra.type == DijkstraAnimType::FINISHED_DIJKSTRA && draggedVertexID != -1)
+		? getShortestPathString(startVertexID, draggedVertexID)
+		: eventDijkstra.description;
+	auto descriptionText = std::make_unique<sf::Text>(*fontPtr, textToDisplay, descriptionFontSize);
 	descriptionText->setFillColor(sf::Color::Black);
 	descriptionText->setPosition(descriptionTextPos);
 	descriptionText->setPosition(round(descriptionText->getPosition()));
@@ -477,7 +507,9 @@ void DijkstraVisEngine::drawNode(std::vector<std::unique_ptr<sf::Drawable>>& dra
 	// Draw circle
 	auto nodeCircle = std::make_unique<sf::CircleShape>(nodeCircleRadius);
 	nodeCircle->setOrigin({nodeCircle->getRadius(), nodeCircle->getRadius()}); 
-	nodeCircle->setFillColor((draggedVertexID == visVertex.getID()) ? draggedNodeColor :sf::Color::Transparent);
+	nodeCircle->setFillColor((draggedVertexID == visVertex.getID()) 
+		? draggedNodeColor 
+		: (graphSnapshot[visVertex.getID()].visited ? visitedNodeColor : sf::Color::Transparent));
 	nodeCircle->setOutlineColor(normalNodeColor);
 	nodeCircle->setOutlineThickness(nodeOutlineThickness);
 	nodeCircle->setPosition(visVertex.position);

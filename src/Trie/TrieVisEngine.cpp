@@ -399,37 +399,41 @@ void TrieVisEngine::drawPseudocodeWindow(TrieAnimStep eventTrie) {
 	switch (visMode) {
 	case TrieVisMode::SEARCH:
 		for (int i = 0; i < TRIE_CODE_SEARCH.size(); i++) {
-			if (vecContains(eventTrie.highlightCodeLineIndex, i))
+			bool highlightLine = vecContains(eventTrie.highlightCodeLineIndex, i);
+			if (highlightLine)
 				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
 			ImGui::Text("%s", TRIE_CODE_SEARCH[i].c_str());
-			if (vecContains(eventTrie.highlightCodeLineIndex, i))
+			if (highlightLine)
 				ImGui::PopStyleColor();
 		}
 		break;
 	case TrieVisMode::UPDATE:
 		for (int i = 0; i < TRIE_CODE_UPDATE.size(); i++) {
-			if (vecContains(eventTrie.highlightCodeLineIndex, i))
+			bool highlightLine = vecContains(eventTrie.highlightCodeLineIndex, i);
+			if (highlightLine)
 				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
 			ImGui::Text("%s", TRIE_CODE_UPDATE[i].c_str());
-			if (vecContains(eventTrie.highlightCodeLineIndex, i))
+			if (highlightLine)
 				ImGui::PopStyleColor();
 		}
 		break;
 	case TrieVisMode::INSERT:
 		for (int i = 0; i < TRIE_CODE_INSERT.size(); i++) {
-			if (vecContains(eventTrie.highlightCodeLineIndex, i))
+			bool highlightLine = vecContains(eventTrie.highlightCodeLineIndex, i);
+			if (highlightLine)
 				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
 			ImGui::Text("%s", TRIE_CODE_INSERT[i].c_str());
-			if (vecContains(eventTrie.highlightCodeLineIndex, i))
+			if (highlightLine)
 				ImGui::PopStyleColor();
 		}
 		break;
 	case TrieVisMode::REMOVE:
 		for (int i = 0; i < TRIE_CODE_REMOVE.size(); i++) {
-			if (vecContains(eventTrie.highlightCodeLineIndex, i))
+			bool highlightLine = vecContains(eventTrie.highlightCodeLineIndex, i);
+			if (highlightLine)
 				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
 			ImGui::Text("%s", TRIE_CODE_REMOVE[i].c_str());
-			if (vecContains(eventTrie.highlightCodeLineIndex, i))
+			if (highlightLine)
 				ImGui::PopStyleColor();
 		}
 		break;

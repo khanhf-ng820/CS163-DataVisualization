@@ -23,6 +23,7 @@ public:
 
 	int cost = INT_MAX;  // Best cost to the start vertex
 	int prevVertex = -1; // Previous vertex in the shortest path
+	bool visited = false;
 
 	// Compare costs
 	bool operator<(const LogicGraphVertexDijkstra& other) const;

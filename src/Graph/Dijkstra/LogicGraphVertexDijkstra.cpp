@@ -14,7 +14,7 @@ LogicGraphVertexDijkstra::LogicGraphVertexDijkstra(int id, int cost, int prevVer
 {}
 
 LogicGraphVertexDijkstra::LogicGraphVertexDijkstra(const LogicGraphVertexDijkstra& v)
-	: id(v.getID()), cost(v.cost), prevVertex(v.prevVertex)
+	: id(v.getID()), cost(v.cost), prevVertex(v.prevVertex), visited(v.visited)
 {}
 
 

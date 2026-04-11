@@ -17,7 +17,8 @@ enum class DijkstraAnimType : unsigned char {
 
 	// DELETE_LEAF_NODE,          // No highlighting
 
-	UPDATE_NEIGHBOR
+	UPDATE_NEIGHBOR,
+	FINISHED_DIJKSTRA             // Only the final event
 };
 
 

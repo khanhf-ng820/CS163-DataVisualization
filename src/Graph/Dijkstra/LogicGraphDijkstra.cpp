@@ -88,9 +88,21 @@ void LogicGraphDijkstra::generateDijkstraEvents(int startVertex, std::vector<Dij
 		pqueue.pop();
 
 		int cheapestVertexID = cheapestVertex.getID();
-		if (cheapestVertex.cost > dijkstraVertices[cheapestVertexID].cost) continue;
+		if (cheapestVertex.cost > dijkstraVertices[cheapestVertexID].cost) {
+			// events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Found outdated vertex in the priority queue: " + std::to_string(cheapestVertexID), {6,8,9}, 
+			// 	cheapestVertexID, -1, graphSnapshots.size() - 1));
+			continue;
+		}
 
-		events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Current cheapest vertex in the priority queue: " + std::to_string(cheapestVertexID), {6,7}, 
+		events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Current cheapest unvisited vertex in the priority queue: " + std::to_string(cheapestVertexID), {6,7}, 
+			cheapestVertexID, -1, graphSnapshots.size() - 1));
+		events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Popping cheapest unvisited vertex from the priority queue: " + std::to_string(cheapestVertexID), {6,8}, 
+			cheapestVertexID, -1, graphSnapshots.size() - 1));
+
+		dijkstraVertices[cheapestVertexID].visited = true;
+
+		graphSnapshots.push_back(dijkstraVertices);
+		events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Marking vertex " + std::to_string(cheapestVertexID) + " as visited", {6,8}, 
 			cheapestVertexID, -1, graphSnapshots.size() - 1));
 
 		for (const auto& [to, weight] : adjList[cheapestVertexID]) {
@@ -98,26 +110,24 @@ void LogicGraphDijkstra::generateDijkstraEvents(int startVertex, std::vector<Dij
 				dijkstraVertices[to].cost = dijkstraVertices[cheapestVertexID].cost + weight;
 
 				graphSnapshots.push_back(dijkstraVertices);
-				events.push_back(DijkstraAnimStep(DijkstraAnimType::UPDATE_NEIGHBOR, "Update cost of neighbor " + std::to_string(to) + " of vertex " + std::to_string(cheapestVertexID), {6,10,11,12}, 
+				events.push_back(DijkstraAnimStep(DijkstraAnimType::UPDATE_NEIGHBOR, "Update cost of neighbor " + std::to_string(to) + " of vertex " + std::to_string(cheapestVertexID), {6,11,12,13}, 
 					cheapestVertexID, to, graphSnapshots.size() - 1));
 
 				dijkstraVertices[to].prevVertex = cheapestVertexID;
 
 				graphSnapshots.push_back(dijkstraVertices);
-				events.push_back(DijkstraAnimStep(DijkstraAnimType::UPDATE_NEIGHBOR, "Update previous vertex of neighbor " + std::to_string(to) + " of vertex " + std::to_string(cheapestVertexID), {6,10,11,13}, 
+				events.push_back(DijkstraAnimStep(DijkstraAnimType::UPDATE_NEIGHBOR, "Update \"previous vertex\" of neighbor " + std::to_string(to) + " of vertex " + std::to_string(cheapestVertexID), {6,11,12,14}, 
 					cheapestVertexID, to, graphSnapshots.size() - 1));
 
 				pqueue.push(dijkstraVertices[to]);
 
-				events.push_back(DijkstraAnimStep(DijkstraAnimType::UPDATE_NEIGHBOR, "Pushing neighbor " + std::to_string(to) + " of vertex " + std::to_string(cheapestVertexID) + " into priority queue", {6,10,11,14}, 
+				events.push_back(DijkstraAnimStep(DijkstraAnimType::UPDATE_NEIGHBOR, "Pushing neighbor " + std::to_string(to) + " of vertex " + std::to_string(cheapestVertexID) + " into priority queue", {6,11,12,15}, 
 					cheapestVertexID, to, graphSnapshots.size() - 1));
 			}
 		}
 	}
 
 	graphSnapshots.push_back(dijkstraVertices);
-	// events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_UPDATED_NODE, "Looking at node step 5 finish", {15}, 
-	// 	startVertex, -1, graphSnapshots.size() - 1));
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::NONE, "Looking at node step 5 finish", {15}, 
+	events.push_back(DijkstraAnimStep(DijkstraAnimType::FINISHED_DIJKSTRA, "Finished Dijkstra\'s algorithm, right click on a vertex to see shortest path.", {16}, 
 		-1, -1, graphSnapshots.size() - 1));
 }

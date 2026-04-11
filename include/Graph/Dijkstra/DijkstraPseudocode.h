@@ -17,15 +17,16 @@ inline const std::vector<std::string> DIJKSTRA_PSEUDOCODE = {
 	"5      pq := empty-min-priority-queue()",
 	"6      pq.push( (0, source) )",
 	"7      while pq is not empty:",        // 6
-	"8          (d, u) := pq.pop()",
-	"9          if d > dist[u]:",
-	"10             continue",
-	"11         for each (v, weight) in Graph[u]:",
-	"12             if dist[u] + weight < dist[v]:",
-	"13                 dist[v] := dist[u] + weight",
-	"14                 parent[v] := u",
-	"15                 pq.push( (dist[v], v) )",
-	"16     return dist[], parent[]"
+	"8          (d, u) := pq.top()",
+	"9          pq.pop()",
+	"10         if d > dist[u]:",
+	"11             continue",
+	"12         for each (v, weight) in Graph[u]:",
+	"13             if dist[u] + weight < dist[v]:",
+	"14                 dist[v] := dist[u] + weight",
+	"15                 parent[v] := u",
+	"16                 pq.push( (dist[v], v) )",
+	"17     return dist[], parent[]"
 };
 
 // Line 5 = highlight when inserting source
