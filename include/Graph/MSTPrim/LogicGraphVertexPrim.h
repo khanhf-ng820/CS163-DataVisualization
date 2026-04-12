@@ -17,7 +17,7 @@ public:
 	LogicGraphVertexPrim();
 	explicit LogicGraphVertexPrim(int id);
 	LogicGraphVertexPrim(int id, int cost, int parentVertex);
-	explicit LogicGraphVertexPrim(const LogicGraphVertexPrim& v) = default;
+	LogicGraphVertexPrim(const LogicGraphVertexPrim& v) = default;
 
 	LogicGraphVertexPrim& operator=(const LogicGraphVertexPrim&) = default; // Copy assignment operator
 
