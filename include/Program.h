@@ -15,6 +15,7 @@
 #include "HashTable/HashVisEngine.h"
 #include "AVL/AVLVisEngine.h"
 #include "Trie/TrieVisEngine.h"
+#include "Graph/MSTPrim/PrimVisEngine.h"
 #include "Graph/Dijkstra/DijkstraVisEngine.h"
 
 #include <iostream>
@@ -39,7 +40,7 @@ enum class ProgramState {
 	VIS_HASH_SCREEN,
 	VIS_AVL_SCREEN,
 	VIS_TRIE_SCREEN,
-	VIS_MST_SCREEN,
+	VIS_MST_PRIM_SCREEN,
 	VIS_DIJKSTRA_SCREEN
 };
 
@@ -102,11 +103,11 @@ public:
 	void displayVisTrieScreenGUI();
 	void finishVisTrieScreen();
 
-	// Display MST visualization screen
-	void initVisMSTScreen() {};
-	void displayVisMSTScreenSFML() {};
-	void displayVisMSTScreenGUI() {};
-	void finishVisMSTScreen() {};
+	// Display MST Prim visualization screen
+	void initVisMSTPrimScreen();
+	void displayVisMSTPrimScreenSFML();
+	void displayVisMSTPrimScreenGUI();
+	void finishVisMSTPrimScreen();
 
 	// Display Dijkstra visualization screen
 	void initVisDijkstraScreen();
@@ -168,6 +169,7 @@ private:
 	HashVisEngine visEngine_Hash; // Engine for visualizing Hash Table
 	AVLVisEngine visEngine_AVL; // Engine for visualizing AVL Tree
 	TrieVisEngine visEngine_Trie; // Engine for visualizing Trie
+	PrimVisEngine visEngine_MSTPrim; // Engine for visualizing Prim's algorithm for MST
 	DijkstraVisEngine visEngine_Dijkstra; // Engine for visualizing Dijkstra's algorithm
 
 
@@ -197,7 +199,7 @@ private:
 	char* customDataHashbuf     = new char[CUSTOM_DATA_BUF_SIZE];
 	char* customDataAVLbuf      = new char[CUSTOM_DATA_BUF_SIZE];
 	char* customDataTriebuf     = new char[CUSTOM_DATA_BUF_SIZE];
-	char* customDataMSTbuf      = new char[CUSTOM_DATA_BUF_SIZE];
+	char* customDataMSTPrimbuf  = new char[CUSTOM_DATA_BUF_SIZE];
 	char* customDataDijkstrabuf = new char[CUSTOM_DATA_BUF_SIZE];
 
 

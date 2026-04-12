@@ -70,7 +70,8 @@ void LogicGraphDijkstra::generateDijkstraEvents(int startVertex, std::vector<Dij
 	// events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Looking at node step 2", {}, 1, -1, graphSnapshots.size() - 1));
 	// events.push_back(DijkstraAnimStep(DijkstraAnimType::HIGHLIGHT_NODE, "Looking at node step 3", {}, 2, -1, graphSnapshots.size() - 1));
 
-	std::priority_queue<LogicGraphVertexDijkstra> pqueue;
+	std::priority_queue<LogicGraphVertexDijkstra, std::vector<LogicGraphVertexDijkstra>, std::greater<LogicGraphVertexDijkstra>>
+		pqueue;
 	std::vector<LogicGraphVertexDijkstra> dijkstraVertices;
 	dijkstraVertices = logicVertices;
 	dijkstraVertices[startVertex].cost = 0;

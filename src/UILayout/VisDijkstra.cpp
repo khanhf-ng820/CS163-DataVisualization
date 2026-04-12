@@ -79,7 +79,7 @@ void Program::displayVisDijkstraScreenGUI() {
 	// Get the current window size
 	sf::Vector2u sfml_window_size = window.getSize();
 
-	ImGui::Begin("Dijkstra Tree Menu",
+	ImGui::Begin("Dijkstra Menu",
 		nullptr
 		// ImGuiWindowFlags_NoCollapse
 		// ImGuiWindowFlags_NoBackground
@@ -135,7 +135,7 @@ void Program::displayVisDijkstraScreenGUI() {
 	// float f;
 	// ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
 
-	if (ImGui::Button("Run Dijkstra")) {
+	if (ImGui::Button("Run Dijkstra\'s algorithm")) {
 		visEngine_Dijkstra.startVertexID = visEngine_Dijkstra.startVertexIDInput;
 		visEngine_Dijkstra.visMode = DijkstraVisMode::DIJKSTRA;
 

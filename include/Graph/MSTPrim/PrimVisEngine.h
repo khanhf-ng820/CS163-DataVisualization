@@ -14,14 +14,14 @@
 #include "utils/readData.hpp"
 #include "utils/utils.h"
 #include "AnimPlayer/AnimPlayer.h"
-#include "Graph/Dijkstra/LogicGraphDijkstra.h"
-#include "Graph/Dijkstra/DijkstraPseudocode.h"
+#include "Graph/MSTPrim/LogicGraphPrim.h"
+#include "Graph/MSTPrim/PrimPseudocode.h"
 
 
 
-enum class DijkstraVisMode {
+enum class PrimVisMode {
 	NONE,
-	DIJKSTRA
+	MST_PRIM
 };
 
 
@@ -29,12 +29,12 @@ enum class DijkstraVisMode {
 // REMEMBER:
 // Drawing SFML: The center of the window is now (0, 0) coordinates
 // Drawing GUI: The top-left of the window is (0, 0) coordinates
-class DijkstraVisEngine : public AnimPlayer {
+class PrimVisEngine : public AnimPlayer {
 public:
-	DijkstraVisEngine(unsigned int numVertex, sf::RenderWindow* window, sf::Font* font, sf::View* view); // N vertices graph
-	// DijkstraVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font, sf::View* view); // Randomized graph
-	DijkstraVisEngine(std::vector<std::vector<Edge>>& adjList, sf::RenderWindow* window, sf::Font* font, sf::View* view); // Custom data graph
-	~DijkstraVisEngine(); // Delete all dynamically allocated memory
+	PrimVisEngine(unsigned int numVertex, sf::RenderWindow* window, sf::Font* font, sf::View* view); // N vertices graph
+	// PrimVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font, sf::View* view); // Randomized graph
+	PrimVisEngine(std::vector<std::vector<Edge>>& adjList, sf::RenderWindow* window, sf::Font* font, sf::View* view); // Custom data graph
+	~PrimVisEngine(); // Delete all dynamically allocated memory
 
 	// Reset all properties to get ready for visualize new action
 	void resetParams();
@@ -55,8 +55,8 @@ public:
 	sf::Font* fontPtr;
 	sf::View* viewPtr;
 
-	DijkstraVisMode visMode = DijkstraVisMode::NONE;
-	std::vector<DijkstraAnimStep> eventList;
+	PrimVisMode visMode = PrimVisMode::NONE;
+	std::vector<PrimAnimStep> eventList;
 	std::unique_ptr<sfLayout> drawableListDefaultView;
 
 
@@ -64,7 +64,7 @@ public:
 
 
 	///// Buffers for Input in ImGui
-	int startVertexID = 0;         // Run Dijkstra
+	int startVertexID = 0;         // Run Prim
 	int startVertexIDInput = 0;
 
 
@@ -73,12 +73,12 @@ public:
 
 
 	///// ALGORITHMS
-	std::vector<DijkstraAnimStep> getEventsDijkstra(int startVertex);
+	std::vector<PrimAnimStep> getEventsPrim(int startVertex);
 
 
-	LogicGraphDijkstra graph; // Final state of graph
-	// Old Logical Dijkstra graphs
-	std::vector<std::vector<LogicGraphVertexDijkstra>> oldGraphSnapshots;
+	LogicGraphPrim graph; // Final state of graph
+	// Old Logical Prim graphs
+	std::vector<std::vector<LogicGraphVertexPrim>> oldGraphSnapshots;
 
 	// std::vector<std::vector<VisualGraphVertex>> groupsOldVisualNodes; // Visual nodes from old graphs (from oldest to newest)
 	std::vector<VisualGraphVertex> visualNodesCur; // Visual nodes for CURRENT GRAPH
@@ -113,6 +113,7 @@ public:
 	static constexpr sf::Color    highlightCircleColor    = sf::Color::Blue;
 	static constexpr sf::Color    highlightFoundCircleColor = sf::Color::Red;
 	static constexpr sf::Color    highlightEdgeColor      = sf::Color::Blue;
+	static constexpr sf::Color    highlightEdgeInMSTColor = sf::Color::Red;
 	static constexpr sf::Color    highlightCodeColor      = sf::Color::Green;
 
 
@@ -120,16 +121,16 @@ private:
 	void refreshOriginPos();
 
 	// Draw nodes: Iterate through graph and draw nodes
-	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, DijkstraAnimStep eventDijkstra);
-	void drawPseudocodeWindow(DijkstraAnimStep eventDijkstra);
+	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, PrimAnimStep eventPrim);
+	void drawPseudocodeWindow(PrimAnimStep eventPrim) {};
 	// Get string of shortest path of the clicked vertex
 	std::string getShortestPathString(int startVertex, int endVertex);
 
 	// // Helper algorithm functions
-	// void getEventsSearchStep(std::vector<DijkstraAnimStep>& events, LogicDijkstraNode* root, int key);
+	// void getEventsSearchStep(std::vector<PrimAnimStep>& events, LogicPrimNode* root, int key);
 
 	// Set initial positions for ALL VISUAL NODES (evenly spaced in circle)
-	void generateAllVisNodePos(LogicGraphDijkstra& logicGraph);
+	void generateAllVisNodePos(LogicGraphPrim& logicGraph);
 
 	// Properties/Constants to draw graph (force-directed)
 	double k = 1; // = sqrt((width * height) / n);
@@ -143,38 +144,38 @@ private:
 
 
 	// Draw a node (a circle with the key as text inside it)
-	void drawNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const VisualGraphVertex& visVertex, const std::vector<LogicGraphVertexDijkstra>& graphSnapshot);
+	void drawNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const VisualGraphVertex& visVertex, const std::vector<LogicGraphVertexPrim>& graphSnapshot);
 	// Draw the highlight circle (a circle highlighting a vertex)
 	void drawHighlightCircle(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f center, bool isHighlighted);
 	// Draw graph edges
 	///// MAKE SURE visualNodes std::map OBJECTS ARE POPULATED FIRST) /////
-	void drawGraphEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const std::vector<LogicGraphVertexDijkstra>& graphSnapshot);
+	void drawGraphEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const std::vector<LogicGraphVertexPrim>& graphSnapshot);
 	// Draw a STILL graph (no interpolation between the graph snapshots)
-	void drawStillGraph(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const std::vector<LogicGraphVertexDijkstra>& graphSnapshot);
+	void drawStillGraph(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const std::vector<LogicGraphVertexPrim>& graphSnapshot);
 
 	// // Draw lerped node
 	// void drawLerpNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const VisualGraphVertex& visNode1, const VisualGraphVertex& visNode2);
 	// // Draw lerped graph edges (straight lines)
-	// void drawLerpTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicDijkstraNode* root,
+	// void drawLerpTreeEdges(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, const LogicPrimNode* root,
 	// 	std::vector<VisualGraphVertex>& visualNodes1, std::vector<VisualGraphVertex>& visualNodes2);
 	// // Draw lerped graph (nodes and edges)
 	// void drawLerpTree(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
-	// 	std::vector<VisualGraphVertex>& visualNodes1, LogicDijkstra& logicTree1,
-	// 	std::vector<VisualGraphVertex>& visualNodes2, LogicDijkstra& logicTree2);
+	// 	std::vector<VisualGraphVertex>& visualNodes1, LogicPrim& logicTree1,
+	// 	std::vector<VisualGraphVertex>& visualNodes2, LogicPrim& logicTree2);
 	// // Draw lerped graph when inserting a node
 	// void drawLerpTreeInsertNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
-	// 	std::vector<VisualGraphVertex>& visualNodes1, LogicDijkstra& logicTree1,
-	// 	std::vector<VisualGraphVertex>& visualNodes2, LogicDijkstra& logicTree2,
+	// 	std::vector<VisualGraphVertex>& visualNodes1, LogicPrim& logicTree1,
+	// 	std::vector<VisualGraphVertex>& visualNodes2, LogicPrim& logicTree2,
 	// 	uint64_t nodeInsertID);
 	// // Draw lerped graph when deleting a node
 	// void drawLerpTreeDeleteNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
-	// 	std::vector<VisualGraphVertex>& visualNodes1, LogicDijkstra& logicTree1,
-	// 	std::vector<VisualGraphVertex>& visualNodes2, LogicDijkstra& logicTree2,
+	// 	std::vector<VisualGraphVertex>& visualNodes1, LogicPrim& logicTree1,
+	// 	std::vector<VisualGraphVertex>& visualNodes2, LogicPrim& logicTree2,
 	// 	uint64_t nodeRemoveID);
 
 
 	// Helper drawing functions
 	void drawEdgeLine(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end);
 	void drawEdgeWeightText(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end, int weight);
-	void drawHighlightEdge(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end);
+	void drawHighlightEdge(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end, bool inMST);
 };

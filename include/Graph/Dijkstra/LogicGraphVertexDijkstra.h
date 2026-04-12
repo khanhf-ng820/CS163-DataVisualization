@@ -21,12 +21,13 @@ public:
 
 	int getID() const;
 
-	int cost = INT_MAX;  // Best cost to the start vertex
+	int cost = INT_MAX;  // Best cheapest cost to the start vertex
 	int prevVertex = -1; // Previous vertex in the shortest path
 	bool visited = false;
 
-	// Compare costs
+	// Compare cheapest costs
 	bool operator<(const LogicGraphVertexDijkstra& other) const;
+	bool operator>(const LogicGraphVertexDijkstra& other) const;
 
 private:
 	int id = 0; // Unique ID of a node

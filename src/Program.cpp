@@ -14,6 +14,7 @@ Program::Program()
 	, visEngine_SLL(window, textFont), visEngine_Hash(&window, &textFont)
 	, visEngine_AVL(&window, &textFont), visEngine_Trie(&window, &textFont)
 	, visEngine_Dijkstra(10, &window, &textFont, &view)
+	, visEngine_MSTPrim(10, &window, &textFont, &view)
 {
 	window.requestFocus();
 	window.setFramerateLimit(FRAMERATE_LIMIT);
@@ -48,7 +49,7 @@ Program::Program()
 	sfDrawables[ProgramState::VIS_HASH_SCREEN] = std::make_unique<sfLayout>(&window);
 	sfDrawables[ProgramState::VIS_AVL_SCREEN] = std::make_unique<sfLayout>(&window);
 	sfDrawables[ProgramState::VIS_TRIE_SCREEN] = std::make_unique<sfLayout>(&window);
-	sfDrawables[ProgramState::VIS_MST_SCREEN] = std::make_unique<sfLayout>(&window);
+	sfDrawables[ProgramState::VIS_MST_PRIM_SCREEN] = std::make_unique<sfLayout>(&window);
 	sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN] = std::make_unique<sfLayout>(&window);
 
 	// -- Create and Open data .txt files
@@ -70,7 +71,7 @@ Program::~Program() {
 	delete[] customDataHashbuf;
 	delete[] customDataAVLbuf;
 	delete[] customDataTriebuf;
-	delete[] customDataMSTbuf;
+	delete[] customDataMSTPrimbuf;
 	delete[] customDataDijkstrabuf;
 }
 
@@ -132,8 +133,8 @@ void Program::mainLoop() {
 	case ProgramState::VIS_TRIE_SCREEN:
 		initVisTrieScreen();
 		break;
-	case ProgramState::VIS_MST_SCREEN:
-		initVisMSTScreen();
+	case ProgramState::VIS_MST_PRIM_SCREEN:
+		initVisMSTPrimScreen();
 		break;
 	case ProgramState::VIS_DIJKSTRA_SCREEN:
 		initVisDijkstraScreen();
@@ -179,11 +180,11 @@ void Program::mainLoop() {
 				// Start dragging graph vertex
 				else if (mb->button == sf::Mouse::Button::Right &&
 					!ImGui::GetIO().WantCaptureMouse) {
-					if (programState == ProgramState::VIS_MST_SCREEN) {
+					if (programState == ProgramState::VIS_MST_PRIM_SCREEN) {
 						draggingGraphVertex = true;
 						sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window));
 
-						// visEngine_MST.getDraggedVertexID(mousePos, view.getCenter(), calculateZoomFactor());
+						visEngine_MSTPrim.getDraggedVertexID(mousePos, view.getCenter(), calculateZoomFactor());
 					} else if (programState == ProgramState::VIS_DIJKSTRA_SCREEN) {
 						draggingGraphVertex = true;
 						sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window));
@@ -199,9 +200,9 @@ void Program::mainLoop() {
 					draggingCanvas = false;
 				// Stop dragging graph vertex
 				else if (mb->button == sf::Mouse::Button::Right) {
-					if (programState == ProgramState::VIS_MST_SCREEN) {
+					if (programState == ProgramState::VIS_MST_PRIM_SCREEN) {
 						draggingGraphVertex = false;
-						// visEngine_MST.resetDraggedVertexID();
+						visEngine_MSTPrim.resetDraggedVertexID();
 					} else if (programState == ProgramState::VIS_DIJKSTRA_SCREEN) {
 						draggingGraphVertex = false;
 						visEngine_Dijkstra.resetDraggedVertexID();
@@ -232,8 +233,8 @@ void Program::mainLoop() {
 		// If mouse is dragging graph vertex
 		if (draggingGraphVertex) {
 			sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window));
-			if (programState == ProgramState::VIS_MST_SCREEN) {
-
+			if (programState == ProgramState::VIS_MST_PRIM_SCREEN) {
+				visEngine_MSTPrim.dragVertexByMouse(mousePos, view.getCenter(), calculateZoomFactor());
 			} else if (programState == ProgramState::VIS_DIJKSTRA_SCREEN) {
 				visEngine_Dijkstra.dragVertexByMouse(mousePos, view.getCenter(), calculateZoomFactor());
 			}
@@ -271,8 +272,8 @@ void Program::mainLoop() {
 		case ProgramState::VIS_TRIE_SCREEN:
 			displayVisTrieScreenGUI();
 			break;
-		case ProgramState::VIS_MST_SCREEN:
-			displayVisMSTScreenGUI();
+		case ProgramState::VIS_MST_PRIM_SCREEN:
+			displayVisMSTPrimScreenGUI();
 			break;
 		case ProgramState::VIS_DIJKSTRA_SCREEN:
 			displayVisDijkstraScreenGUI();
@@ -314,8 +315,8 @@ void Program::mainLoop() {
 		case ProgramState::VIS_TRIE_SCREEN:
 			displayVisTrieScreenSFML();
 			break;
-		case ProgramState::VIS_MST_SCREEN:
-			displayVisMSTScreenSFML();
+		case ProgramState::VIS_MST_PRIM_SCREEN:
+			displayVisMSTPrimScreenSFML();
 			break;
 		case ProgramState::VIS_DIJKSTRA_SCREEN:
 			displayVisDijkstraScreenSFML();
@@ -360,8 +361,8 @@ void Program::mainLoop() {
 	case ProgramState::VIS_TRIE_SCREEN:
 		finishVisTrieScreen();
 		break;
-	case ProgramState::VIS_MST_SCREEN:
-		finishVisMSTScreen();
+	case ProgramState::VIS_MST_PRIM_SCREEN:
+		finishVisMSTPrimScreen();
 		break;
 	case ProgramState::VIS_DIJKSTRA_SCREEN:
 		finishVisDijkstraScreen();

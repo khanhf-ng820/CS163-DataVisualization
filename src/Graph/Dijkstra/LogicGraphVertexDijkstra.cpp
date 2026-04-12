@@ -25,7 +25,11 @@ int LogicGraphVertexDijkstra::getID() const {
 
 
 
-// Compare costs
+// Compare cheapest costs
 bool LogicGraphVertexDijkstra::operator<(const LogicGraphVertexDijkstra& other) const {
+	return cost < other.cost;
+}
+
+bool LogicGraphVertexDijkstra::operator>(const LogicGraphVertexDijkstra& other) const {
 	return cost > other.cost;
 }
