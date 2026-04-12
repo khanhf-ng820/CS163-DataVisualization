@@ -13,10 +13,10 @@ LogicGraphVertexPrim::LogicGraphVertexPrim(int id, int cost, int parentVertex)
 	: id(id), cost(cost), parentVertex(parentVertex)
 {}
 
-LogicGraphVertexPrim::LogicGraphVertexPrim(const LogicGraphVertexPrim& v)
-	: id(v.getID()), cost(v.cost), parentVertex(v.parentVertex)
-	, visited(v.visited), highlightMSTEdge(v.highlightMSTEdge)
-{}
+// LogicGraphVertexPrim::LogicGraphVertexPrim(const LogicGraphVertexPrim& v)
+// 	: id(v.getID()), cost(v.cost), parentVertex(v.parentVertex)
+// 	, visited(v.visited), highlightMSTEdge(v.highlightMSTEdge)
+// {}
 
 
 

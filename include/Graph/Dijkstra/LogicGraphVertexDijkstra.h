@@ -17,7 +17,10 @@ public:
 	LogicGraphVertexDijkstra();
 	explicit LogicGraphVertexDijkstra(int id);
 	LogicGraphVertexDijkstra(int id, int cost, int prevVertex);
-	explicit LogicGraphVertexDijkstra(const LogicGraphVertexDijkstra& v);
+	LogicGraphVertexDijkstra(const LogicGraphVertexDijkstra& v) = default;
+
+	LogicGraphVertexDijkstra& operator=(const LogicGraphVertexDijkstra& other) = default; // Copy assignment operator
+
 
 	int getID() const;
 
