@@ -11,10 +11,10 @@ Program::Program()
 	, textFont(fs::path(ASSET_DIR) / "Roboto_Mono/RobotoMono-VariableFont_wght.ttf")
 	// , textFont(fs::path(ASSET_DIR) / "Roboto/Roboto-VariableFont_wdth,wght.ttf")
 	, rng(std::random_device()())
-	, visEngine_SLL(window, textFont)
-	, visEngine_Hash(&window, &textFont)
-	, visEngine_AVL(&window, &textFont)
-	, visEngine_Trie(&window, &textFont)
+	, visEngine_SLL(window, textFont), visEngine_Hash(&window, &textFont)
+	, visEngine_AVL(&window, &textFont), visEngine_Trie(&window, &textFont)
+	, visEngine_Dijkstra(10, &window, &textFont, &view)
+	, visEngine_MSTPrim(10, &window, &textFont, &view)
 {
 	window.requestFocus();
 	window.setFramerateLimit(FRAMERATE_LIMIT);
@@ -49,7 +49,7 @@ Program::Program()
 	sfDrawables[ProgramState::VIS_HASH_SCREEN] = std::make_unique<sfLayout>(&window);
 	sfDrawables[ProgramState::VIS_AVL_SCREEN] = std::make_unique<sfLayout>(&window);
 	sfDrawables[ProgramState::VIS_TRIE_SCREEN] = std::make_unique<sfLayout>(&window);
-	sfDrawables[ProgramState::VIS_MST_SCREEN] = std::make_unique<sfLayout>(&window);
+	sfDrawables[ProgramState::VIS_MST_PRIM_SCREEN] = std::make_unique<sfLayout>(&window);
 	sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN] = std::make_unique<sfLayout>(&window);
 
 	// -- Create and Open data .txt files
@@ -71,7 +71,7 @@ Program::~Program() {
 	delete[] customDataHashbuf;
 	delete[] customDataAVLbuf;
 	delete[] customDataTriebuf;
-	delete[] customDataMSTbuf;
+	delete[] customDataMSTPrimbuf;
 	delete[] customDataDijkstrabuf;
 }
 
@@ -133,8 +133,8 @@ void Program::mainLoop() {
 	case ProgramState::VIS_TRIE_SCREEN:
 		initVisTrieScreen();
 		break;
-	case ProgramState::VIS_MST_SCREEN:
-		initVisMSTScreen();
+	case ProgramState::VIS_MST_PRIM_SCREEN:
+		initVisMSTPrimScreen();
 		break;
 	case ProgramState::VIS_DIJKSTRA_SCREEN:
 		initVisDijkstraScreen();
@@ -142,6 +142,8 @@ void Program::mainLoop() {
 	default:
 		break;
 	};
+
+
 
 
 
@@ -164,6 +166,7 @@ void Program::mainLoop() {
 				defaultView.setSize({static_cast<float>(resized->size.x), static_cast<float>(resized->size.y)});
 				// Don't set viewport to defaultView because we want UI to cover entire window
 			}
+
 			if (!allowDragCanvas) continue;
 			// Start dragging
 			if (const auto* mb = event->getIf<sf::Event::MouseButtonPressed>()) {
@@ -174,13 +177,39 @@ void Program::mainLoop() {
 					lastWorldPos = window.mapPixelToCoords(
 						{mb->position.x, mb->position.y}, view);
 				}
+				// Start dragging graph vertex
+				else if (mb->button == sf::Mouse::Button::Right &&
+					!ImGui::GetIO().WantCaptureMouse) {
+					if (programState == ProgramState::VIS_MST_PRIM_SCREEN) {
+						draggingGraphVertex = true;
+						sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window));
+
+						visEngine_MSTPrim.getDraggedVertexID(mousePos, view.getCenter(), calculateZoomFactor());
+					} else if (programState == ProgramState::VIS_DIJKSTRA_SCREEN) {
+						draggingGraphVertex = true;
+						sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window));
+
+						visEngine_Dijkstra.getDraggedVertexID(mousePos, view.getCenter(), calculateZoomFactor());
+					}
+				}
 			}
 
 			// Stop dragging
 			if (const auto* mb = event->getIf<sf::Event::MouseButtonReleased>()) {
 				if (mb->button == sf::Mouse::Button::Left)
 					draggingCanvas = false;
+				// Stop dragging graph vertex
+				else if (mb->button == sf::Mouse::Button::Right) {
+					if (programState == ProgramState::VIS_MST_PRIM_SCREEN) {
+						draggingGraphVertex = false;
+						visEngine_MSTPrim.resetDraggedVertexID();
+					} else if (programState == ProgramState::VIS_DIJKSTRA_SCREEN) {
+						draggingGraphVertex = false;
+						visEngine_Dijkstra.resetDraggedVertexID();
+					}
+				}
 			}
+
 			// Zoom when mouse is scrolling
 			if (const auto* scroll = event->getIf<sf::Event::MouseWheelScrolled>()) {
 				if (scroll->wheel == sf::Mouse::Wheel::Vertical) {
@@ -201,6 +230,17 @@ void Program::mainLoop() {
 
 			lastWorldPos = window.mapPixelToCoords(pixel, view);
 		}
+		// If mouse is dragging graph vertex
+		if (draggingGraphVertex) {
+			sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window));
+			if (programState == ProgramState::VIS_MST_PRIM_SCREEN) {
+				visEngine_MSTPrim.dragVertexByMouse(mousePos, view.getCenter(), calculateZoomFactor());
+			} else if (programState == ProgramState::VIS_DIJKSTRA_SCREEN) {
+				visEngine_Dijkstra.dragVertexByMouse(mousePos, view.getCenter(), calculateZoomFactor());
+			}
+			// std::cout << "Dragging node" << std::endl; // DEBUG
+		}
+
 
 		ImGui::SFML::Update(window, deltaClock.restart());
 
@@ -232,8 +272,8 @@ void Program::mainLoop() {
 		case ProgramState::VIS_TRIE_SCREEN:
 			displayVisTrieScreenGUI();
 			break;
-		case ProgramState::VIS_MST_SCREEN:
-			displayVisMSTScreenGUI();
+		case ProgramState::VIS_MST_PRIM_SCREEN:
+			displayVisMSTPrimScreenGUI();
 			break;
 		case ProgramState::VIS_DIJKSTRA_SCREEN:
 			displayVisDijkstraScreenGUI();
@@ -275,8 +315,8 @@ void Program::mainLoop() {
 		case ProgramState::VIS_TRIE_SCREEN:
 			displayVisTrieScreenSFML();
 			break;
-		case ProgramState::VIS_MST_SCREEN:
-			displayVisMSTScreenSFML();
+		case ProgramState::VIS_MST_PRIM_SCREEN:
+			displayVisMSTPrimScreenSFML();
 			break;
 		case ProgramState::VIS_DIJKSTRA_SCREEN:
 			displayVisDijkstraScreenSFML();
@@ -321,8 +361,8 @@ void Program::mainLoop() {
 	case ProgramState::VIS_TRIE_SCREEN:
 		finishVisTrieScreen();
 		break;
-	case ProgramState::VIS_MST_SCREEN:
-		finishVisMSTScreen();
+	case ProgramState::VIS_MST_PRIM_SCREEN:
+		finishVisMSTPrimScreen();
 		break;
 	case ProgramState::VIS_DIJKSTRA_SCREEN:
 		finishVisDijkstraScreen();
@@ -338,3 +378,13 @@ void Program::mainLoop() {
 // Display test screen (FOR TESTING ONLY)
 // void displayTestScreen();
 
+
+
+
+
+
+// Returns the view's zoom factor (zoom in < 1, zoom out > 1)
+float Program::calculateZoomFactor() {
+	sf::Vector2f currentSize = view.getSize();
+	return currentSize.x / window.getSize().x;
+}

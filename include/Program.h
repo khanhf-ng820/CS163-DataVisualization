@@ -15,12 +15,15 @@
 #include "HashTable/HashVisEngine.h"
 #include "AVL/AVLVisEngine.h"
 #include "Trie/TrieVisEngine.h"
+#include "Graph/MSTPrim/PrimVisEngine.h"
+#include "Graph/Dijkstra/DijkstraVisEngine.h"
 
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <map>
+#include <algorithm>
 #include <filesystem>
 #include <random>
 #include <chrono>
@@ -37,7 +40,7 @@ enum class ProgramState {
 	VIS_HASH_SCREEN,
 	VIS_AVL_SCREEN,
 	VIS_TRIE_SCREEN,
-	VIS_MST_SCREEN,
+	VIS_MST_PRIM_SCREEN,
 	VIS_DIJKSTRA_SCREEN
 };
 
@@ -100,17 +103,17 @@ public:
 	void displayVisTrieScreenGUI();
 	void finishVisTrieScreen();
 
-	// Display MST visualization screen
-	void initVisMSTScreen() {};
-	void displayVisMSTScreenSFML() {};
-	void displayVisMSTScreenGUI() {};
-	void finishVisMSTScreen() {};
+	// Display MST Prim visualization screen
+	void initVisMSTPrimScreen();
+	void displayVisMSTPrimScreenSFML();
+	void displayVisMSTPrimScreenGUI();
+	void finishVisMSTPrimScreen();
 
 	// Display Dijkstra visualization screen
-	void initVisDijkstraScreen() {};
-	void displayVisDijkstraScreenSFML() {};
-	void displayVisDijkstraScreenGUI() {};
-	void finishVisDijkstraScreen() {};
+	void initVisDijkstraScreen();
+	void displayVisDijkstraScreenSFML();
+	void displayVisDijkstraScreenGUI();
+	void finishVisDijkstraScreen();
 
 
 
@@ -140,10 +143,16 @@ private:
 	// Random number generator
 	std::mt19937 rng;
 
+	// Function to calculate zoom factor of view
+	// Returns the view's zoom factor (zoom in < 1, zoom out > 1)
+	float calculateZoomFactor();
+
 	bool init_imgui_successful = true;
-	bool draggingCanvas = false; // If mouse is dragging canvas
 	bool allowDragCanvas = false; // Allow dragging canvas (remember to set false)
+	bool draggingCanvas = false; // If mouse is dragging canvas
 	sf::Vector2f lastWorldPos; // Position of last dragged view
+	
+	bool draggingGraphVertex = false;
 
 
 	// Initializing data structure from files
@@ -159,7 +168,9 @@ private:
 	SLLVisEngine visEngine_SLL; // Engine for visualizing SLL
 	HashVisEngine visEngine_Hash; // Engine for visualizing Hash Table
 	AVLVisEngine visEngine_AVL; // Engine for visualizing AVL Tree
-	TrieVisEngine visEngine_Trie; // Engine for visualizing AVL Tree
+	TrieVisEngine visEngine_Trie; // Engine for visualizing Trie
+	PrimVisEngine visEngine_MSTPrim; // Engine for visualizing Prim's algorithm for MST
+	DijkstraVisEngine visEngine_Dijkstra; // Engine for visualizing Dijkstra's algorithm
 
 
 
@@ -188,7 +199,7 @@ private:
 	char* customDataHashbuf     = new char[CUSTOM_DATA_BUF_SIZE];
 	char* customDataAVLbuf      = new char[CUSTOM_DATA_BUF_SIZE];
 	char* customDataTriebuf     = new char[CUSTOM_DATA_BUF_SIZE];
-	char* customDataMSTbuf      = new char[CUSTOM_DATA_BUF_SIZE];
+	char* customDataMSTPrimbuf  = new char[CUSTOM_DATA_BUF_SIZE];
 	char* customDataDijkstrabuf = new char[CUSTOM_DATA_BUF_SIZE];
 
 

@@ -2,7 +2,7 @@
 #include "Program.h"
 #include "utils/utils.h"
 
-#define ALL_DS_TYPE_LIST { "Lists - Singly Linked List", "Hash Table - Linear Probing", "Trees - AVL Tree", "Trees - Trie", "Graphs - Minimum Spanning Tree", "Graphs - Shortest Path (Dijkstra\'s algorithm)" }
+#define ALL_DS_TYPE_LIST { "Lists - Singly Linked List", "Hash Table - Linear Probing", "Trees - AVL Tree", "Trees - Trie", "Graphs - Minimum Spanning Tree (Prim\'s algorithm)", "Graphs - Shortest Path (Dijkstra\'s algorithm)" }
 
 
 const std::vector<std::string> ALL_DS_LIST = ALL_DS_TYPE_LIST;
@@ -13,7 +13,7 @@ enum class DSType {
 	HASH_TABLE,
 	AVL_TREE,
 	TRIE_TREE,
-	MST_GRAPH,
+	MST_PRIM_GRAPH,
 	DIJKSTRA_GRAPH,
 	DEFAULT // Error value, must avoid
 };

@@ -392,6 +392,64 @@ void TrieVisEngine::addNodeDrawablesUpdate(std::vector<std::unique_ptr<sf::Drawa
 
 
 
+// Create AND display ImGui window to highlight source code (pseudocode)
+void TrieVisEngine::drawPseudocodeWindow(TrieAnimStep eventTrie) {
+	ImGui::Begin("Pseudocode", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+
+	switch (visMode) {
+	case TrieVisMode::SEARCH:
+		for (int i = 0; i < TRIE_CODE_SEARCH.size(); i++) {
+			bool highlightLine = vecContains(eventTrie.highlightCodeLineIndex, i);
+			if (highlightLine)
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", TRIE_CODE_SEARCH[i].c_str());
+			if (highlightLine)
+				ImGui::PopStyleColor();
+		}
+		break;
+	case TrieVisMode::UPDATE:
+		for (int i = 0; i < TRIE_CODE_UPDATE.size(); i++) {
+			bool highlightLine = vecContains(eventTrie.highlightCodeLineIndex, i);
+			if (highlightLine)
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", TRIE_CODE_UPDATE[i].c_str());
+			if (highlightLine)
+				ImGui::PopStyleColor();
+		}
+		break;
+	case TrieVisMode::INSERT:
+		for (int i = 0; i < TRIE_CODE_INSERT.size(); i++) {
+			bool highlightLine = vecContains(eventTrie.highlightCodeLineIndex, i);
+			if (highlightLine)
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", TRIE_CODE_INSERT[i].c_str());
+			if (highlightLine)
+				ImGui::PopStyleColor();
+		}
+		break;
+	case TrieVisMode::REMOVE:
+		for (int i = 0; i < TRIE_CODE_REMOVE.size(); i++) {
+			bool highlightLine = vecContains(eventTrie.highlightCodeLineIndex, i);
+			if (highlightLine)
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", TRIE_CODE_REMOVE[i].c_str());
+			if (highlightLine)
+				ImGui::PopStyleColor();
+		}
+		break;
+	default:
+		ImGui::Text("(Nothing to visualize.)");
+		break;
+	}
+
+	ImGui::End();
+}
+
+
+
+
+
+
 
 
 
@@ -433,19 +491,19 @@ void TrieVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 	if (visMode == TrieVisMode::INSERT) {
 		// INSERT MODE
 		addNodeDrawablesInsert(drawableList, eventTrie);
-		// drawPseudocodeWindow(eventTrie);
+		drawPseudocodeWindow(eventTrie);
 	} else if (visMode == TrieVisMode::REMOVE) {
 		// REMOVE MODE
 		addNodeDrawablesDelete(drawableList, eventTrie);
-		// drawPseudocodeWindow(eventTrie);
+		drawPseudocodeWindow(eventTrie);
 	} else if (visMode == TrieVisMode::UPDATE) {
 		// UPDATE MODE
 		addNodeDrawablesUpdate(drawableList, eventTrie);
-		// drawPseudocodeWindow(eventTrie);
+		drawPseudocodeWindow(eventTrie);
 	} else {
 		// SEARCH MODE
 		addNodeDrawables(drawableList, eventTrie);
-		// drawPseudocodeWindow(eventTrie);
+		drawPseudocodeWindow(eventTrie);
 	}
 
 

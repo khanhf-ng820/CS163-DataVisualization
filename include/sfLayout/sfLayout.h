@@ -13,6 +13,7 @@ public:
 	~sfLayout();
 
 	void displayAll();
+	void clear();
 
 
 	std::vector<std::unique_ptr<sf::Drawable>> drawables;

@@ -9,7 +9,7 @@
 // Drawing GUI: The top-left of the window is (0, 0) coordinates
 // Display settings menu screen
 void Program::initSettingsMenuScreen() {
-	allowDragCanvas = true;
+	allowDragCanvas = false;
 }
 
 
@@ -21,7 +21,7 @@ void Program::displaySettingsMenuScreenSFML() {
 
 
 void Program::displaySettingsMenuScreenGUI() {
-	allowDragCanvas = true;
+	allowDragCanvas = false;
 
 	// Show the demo window
 	// ImGui::ShowDemoWindow();

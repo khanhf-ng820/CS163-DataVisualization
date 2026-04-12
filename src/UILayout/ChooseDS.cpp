@@ -12,8 +12,8 @@ DSType strToDSType(std::string str) {
 		return DSType::AVL_TREE;
 	} else if (str == "Trees - Trie") {
 		return DSType::TRIE_TREE;
-	} else if (str == "Graphs - Minimum Spanning Tree") {
-		return DSType::MST_GRAPH;
+	} else if (str == "Graphs - Minimum Spanning Tree (Prim\'s algorithm)") {
+		return DSType::MST_PRIM_GRAPH;
 	} else if (str == "Graphs - Shortest Path (Dijkstra\'s algorithm)") {
 		return DSType::DIJKSTRA_GRAPH;
 	}
@@ -35,7 +35,7 @@ std::string getDataFileName(std::string ds_selection_str) {
 	case DSType::TRIE_TREE:
 		return "Trie.txt";
 		break;
-	case DSType::MST_GRAPH:
+	case DSType::MST_PRIM_GRAPH:
 	case DSType::DIJKSTRA_GRAPH:
 		return "Graph.txt";
 		break;
@@ -273,7 +273,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 			break;
 		case DSType::TRIE_TREE:
 			break;
-		case DSType::MST_GRAPH:
+		case DSType::MST_PRIM_GRAPH:
 			break;
 		case DSType::DIJKSTRA_GRAPH:
 			break;
@@ -296,7 +296,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 			break;
 		case DSType::TRIE_TREE:
 			break;
-		case DSType::MST_GRAPH:
+		case DSType::MST_PRIM_GRAPH:
 			break;
 		case DSType::DIJKSTRA_GRAPH:
 			break;
@@ -327,8 +327,8 @@ void Program::displayChooseDSMenuScreenGUI() {
 			dataString = std::string(customDataTriebuf);
 			invalidDataCustom = !validDataTrieString(dataString);
 			break;
-		case DSType::MST_GRAPH:
-			ImGui::InputTextMultiline("##CustomDataMST", customDataMSTbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+		case DSType::MST_PRIM_GRAPH:
+			ImGui::InputTextMultiline("##CustomDataMST", customDataMSTPrimbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			break;
 		case DSType::DIJKSTRA_GRAPH:
 			ImGui::InputTextMultiline("##CustomDataDijkstra", customDataDijkstrabuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
@@ -390,8 +390,8 @@ void Program::displayChooseDSMenuScreenGUI() {
 				programState = ProgramState::VIS_TRIE_SCREEN;
 			}
 			break;
-		case DSType::MST_GRAPH:
-			programState = ProgramState::VIS_MST_SCREEN;
+		case DSType::MST_PRIM_GRAPH:
+			programState = ProgramState::VIS_MST_PRIM_SCREEN;
 			break;
 		case DSType::DIJKSTRA_GRAPH:
 			programState = ProgramState::VIS_DIJKSTRA_SCREEN;

@@ -15,6 +15,7 @@
 #include "utils/utils.h"
 #include "AnimPlayer/AnimPlayer.h"
 #include "Trie/LogicTrie.h"
+#include "Trie/TrieSourceCode.h"
 
 
 
@@ -46,6 +47,7 @@ public:
 	void addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, TrieAnimStep eventTrie);
 	void addNodeDrawablesDelete(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, TrieAnimStep eventTrie);
 	void addNodeDrawablesUpdate(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, TrieAnimStep eventTrie);
+	void drawPseudocodeWindow(TrieAnimStep eventTrie);
 	// Draw nodes and links, depending on eventList
 	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
 	void displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout);
@@ -116,6 +118,7 @@ public:
 	static constexpr sf::Color    normalNodeEOW_BGColor   = sf::Color(144, 238, 144, 127);
 	static constexpr sf::Color    highlightCircleColor    = sf::Color::Green;
 	static constexpr sf::Color    highlightFoundCircleColor = sf::Color::Red;
+	static constexpr sf::Color    highlightCodeColor      = sf::Color::Green;
 
 
 private:

@@ -618,37 +618,41 @@ void HashVisEngine::drawPseudocodeWindow(HashAnimStep eventHash) {
 	switch (visMode) {
 	case HashVisMode::SEARCH:
 		for (int i = 0; i < HASH_TABLE_CODE_SEARCH.size(); i++) {
-			if (vecContains(eventHash.highlightLineIndex, i))
+			bool highlightLine = vecContains(eventHash.highlightLineIndex, i);
+			if (highlightLine)
 				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
 			ImGui::Text("%s", HASH_TABLE_CODE_SEARCH[i].c_str());
-			if (vecContains(eventHash.highlightLineIndex, i))
+			if (highlightLine)
 				ImGui::PopStyleColor();
 		}
 		break;
 	case HashVisMode::UPDATE:
 		for (int i = 0; i < HASH_TABLE_CODE_UPDATE.size(); i++) {
-			if (vecContains(eventHash.highlightLineIndex, i))
+			bool highlightLine = vecContains(eventHash.highlightLineIndex, i);
+			if (highlightLine)
 				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
 			ImGui::Text("%s", HASH_TABLE_CODE_UPDATE[i].c_str());
-			if (vecContains(eventHash.highlightLineIndex, i))
+			if (highlightLine)
 				ImGui::PopStyleColor();
 		}
 		break;
 	case HashVisMode::INSERT:
 		for (int i = 0; i < HASH_TABLE_CODE_INSERT.size(); i++) {
-			if (vecContains(eventHash.highlightLineIndex, i))
+			bool highlightLine = vecContains(eventHash.highlightLineIndex, i);
+			if (highlightLine)
 				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
 			ImGui::Text("%s", HASH_TABLE_CODE_INSERT[i].c_str());
-			if (vecContains(eventHash.highlightLineIndex, i))
+			if (highlightLine)
 				ImGui::PopStyleColor();
 		}
 		break;
 	case HashVisMode::REMOVE:
 		for (int i = 0; i < HASH_TABLE_CODE_REMOVE.size(); i++) {
-			if (vecContains(eventHash.highlightLineIndex, i))
+			bool highlightLine = vecContains(eventHash.highlightLineIndex, i);
+			if (highlightLine)
 				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
 			ImGui::Text("%s", HASH_TABLE_CODE_REMOVE[i].c_str());
-			if (vecContains(eventHash.highlightLineIndex, i))
+			if (highlightLine)
 				ImGui::PopStyleColor();
 		}
 		break;

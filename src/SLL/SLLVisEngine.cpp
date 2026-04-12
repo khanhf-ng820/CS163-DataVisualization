@@ -745,19 +745,21 @@ void SLLVisEngine::drawPseudocodeWindow(SLLAnimStep eventSLL) {
 	switch (visMode) {
 	case SLLVisMode::SEARCH:
 		for (int i = 0; i < SLL_CODE_SEARCH.size(); i++) {
-			if (vecContains(eventSLL.highlightLineIndex, i))
+			bool highlightLine = vecContains(eventSLL.highlightLineIndex, i);
+			if (highlightLine)
 				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
 			ImGui::Text("%s", SLL_CODE_SEARCH[i].c_str());
-			if (vecContains(eventSLL.highlightLineIndex, i))
+			if (highlightLine)
 				ImGui::PopStyleColor();
 		}
 		break;
 	case SLLVisMode::UPDATE:
 		for (int i = 0; i < SLL_CODE_UPDATE.size(); i++) {
-			if (vecContains(eventSLL.highlightLineIndex, i))
+			bool highlightLine = vecContains(eventSLL.highlightLineIndex, i);
+			if (highlightLine)
 				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
 			ImGui::Text("%s", SLL_CODE_UPDATE[i].c_str());
-			if (vecContains(eventSLL.highlightLineIndex, i))
+			if (highlightLine)
 				ImGui::PopStyleColor();
 		}
 		break;
@@ -765,20 +767,22 @@ void SLLVisEngine::drawPseudocodeWindow(SLLAnimStep eventSLL) {
 	case SLLVisMode::INSERT_END:
 	case SLLVisMode::INSERT_K:
 		for (int i = 0; i < SLL_CODE_INSERT.size(); i++) {
-			if (vecContains(eventSLL.highlightLineIndex, i))
+			bool highlightLine = vecContains(eventSLL.highlightLineIndex, i);
+			if (highlightLine)
 				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
 			ImGui::Text("%s", SLL_CODE_INSERT[i].c_str());
-			if (vecContains(eventSLL.highlightLineIndex, i))
+			if (highlightLine)
 				ImGui::PopStyleColor();
 		}
 		break;
 	case SLLVisMode::REMOVE_BEG:
 	case SLLVisMode::REMOVE_K:
 		for (int i = 0; i < SLL_CODE_REMOVE.size(); i++) {
-			if (vecContains(eventSLL.highlightLineIndex, i))
+			bool highlightLine = vecContains(eventSLL.highlightLineIndex, i);
+			if (highlightLine)
 				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
 			ImGui::Text("%s", SLL_CODE_REMOVE[i].c_str());
-			if (vecContains(eventSLL.highlightLineIndex, i))
+			if (highlightLine)
 				ImGui::PopStyleColor();
 		}
 		break;
