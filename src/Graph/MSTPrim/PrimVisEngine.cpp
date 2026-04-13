@@ -70,7 +70,7 @@ std::vector<PrimAnimStep> PrimVisEngine::getEventsPrim(int startVertex) {
 	oldGraphSnapshots.clear();
 	oldGraphSnapshots.push_back(graph.logicVertices);
 
-	events.push_back(PrimAnimStep(PrimAnimType::NONE, "Before running Prim\'s algorithm with starting vertex: " + std::to_string(startVertex), {1,2}, 
+	events.push_back(PrimAnimStep(PrimAnimType::NONE, "Before running Prim\'s algorithm with starting vertex: " + std::to_string(startVertex), {1,2,3}, 
 		-1, -1, oldGraphSnapshots.size() - 1));
 	graph.generatePrimEvents(startVertex, events, oldGraphSnapshots);
 
@@ -292,27 +292,27 @@ void PrimVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>&
 
 
 // // Create AND display ImGui window to highlight source code (pseudocode)
-// void PrimVisEngine::drawPseudocodeWindow(PrimAnimStep eventPrim) {
-// 	ImGui::Begin("Pseudocode", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+void PrimVisEngine::drawPseudocodeWindow(PrimAnimStep eventPrim) {
+	ImGui::Begin("Pseudocode", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
-// 	switch (visMode) {
-// 	case PrimVisMode::MST_PRIM:
-// 		for (int i = 0; i < MST_PRIM_PSEUDOCODE.size(); i++) {
-// 			bool highlightLine = vecContains(eventPrim.highlightCodeLineIndex, i);
-// 			if (highlightLine)
-// 				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
-// 			ImGui::Text("%s", MST_PRIM_PSEUDOCODE[i].c_str());
-// 			if (highlightLine)
-// 				ImGui::PopStyleColor();
-// 		}
-// 		break;
-// 	default:
-// 		ImGui::Text("(Nothing to visualize.)");
-// 		break;
-// 	}
+	switch (visMode) {
+	case PrimVisMode::MST_PRIM:
+		for (int i = 0; i < MST_PRIM_PSEUDOCODE.size(); i++) {
+			bool highlightLine = vecContains(eventPrim.highlightCodeLineIndex, i);
+			if (highlightLine)
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", MST_PRIM_PSEUDOCODE[i].c_str());
+			if (highlightLine)
+				ImGui::PopStyleColor();
+		}
+		break;
+	default:
+		ImGui::Text("(Nothing to visualize.)");
+		break;
+	}
 
-// 	ImGui::End();
-// }
+	ImGui::End();
+}
 
 
 std::string PrimVisEngine::getShortestPathString(int startVertex, int endVertex) {
@@ -700,7 +700,9 @@ void PrimVisEngine::drawHighlightEdge(std::vector<std::unique_ptr<sf::Drawable>>
 	float length = direction.length();
 	float angle = std::atan2(direction.y, direction.x);
 
-	auto highlightedEdgeLine = std::make_unique<sf::RectangleShape>(sf::Vector2f(length, highlightEdgeThickness));
+	auto highlightedEdgeLine = std::make_unique<sf::RectangleShape>(
+		sf::Vector2f(length, inMST ? highlightEdgeInMSTThickness : highlightEdgeThickness)
+	);
 	highlightedEdgeLine->setFillColor(inMST ? highlightEdgeInMSTColor : highlightEdgeColor);
 	highlightedEdgeLine->setPosition(start);
 	highlightedEdgeLine->setRotation(sf::radians(angle));

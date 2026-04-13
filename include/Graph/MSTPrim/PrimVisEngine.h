@@ -101,8 +101,9 @@ public:
 	static constexpr float        highlightCircleThickness = 5;
 
 	static constexpr int          edgeWeightTextFontSize = 14;
-	static constexpr float        highlightEdgeThickness   = 3;
-	static constexpr float        arrowHeadSideLen      = 8;
+	static constexpr float        highlightEdgeThickness = 3;
+	static constexpr float        highlightEdgeInMSTThickness = 5;
+	static constexpr float        arrowHeadSideLen       = 8;
 
 	static constexpr sf::Color    normalNodeColor         = sf::Color::Black;
 	static constexpr sf::Color    normalNodeKeyColor      = sf::Color::Blue;
@@ -122,7 +123,7 @@ private:
 
 	// Draw nodes: Iterate through graph and draw nodes
 	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, PrimAnimStep eventPrim);
-	void drawPseudocodeWindow(PrimAnimStep eventPrim) {};
+	void drawPseudocodeWindow(PrimAnimStep eventPrim);
 	// Get string of shortest path of the clicked vertex
 	std::string getShortestPathString(int startVertex, int endVertex);
 

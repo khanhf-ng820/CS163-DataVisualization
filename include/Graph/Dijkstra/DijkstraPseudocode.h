@@ -10,15 +10,15 @@
 // Written in pseudocode
 // -- DIJKSTRA'S ALGORITHM --
 inline const std::vector<std::string> DIJKSTRA_PSEUDOCODE = {
-	"1  function Dijkstra(Graph, source):", // 0
-	"2      dist[] := +INF",
-	"3      parent[] := -1",
-	"4      dist[source] := 0",
-	"5      pq := empty-min-priority-queue()",
-	"6      pq.push( (0, source) )",
-	"7      while pq is not empty:",        // 6
-	"8          (d, u) := pq.top()",
-	"9          pq.pop()",
+	" 1 function Dijkstra(Graph, source):", // 0
+	" 2     dist[] := +INF",
+	" 3     parent[] := -1",
+	" 4     dist[source] := 0",
+	" 5     pq := empty-min-priority-queue()",
+	" 6     pq.push( (0, source) )",
+	" 7     while pq is not empty:",        // 6
+	" 8         (d, u) := pq.top()",
+	" 9         pq.pop()",
 	"10         if d > dist[u]:",
 	"11             continue",
 	"12         for each (v, weight) in Graph[u]:",
