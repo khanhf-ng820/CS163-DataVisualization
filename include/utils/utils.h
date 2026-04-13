@@ -27,6 +27,18 @@ inline const sf::Vector2f round(sf::Vector2f vec) {
 	return sf::Vector2f(round(vec.x), round(vec.y));
 }
 
+inline const bool isPerfectSquare(long long n) {
+	if (n < 0) return false;
+	if (n == 0 || n == 1) return true;
+	long long root = static_cast<long long>(std::round(std::sqrt(n)));
+	return root * root == n;
+}
+
+inline const int perfectSquareRoot(int n) {
+	assert(isPerfectSquare(n));
+	return static_cast<int>(std::sqrt(n));
+}
+
 inline const sf::Vector2f limitMag(sf::Vector2f vec, float maxMag) {
 	if (vec.lengthSquared() > maxMag * maxMag)
 		vec = vec.normalized() * maxMag;

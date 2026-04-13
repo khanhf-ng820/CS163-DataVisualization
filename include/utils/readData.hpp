@@ -3,6 +3,7 @@
 #include "utils/readData/readHashTable.h"
 #include "utils/readData/readAVL.h"
 #include "utils/readData/readTrie.h"
+#include "utils/readData/readGraph.h"
 
 
 
