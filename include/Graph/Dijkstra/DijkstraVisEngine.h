@@ -32,9 +32,17 @@ enum class DijkstraVisMode {
 class DijkstraVisEngine : public AnimPlayer {
 public:
 	DijkstraVisEngine(unsigned int numVertex, sf::RenderWindow* window, sf::Font* font, sf::View* view); // N vertices graph
-	// DijkstraVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font, sf::View* view); // Randomized graph
-	DijkstraVisEngine(std::vector<std::vector<Edge>>& adjList, sf::RenderWindow* window, sf::Font* font, sf::View* view); // Custom data graph
-	~DijkstraVisEngine(); // Delete all dynamically allocated memory
+	DijkstraVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font, sf::View* view); // Randomized graph
+	// Custom data initialization for graph
+	DijkstraVisEngine(std::vector<std::vector<int>>& adjMatrix, 
+		sf::RenderWindow* window, sf::Font* font, sf::View* view);
+	DijkstraVisEngine(std::vector<std::vector<Edge>>& adjList, 
+		sf::RenderWindow* window, sf::Font* font, sf::View* view);
+	DijkstraVisEngine(unsigned int numVertex, std::vector<GraphReader::GraphEdge>& edgeList, 
+		sf::RenderWindow* window, sf::Font* font, sf::View* view);
+	~DijkstraVisEngine() = default; // Delete all dynamically allocated memory
+	DijkstraVisEngine(const DijkstraVisEngine&) = default;
+    DijkstraVisEngine& operator=(const DijkstraVisEngine&) = default;
 
 	// Reset all properties to get ready for visualize new action
 	void resetParams();
@@ -47,7 +55,7 @@ public:
 	void dragVertexByMouse(sf::Vector2f mousePos, sf::Vector2f viewDisplacement, float viewZoomFactor);
 
 	// Draw nodes and links, depending on eventList
-	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
+	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::vector<std::unique_ptr<sf::Drawable>>& drawableListDefaultView);
 	void displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout);
 
 
@@ -57,7 +65,6 @@ public:
 
 	DijkstraVisMode visMode = DijkstraVisMode::NONE;
 	std::vector<DijkstraAnimStep> eventList;
-	std::unique_ptr<sfLayout> drawableListDefaultView;
 
 
 	///// Parameters for Visualization

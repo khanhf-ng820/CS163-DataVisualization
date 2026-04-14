@@ -11,6 +11,7 @@
 void Program::initVisMSTPrimScreen() {
 	// Push back to vector
 	sfDrawables[ProgramState::VIS_MST_PRIM_SCREEN]->drawables.clear();
+	sfDrawablesDefaultView[ProgramState::VIS_MST_PRIM_SCREEN]->drawables.clear();
 	// printf("VisMSTPrim SFML init function called\n"); // DEBUG
 }
 
@@ -23,13 +24,14 @@ void Program::displayVisMSTPrimScreenSFML() {
 	case PrimVisMode::NONE:
 		visEngine_MSTPrim.eventList = std::vector<PrimAnimStep>();
 		visEngine_MSTPrim.createDrawables(
-			sfDrawables[ProgramState::VIS_MST_PRIM_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_MST_PRIM_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_MST_PRIM_SCREEN]->drawables
 		);
 		// Draw all drawables in both views (zoomable view and window's default view)
 		window.setView(view);
 		sfDrawables[ProgramState::VIS_MST_PRIM_SCREEN]->displayAll();
 		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
-		visEngine_MSTPrim.drawableListDefaultView->displayAll();
+		sfDrawablesDefaultView[ProgramState::VIS_MST_PRIM_SCREEN]->displayAll();
 
 		if (!visEngine_MSTPrim.animPaused)
 			visEngine_MSTPrim.increaseTime();
@@ -38,13 +40,14 @@ void Program::displayVisMSTPrimScreenSFML() {
 	case PrimVisMode::MST_PRIM:
 		// visEngine_MSTPrim.eventList = visEngine_MSTPrim.getEventsSearch(visEngine_MSTPrim.startVertexID);
 		visEngine_MSTPrim.createDrawables(
-			sfDrawables[ProgramState::VIS_MST_PRIM_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_MST_PRIM_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_MST_PRIM_SCREEN]->drawables
 		);
 		// Draw all drawables in both views (zoomable view and window's default view)
 		window.setView(view);
 		sfDrawables[ProgramState::VIS_MST_PRIM_SCREEN]->displayAll();
 		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
-		visEngine_MSTPrim.drawableListDefaultView->displayAll();
+		sfDrawablesDefaultView[ProgramState::VIS_MST_PRIM_SCREEN]->displayAll();
 
 		// If not paused, just increase / decrease time
 		if (visEngine_MSTPrim.animPaused) {
@@ -62,6 +65,10 @@ void Program::displayVisMSTPrimScreenSFML() {
 	default:
 		break;
 	}
+	// visEngine_MSTPrim.graph.printAdjList(); // DEBUG
+	// // DEBUG
+	// std::cerr << "sfDrawables[ProgramState::VIS_MST_PRIM_SCREEN].drawables.size() = " << sfDrawables[ProgramState::VIS_MST_PRIM_SCREEN]->drawables.size() << std::endl;
+	// std::cerr << "sfDrawablesDefaultView[ProgramState::VIS_MST_PRIM_SCREEN].drawables.size() = " << sfDrawablesDefaultView[ProgramState::VIS_MST_PRIM_SCREEN]->drawables.size ()<< std::endl;
 
 
 	// std::cout << sfDrawables[ProgramState::VIS_MST_PRIM_SCREEN]->drawables.size() << std::endl;

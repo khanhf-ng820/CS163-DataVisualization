@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "utils/utils.h"
-#include "utils/readData/GraphReader/const.h"
+#include "utils/readData/GraphReader/GraphInitMethod.h"
 #include "Graph/const.h"
 #include "Graph/EdgeStruct.h"
 
@@ -24,6 +24,6 @@ namespace GraphReader {
 
 	bool validDataEdgeListFile(std::ifstream& ifile);
 	bool validDataEdgeListString(std::string& data);
-	std::vector<GraphEdge> getDataEdgeListFile(std::ifstream& ifile);
-	std::vector<GraphEdge> getDataEdgeListString(std::string& data);
+	std::vector<GraphEdge> getDataEdgeListFile(std::ifstream& ifile, unsigned int& numVertices);
+	std::vector<GraphEdge> getDataEdgeListString(std::string& data, unsigned int& numVertices);
 };

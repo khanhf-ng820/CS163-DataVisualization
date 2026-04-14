@@ -7,7 +7,7 @@
 
 #include "utils/utils.h"
 #include "Graph/const.h"
-#include "utils/readData/GraphReader/const.h"
+#include "utils/readData/GraphReader/GraphInitMethod.h"
 #include "utils/readData/GraphReader/readAdjMatrix.h"
 #include "utils/readData/GraphReader/readAdjList.h"
 #include "utils/readData/GraphReader/readEdgeList.h"

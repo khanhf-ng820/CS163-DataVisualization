@@ -84,14 +84,13 @@ bool GraphReader::validDataEdgeListString(std::string& data) {
 
 
 
-std::vector<GraphReader::GraphEdge> GraphReader::getDataEdgeListFile(std::ifstream& ifile) {
+std::vector<GraphReader::GraphEdge> GraphReader::getDataEdgeListFile(std::ifstream& ifile, unsigned int& numVertices) {
 	if (!ifile.is_open()) return {};
 	if (!validDataEdgeListFile(ifile)) return {};
 
 	std::vector<GraphReader::GraphEdge> edges;
 
 	// Read number of vertices |V|
-	unsigned short int numVertices;
 	ifile >> numVertices;
 
 	// Read each edge
@@ -109,16 +108,15 @@ std::vector<GraphReader::GraphEdge> GraphReader::getDataEdgeListFile(std::ifstre
 
 
 
-std::vector<GraphReader::GraphEdge> GraphReader::getDataEdgeListString(std::string& data) {
+std::vector<GraphReader::GraphEdge> GraphReader::getDataEdgeListString(std::string& data, unsigned int& numVertices) {
 	if (!validDataEdgeListString(data)) return {};
 
 	std::string trimmedData = trim(data);
 	std::istringstream iss(trimmedData);
 
 	std::vector<GraphReader::GraphEdge> edges;
-	
+
 	// Read number of vertices |V|
-	unsigned short int numVertices;
 	iss >> numVertices;
 
 	// Read each edge

@@ -71,6 +71,8 @@ std::vector<std::vector<int>> GraphReader::getDataAdjMatFile(std::ifstream& ifil
 		weights.push_back(weight);
 	}
 
+	for (const auto& w : weights) std::cout << w << ' '; std::cout << std::endl; // DEBUG
+
 	unsigned int numVertices = perfectSquareRoot(numVerticesSquared);
 	std::vector<std::vector<int>> adjMat(numVertices, std::vector<int>(numVertices, 0));
 

@@ -32,9 +32,17 @@ enum class PrimVisMode {
 class PrimVisEngine : public AnimPlayer {
 public:
 	PrimVisEngine(unsigned int numVertex, sf::RenderWindow* window, sf::Font* font, sf::View* view); // N vertices graph
-	// PrimVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font, sf::View* view); // Randomized graph
-	PrimVisEngine(std::vector<std::vector<Edge>>& adjList, sf::RenderWindow* window, sf::Font* font, sf::View* view); // Custom data graph
-	~PrimVisEngine(); // Delete all dynamically allocated memory
+	PrimVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font, sf::View* view); // Randomized graph
+	// Custom data initialization for graph
+	PrimVisEngine(std::vector<std::vector<int>>& adjMatrix, 
+		sf::RenderWindow* window, sf::Font* font, sf::View* view);
+	PrimVisEngine(std::vector<std::vector<Edge>>& adjList, 
+		sf::RenderWindow* window, sf::Font* font, sf::View* view);
+	PrimVisEngine(unsigned int numVertex, std::vector<GraphReader::GraphEdge>& edgeList, 
+		sf::RenderWindow* window, sf::Font* font, sf::View* view);
+	~PrimVisEngine() = default; // Delete all dynamically allocated memory
+	PrimVisEngine(const PrimVisEngine&) = default;
+    PrimVisEngine& operator=(const PrimVisEngine&) = default;
 
 	// Reset all properties to get ready for visualize new action
 	void resetParams();
@@ -47,7 +55,7 @@ public:
 	void dragVertexByMouse(sf::Vector2f mousePos, sf::Vector2f viewDisplacement, float viewZoomFactor);
 
 	// Draw nodes and links, depending on eventList
-	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
+	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::vector<std::unique_ptr<sf::Drawable>>& drawableListDefaultView);
 	void displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout);
 
 
@@ -57,7 +65,6 @@ public:
 
 	PrimVisMode visMode = PrimVisMode::NONE;
 	std::vector<PrimAnimStep> eventList;
-	std::unique_ptr<sfLayout> drawableListDefaultView;
 
 
 	///// Parameters for Visualization

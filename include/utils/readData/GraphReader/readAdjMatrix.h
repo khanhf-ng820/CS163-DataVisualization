@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "utils/utils.h"
-#include "utils/readData/GraphReader/const.h"
+#include "utils/readData/GraphReader/GraphInitMethod.h"
 #include "Graph/const.h"
 
 

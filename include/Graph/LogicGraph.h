@@ -1,7 +1,11 @@
 #pragma once
+#include <random>
+
 #include "Graph/VisualGraphVertex.h"
 #include "Graph/EdgeStruct.h"
 // #include "Graph/GraphAnimStep.h"
+
+#include "utils/readData.hpp"
 
 
 
@@ -11,7 +15,10 @@
 class LogicGraph {
 public:
 	explicit LogicGraph(unsigned int numVertex);
+	explicit LogicGraph(std::mt19937& rng);
+	explicit LogicGraph(std::vector<std::vector<int>>& adjMatrix);
 	explicit LogicGraph(std::vector<std::vector<Edge>>& adjList);
+	explicit LogicGraph(unsigned int numVertex, std::vector<GraphReader::GraphEdge>& edgeList);
 	// LogicGraph(const LogicGraph& other); // Copy constructor
 
 	// LogicGraph& operator=(const LogicGraph& other); // Assignment op
@@ -23,6 +30,8 @@ public:
 
 	// Get number of nodes (O(1))
 	unsigned int getNumVertex() const;
+	// Print adjacency list
+	void printAdjList() const;
 
 	// // Get vertex, knowing the ID
 	// LogicGraphVertex* getVertexID(int ID);
