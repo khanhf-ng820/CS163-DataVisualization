@@ -4,6 +4,8 @@
 # Build directory
 build/
 
+# data-test/
+
 notes.txt
 notes.cpp
 notes1.cpp

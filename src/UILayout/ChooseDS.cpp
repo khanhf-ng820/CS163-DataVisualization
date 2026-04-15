@@ -362,6 +362,19 @@ void Program::displayChooseDSMenuScreenGUI() {
 	} else if (dataInitOption == DATA_INIT_FROM_FILE) {
 		std::string dataFileName = getDataFileName(DSVectors[current_DS_item]);
 
+		switch (chosenDSType) {
+		case DSType::MST_PRIM_GRAPH:
+		case DSType::DIJKSTRA_GRAPH:
+			ImGui::RadioButton("Adjacency Matrix", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::ADJ_MATRIX); // Value 0
+			ImGui::SameLine();
+			ImGui::RadioButton("Adjacency List", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::ADJ_LIST); // Value 1
+			ImGui::SameLine();
+			ImGui::RadioButton("Edge List", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::EDGE_LIST); // Value 2
+			break;
+		default:
+			break;
+		}
+
 		// Change ItemSpacing temporarily
 		ImVec2 originalItemSpacing = stylePtr->ItemSpacing;
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, originalItemSpacing.y));

@@ -18,7 +18,7 @@ bool GraphReader::validDataAdjListFile(std::ifstream& ifile) {
 		// Read number of vertices |V|
 		if (!doneReadNumVertices) {
 			unsigned short int numVertices;
-			if (ifile >> numVertices) {
+			if (iss >> numVertices) {
 				if (numVertices > GRAPH_INIT_NUM_VERTICES_MAX) {
 					ifile.clear(); // Cleanup
 					ifile.seekg(0, std::ios::beg);
@@ -67,15 +67,11 @@ bool GraphReader::validDataAdjListString(std::string& data) {
 		// Read number of vertices |V|
 		if (!doneReadNumVertices) {
 			unsigned short int numVertices;
-			if (dataStream >> numVertices) {
+			if (iss >> numVertices) {
 				if (numVertices > GRAPH_INIT_NUM_VERTICES_MAX) {
-					dataStream.clear(); // Cleanup
-					dataStream.seekg(0, std::ios::beg);
 					return false;
 				}
 			} else {
-				dataStream.clear(); // Cleanup
-				dataStream.seekg(0, std::ios::beg);
 				return false;
 			}
 			doneReadNumVertices = true;
@@ -116,7 +112,7 @@ std::vector<std::vector<Edge>> GraphReader::getDataAdjListFile(std::ifstream& if
 
 		// Read number of vertices |V|
 		if (!doneReadNumVertices) {
-			ifile >> numVertices;
+			iss >> numVertices;
 			adjList = std::vector<std::vector<Edge>>(numVertices, std::vector<Edge>());
 
 			doneReadNumVertices = true;
@@ -160,7 +156,7 @@ std::vector<std::vector<Edge>> GraphReader::getDataAdjListString(std::string& da
 
 		// Read number of vertices |V|
 		if (!doneReadNumVertices) {
-			dataStream >> numVertices;
+			iss >> numVertices;
 			adjList = std::vector<std::vector<Edge>>(numVertices, std::vector<Edge>());
 
 			doneReadNumVertices = true;
