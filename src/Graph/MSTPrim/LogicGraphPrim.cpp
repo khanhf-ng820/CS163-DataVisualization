@@ -237,7 +237,19 @@ void LogicGraphPrim::generatePrimEvents(int startVertex, std::vector<PrimAnimSte
 	}
 
 
+	// Check if the result is an MST or not
+	bool isMST = (numVertex > 1);
+	unsigned int MSTEdges = 0;
+	for (const auto& logicVertex : primVertices) {
+		if (logicVertex.parentVertex != -1) MSTEdges++;
+	}
+	isMST &= (MSTEdges == numVertex-1);
+
+	std::string resultDescription = isMST
+		? ("Finished Prim\'s algorithm, the total cost of MST is " + std::to_string(edgeSumMST(primVertices)) + ".")
+		: "Finished Prim\'s algorithm, the Minimum Spanning Tree does not exist.";
+
 	graphSnapshots.push_back(primVertices);
-	events.push_back(PrimAnimStep(PrimAnimType::FINISHED_MST_PRIM, "Finished Prim\'s algorithm, the total cost of MST is " + std::to_string(edgeSumMST(primVertices)) + ".", {22}, 
+	events.push_back(PrimAnimStep(PrimAnimType::FINISHED_MST_PRIM, resultDescription, {22}, 
 		-1, -1, graphSnapshots.size() - 1));
 }

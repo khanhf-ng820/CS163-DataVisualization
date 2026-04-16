@@ -9,6 +9,7 @@ bool GraphReader::validDataAdjListFile(std::ifstream& ifile) {
 		return false; // Can't open file
 
 	std::string line;
+	unsigned short int numVertices;
 	bool doneReadNumVertices = false;
 	bool read = false;
 
@@ -17,7 +18,6 @@ bool GraphReader::validDataAdjListFile(std::ifstream& ifile) {
 
 		// Read number of vertices |V|
 		if (!doneReadNumVertices) {
-			unsigned short int numVertices;
 			if (iss >> numVertices) {
 				if (numVertices > GRAPH_INIT_NUM_VERTICES_MAX) {
 					ifile.clear(); // Cleanup
@@ -38,6 +38,13 @@ bool GraphReader::validDataAdjListFile(std::ifstream& ifile) {
 			// reads whitespace-separated numbers
 			while (iss >> vertexTo >> weight) {
 				read = true;
+
+				// Weight must be > 0, vertex must be between 0 and numVertices
+				if (weight == 0 || vertexTo < 0 || vertexTo >= numVertices) {
+					ifile.clear(); // Cleanup
+					ifile.seekg(0, std::ios::beg);
+					return false;
+				}
 			}
 		}
 	}
@@ -58,6 +65,7 @@ bool GraphReader::validDataAdjListString(std::string& data) {
 	std::istringstream dataStream(trimmedData);
 
 	std::string line;
+	unsigned short int numVertices;
 	bool doneReadNumVertices = false;
 	bool read = false;
 
@@ -66,7 +74,6 @@ bool GraphReader::validDataAdjListString(std::string& data) {
 
 		// Read number of vertices |V|
 		if (!doneReadNumVertices) {
-			unsigned short int numVertices;
 			if (iss >> numVertices) {
 				if (numVertices > GRAPH_INIT_NUM_VERTICES_MAX) {
 					return false;
@@ -83,6 +90,11 @@ bool GraphReader::validDataAdjListString(std::string& data) {
 			// reads whitespace-separated numbers
 			while (iss >> vertexTo >> weight) {
 				read = true;
+
+				// Weight must be > 0, vertex must be between 0 and numVertices
+				if (weight == 0 || vertexTo < 0 || vertexTo >= numVertices) {
+					return false;
+				}
 			}
 		}
 	}

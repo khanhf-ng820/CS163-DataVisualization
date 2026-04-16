@@ -35,6 +35,13 @@ bool GraphReader::validDataEdgeListFile(std::ifstream& ifile) {
 		// 	ifile.seekg(0, std::ios::beg);
 		// 	return false;
 		// }
+
+		// Weight must be > 0, vertex must be between 0 and numVertices
+		if (weight == 0 || vertex1 < 0 || vertex1 >= numVertices || vertex2 < 0 || vertex2 >= numVertices) {
+			ifile.clear(); // Cleanup
+			ifile.seekg(0, std::ios::beg);
+			return false;
+		}
 	}
 
 	// bool isValidEdgeList = isPerfectSquare(inputCount);
@@ -74,6 +81,11 @@ bool GraphReader::validDataEdgeListString(std::string& data) {
 		// if (inputCount > GRAPH_INIT_NUM_VERTICES_MAX * GRAPH_INIT_NUM_VERTICES_MAX) {
 		// 	return false;
 		// }
+
+		// Weight must be > 0, vertex must be between 0 and numVertices
+		if (weight == 0 || vertex1 < 0 || vertex1 >= numVertices || vertex2 < 0 || vertex2 >= numVertices) {
+			return false;
+		}
 	}
 
 	// bool isValidEdgeList = isPerfectSquare(inputCount);
