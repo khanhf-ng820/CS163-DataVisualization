@@ -200,6 +200,6 @@ void LogicGraphDijkstra::generateDijkstraEvents(int startVertex, std::vector<Dij
 	}
 
 	graphSnapshots.push_back(dijkstraVertices);
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::FINISHED_DIJKSTRA, "Finished Dijkstra\'s algorithm, right click on a vertex to see shortest path.", {16}, 
+	events.push_back(DijkstraAnimStep(DijkstraAnimType::FINISHED_DIJKSTRA, "Finished Dijkstra\'s algorithm, hold right click on a vertex to see shortest path.", {16}, 
 		-1, -1, graphSnapshots.size() - 1));
 }

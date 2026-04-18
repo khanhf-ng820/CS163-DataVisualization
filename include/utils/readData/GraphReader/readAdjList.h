@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <map>
 
 #include "utils/utils.h"
 #include "utils/readData/GraphReader/GraphInitMethod.h"

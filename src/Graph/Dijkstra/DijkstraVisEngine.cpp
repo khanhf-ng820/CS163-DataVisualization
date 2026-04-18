@@ -340,7 +340,7 @@ std::string DijkstraVisEngine::getShortestPathString(int startVertex, int endVer
 	std::reverse(path.begin(), path.end());
 
 	if (oldGraphSnapshots.back()[endVertex].prevVertex == -1 && startVertex != endVertex) {
-		return "No path from vertex " + std::to_string(startVertexID) + " to vertex " + std::to_string(endVertex) + "exists.";
+		return "No path from vertex " + std::to_string(startVertexID) + " to vertex " + std::to_string(endVertex) + " exists.";
 	}
 	std::string shortestPathString = "Shortest path from vertex " + std::to_string(startVertexID) + " to vertex " + std::to_string(endVertex) + ":\n";
 

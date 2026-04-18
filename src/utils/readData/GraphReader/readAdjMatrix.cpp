@@ -8,6 +8,8 @@ bool GraphReader::validDataAdjMatFile(std::ifstream& ifile) {
 	if (!ifile.is_open())
 		return false; // Can't open file
 
+	std::vector<unsigned short int> weights;
+
 	unsigned short int weight;
 	bool read = false;
 	unsigned int inputCount = 0;
@@ -20,14 +22,26 @@ bool GraphReader::validDataAdjMatFile(std::ifstream& ifile) {
 			ifile.seekg(0, std::ios::beg);
 			return false;
 		}
+
+		weights.push_back(weight);
 	}
 
 	bool isValidAdjMatrix = isPerfectSquare(inputCount);
+	// Valid if reached EOF
 	bool isValid = read && ifile.eof() && isValidAdjMatrix;
 
 	ifile.clear(); // Cleanup
 	ifile.seekg(0, std::ios::beg);
-	return isValid; // Valid if reached EOF
+	if (!isValid) return isValid;
+
+	unsigned int numVertices = perfectSquareRoot(inputCount);
+	for (int i = 0; i < numVertices; i++) {
+		for (int j = i; j < numVertices; j++) {
+			if (weights[i * numVertices + j] != weights[j * numVertices + i])
+				return false;
+		}
+	}
+	return true;
 }
 
 
@@ -37,6 +51,8 @@ bool GraphReader::validDataAdjMatFile(std::ifstream& ifile) {
 bool GraphReader::validDataAdjMatString(std::string& data) {
 	std::string trimmedData = trim(data);
 	std::istringstream iss(trimmedData);
+
+	std::vector<unsigned short int> weights;
 
 	unsigned short int weight;
 	bool read = false;
@@ -48,10 +64,24 @@ bool GraphReader::validDataAdjMatString(std::string& data) {
 		if (inputCount > GRAPH_INIT_NUM_VERTICES_MAX * GRAPH_INIT_NUM_VERTICES_MAX) {
 			return false;
 		}
+
+		weights.push_back(weight);
 	}
 
 	bool isValidAdjMatrix = isPerfectSquare(inputCount);
-	return read && iss.eof() && isValidAdjMatrix;
+	// Valid if reached EOF
+	bool isValid = read && iss.eof() && isValidAdjMatrix;
+
+	if (!isValid) return isValid;
+
+	unsigned int numVertices = perfectSquareRoot(inputCount);
+	for (int i = 0; i < numVertices; i++) {
+		for (int j = i; j < numVertices; j++) {
+			if (weights[i * numVertices + j] != weights[j * numVertices + i])
+				return false;
+		}
+	}
+	return true;
 }
 
 
@@ -78,6 +108,7 @@ std::vector<std::vector<int>> GraphReader::getDataAdjMatFile(std::ifstream& ifil
 
 	for (int i = 0; i < numVertices; i++) {
 		for (int j = 0; j < numVertices; j++) {
+			if (i == j) continue;
 			adjMat[i][j] = weights[i * numVertices + j];
 		}
 	}
@@ -111,6 +142,7 @@ std::vector<std::vector<int>> GraphReader::getDataAdjMatString(std::string& data
 
 	for (int i = 0; i < numVertices; i++) {
 		for (int j = 0; j < numVertices; j++) {
+			if (i == j) continue;
 			adjMat[i][j] = weights[i * numVertices + j];
 		}
 	}

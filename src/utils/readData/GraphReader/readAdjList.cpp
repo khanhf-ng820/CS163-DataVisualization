@@ -8,10 +8,13 @@ bool GraphReader::validDataAdjListFile(std::ifstream& ifile) {
 	if (!ifile.is_open())
 		return false; // Can't open file
 
+	std::map<std::pair<unsigned short int, unsigned short int>, unsigned short int> edgeList;
+
 	std::string line;
 	unsigned short int numVertices;
 	bool doneReadNumVertices = false;
 	bool read = false;
+	unsigned short int vertexIdx = 0; // Current vertex index
 
 	while (std::getline(ifile, line)) {
 		std::istringstream iss(line);
@@ -45,15 +48,32 @@ bool GraphReader::validDataAdjListFile(std::ifstream& ifile) {
 					ifile.seekg(0, std::ios::beg);
 					return false;
 				}
+
+				// Edges must be valid
+				edgeList[std::make_pair(vertexIdx, vertexTo)] = weight;
+				// if (!edgeList.count(std::make_pair(vertexIdx, vertexTo)))  {
+				// }
 			}
+
+			vertexIdx++;
 		}
 	}
 
+	// Valid if reached EOF
 	bool isValid = read && ifile.eof();
 
 	ifile.clear(); // Cleanup
 	ifile.seekg(0, std::ios::beg);
-	return isValid; // Valid if reached EOF
+	if (!isValid) return isValid;
+
+	// Edges must be valid, must have reversed edge with the same weight
+	for (const auto& [vertexPair, weight] : edgeList) {
+		std::pair<unsigned short int, unsigned short int> reversedPair = std::make_pair(vertexPair.second, vertexPair.first);
+		// Must have symmetry (have reversed edge and same weight)
+		if (!edgeList.count(reversedPair)) return false;
+		if (edgeList[reversedPair] != weight) return false;
+	}
+	return true;
 }
 
 
@@ -64,10 +84,13 @@ bool GraphReader::validDataAdjListString(std::string& data) {
 	std::string trimmedData = trim(data);
 	std::istringstream dataStream(trimmedData);
 
+	std::map<std::pair<unsigned short int, unsigned short int>, unsigned short int> edgeList;
+
 	std::string line;
 	unsigned short int numVertices;
 	bool doneReadNumVertices = false;
 	bool read = false;
+	unsigned short int vertexIdx = 0; // Current vertex index
 
 	while (std::getline(dataStream, line)) {
 		std::istringstream iss(line);
@@ -95,13 +118,30 @@ bool GraphReader::validDataAdjListString(std::string& data) {
 				if (weight == 0 || vertexTo < 0 || vertexTo >= numVertices) {
 					return false;
 				}
+
+				// Edges must be valid
+				edgeList[std::make_pair(vertexIdx, vertexTo)] = weight;
+				// if (!edgeList.count(std::make_pair(vertexIdx, vertexTo)))  {
+				// }
 			}
+
+			vertexIdx++;
 		}
 	}
 
+	// Valid if reached EOF
 	bool isValid = read && dataStream.eof();
 
-	return isValid; // Valid if reached EOF
+	if (!isValid) return isValid;
+
+	// Edges must be valid, must have reversed edge with the same weight
+	for (const auto& [vertexPair, weight] : edgeList) {
+		std::pair<unsigned short int, unsigned short int> reversedPair = std::make_pair(vertexPair.second, vertexPair.first);
+		// Must have symmetry (have reversed edge and same weight)
+		if (!edgeList.count(reversedPair)) return false;
+		if (edgeList[reversedPair] != weight) return false;
+	}
+	return true;
 }
 
 

@@ -13,7 +13,7 @@ LogicGraph::LogicGraph(unsigned int numVertex)
 
 
 LogicGraph::LogicGraph(std::mt19937& rng) {
-	std::uniform_int_distribution<int> numVertexDistrib(GRAPH_INIT_NUM_VERTICES_MIN, GRAPH_INIT_NUM_VERTICES_MAX);
+	std::uniform_int_distribution<int> numVertexDistrib(GRAPH_INIT_RANDOM_NUM_VERTICES_MIN, GRAPH_INIT_RANDOM_NUM_VERTICES_MAX);
 	
 	numVertex = numVertexDistrib(rng);
 	adjList = std::vector<std::vector<Edge>>(numVertex, std::vector<Edge>());

@@ -8,6 +8,8 @@ bool GraphReader::validDataEdgeListFile(std::ifstream& ifile) {
 	if (!ifile.is_open())
 		return false; // Can't open file
 
+	std::map<std::pair<unsigned short int, unsigned short int>, unsigned short int> edgeList;
+
 	// Read number of vertices |V|
 	unsigned short int numVertices;
 	if (ifile >> numVertices) {
@@ -42,9 +44,22 @@ bool GraphReader::validDataEdgeListFile(std::ifstream& ifile) {
 			ifile.seekg(0, std::ios::beg);
 			return false;
 		}
+
+		// Edges must be valid
+		// Check if edge already exists
+		if (edgeList.count(std::make_pair(vertex1, vertex2))) {
+			ifile.clear(); // Cleanup
+			ifile.seekg(0, std::ios::beg);
+			return false;
+		}
+		edgeList[std::make_pair(vertex1, vertex2)] = weight;
+		edgeList[std::make_pair(vertex2, vertex1)] = weight;
+		// if (!edgeList.count(std::make_pair(vertexIdx, vertexTo)))  {
+		// }
 	}
 
 	// bool isValidEdgeList = isPerfectSquare(inputCount);
+	// Valid if reached EOF
 	bool isValid = read && ifile.eof();
 
 	ifile.clear(); // Cleanup
@@ -60,6 +75,8 @@ bool GraphReader::validDataEdgeListString(std::string& data) {
 	std::string trimmedData = trim(data);
 	std::istringstream iss(trimmedData);
 
+	std::map<std::pair<unsigned short int, unsigned short int>, unsigned short int> edgeList;
+	
 	// Read number of vertices |V|
 	unsigned short int numVertices;
 	if (iss >> numVertices) {
@@ -86,9 +103,20 @@ bool GraphReader::validDataEdgeListString(std::string& data) {
 		if (weight == 0 || vertex1 < 0 || vertex1 >= numVertices || vertex2 < 0 || vertex2 >= numVertices) {
 			return false;
 		}
+
+		// Edges must be valid
+		// Check if edge already exists
+		if (edgeList.count(std::make_pair(vertex1, vertex2))) {
+			return false;
+		}
+		edgeList[std::make_pair(vertex1, vertex2)] = weight;
+		edgeList[std::make_pair(vertex2, vertex1)] = weight;
+		// if (!edgeList.count(std::make_pair(vertexIdx, vertexTo)))  {
+		// }
 	}
 
 	// bool isValidEdgeList = isPerfectSquare(inputCount);
+	// Valid if reached EOF
 	return read && iss.eof();
 }
 
