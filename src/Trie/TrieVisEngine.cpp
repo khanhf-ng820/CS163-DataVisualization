@@ -69,7 +69,7 @@ std::vector<TrieAnimStep> TrieVisEngine::getEventsSearch(std::string word) {
 	oldTreeSnapshots.clear();
 	oldTreeSnapshots.push_back(tree);
 
-	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before searching word: \"" + word + "\"", {}, 0, 0));
+	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before searching word: \"" + word + "\"", {0}, 0, 0));
 	tree.generateSearchEvents(word, events, oldTreeSnapshots);
 
 	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
@@ -86,13 +86,13 @@ std::vector<TrieAnimStep> TrieVisEngine::getEventsInsert(std::string word) {
 	oldTreeSnapshots.clear();
 	oldTreeSnapshots.push_back(tree);
 
-	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before inserting word: \"" + word + "\"", {}, 0, oldTreeSnapshots.size() - 1));
+	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before inserting word: \"" + word + "\"", {0}, 0, oldTreeSnapshots.size() - 1));
 	// Insert node into tree and get animation events
 	LogicTrieNode* lastInsertedNode = tree.generateInsertEvents(word, events, oldTreeSnapshots);
 	// // Remind to snapshot tree after insertion/rotation
 	// tree.snapshotTree(key, events, oldTreeSnapshots);
 
-	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting word: \"" + word + "\"", {}, lastInsertedNode->getID(), -1));
+	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting word: \"" + word + "\"", {7}, lastInsertedNode->getID(), -1));
 
 	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
 	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
@@ -108,7 +108,7 @@ std::vector<TrieAnimStep> TrieVisEngine::getEventsDelete(std::string word) {
 	oldTreeSnapshots.clear();
 	oldTreeSnapshots.push_back(tree);
 
-	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before deleting word: \"" + word + "\"", {}, 0, oldTreeSnapshots.size() -1));
+	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before deleting word: \"" + word + "\"", {0}, 0, oldTreeSnapshots.size() -1));
 	tree.generateDeleteEvents(word, events, oldTreeSnapshots);
 
 	std::cerr << "Done generating deletion events!" << std::endl; // DEBUG
@@ -126,26 +126,36 @@ std::vector<TrieAnimStep> TrieVisEngine::getEventsUpdate(std::string oldWord, st
 	oldTreeSnapshots.push_back(tree);
 
 	// -- Deletion step
-	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before deleting word: \"" + oldWord + "\"", {}, 0, oldTreeSnapshots.size() -1));
+	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before deleting word: \"" + oldWord + "\"", {0}, 0, oldTreeSnapshots.size() -1));
 	tree.generateDeleteEvents(oldWord, events, oldTreeSnapshots);
 
 	std::cerr << "Done generating deletion events!" << std::endl; // DEBUG
 	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
 
+	for (auto& event : events) {
+		event.displayPseudocode = TrieDisplayPseudocode::DELETION;
+	}
+	unsigned int numDeletionEvents = events.size();
+
 	// -- Insertion step
 	oldTreeSnapshots.push_back(tree);
-	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before inserting word: \"" + newWord + "\"", {}, 0, oldTreeSnapshots.size() - 1));
+	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before inserting word: \"" + newWord + "\"", {0}, 0, oldTreeSnapshots.size() - 1));
 	// Insert node into tree and get animation events
 	LogicTrieNode* lastInsertedNode = tree.generateInsertEvents(newWord, events, oldTreeSnapshots);
 	// // Remind to snapshot tree after insertion/rotation
 	// tree.snapshotTree(key, events, oldTreeSnapshots);
 
-	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting word: \"" + newWord + "\"", {}, lastInsertedNode->getID(), -1));
+	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting word: \"" + newWord + "\"", {7}, lastInsertedNode->getID(), -1));
 
 	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
 	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
 
 	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Finished updating operation" , {}, lastInsertedNode->getID(), oldTreeSnapshots.size() -1));
+
+	for (int i = numDeletionEvents; i < events.size(); i++) {
+		events[i].displayPseudocode = TrieDisplayPseudocode::INSERTION;
+	}
+
 	return events;
 }
 
@@ -408,15 +418,29 @@ void TrieVisEngine::drawPseudocodeWindow(TrieAnimStep eventTrie) {
 		}
 		break;
 	case TrieVisMode::UPDATE:
-		for (int i = 0; i < TRIE_CODE_UPDATE.size(); i++) {
-			bool highlightLine = vecContains(eventTrie.highlightCodeLineIndex, i);
-			if (highlightLine)
-				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
-			ImGui::Text("%s", TRIE_CODE_UPDATE[i].c_str());
-			if (highlightLine)
-				ImGui::PopStyleColor();
+		switch (eventTrie.displayPseudocode) {
+		case TrieDisplayPseudocode::DELETION:
+			for (int i = 0; i < TRIE_CODE_DELETE.size(); i++) {
+				bool highlightLine = vecContains(eventTrie.highlightCodeLineIndex, i);
+				if (highlightLine)
+					ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+				ImGui::Text("%s", TRIE_CODE_DELETE[i].c_str());
+				if (highlightLine)
+					ImGui::PopStyleColor();
+			}
+			break;
+		case TrieDisplayPseudocode::INSERTION:
+		default:
+			for (int i = 0; i < TRIE_CODE_INSERT.size(); i++) {
+				bool highlightLine = vecContains(eventTrie.highlightCodeLineIndex, i);
+				if (highlightLine)
+					ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+				ImGui::Text("%s", TRIE_CODE_INSERT[i].c_str());
+				if (highlightLine)
+					ImGui::PopStyleColor();
+			}
+			break;
 		}
-		break;
 	case TrieVisMode::INSERT:
 		for (int i = 0; i < TRIE_CODE_INSERT.size(); i++) {
 			bool highlightLine = vecContains(eventTrie.highlightCodeLineIndex, i);
@@ -428,11 +452,11 @@ void TrieVisEngine::drawPseudocodeWindow(TrieAnimStep eventTrie) {
 		}
 		break;
 	case TrieVisMode::REMOVE:
-		for (int i = 0; i < TRIE_CODE_REMOVE.size(); i++) {
+		for (int i = 0; i < TRIE_CODE_DELETE.size(); i++) {
 			bool highlightLine = vecContains(eventTrie.highlightCodeLineIndex, i);
 			if (highlightLine)
 				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
-			ImGui::Text("%s", TRIE_CODE_REMOVE[i].c_str());
+			ImGui::Text("%s", TRIE_CODE_DELETE[i].c_str());
 			if (highlightLine)
 				ImGui::PopStyleColor();
 		}

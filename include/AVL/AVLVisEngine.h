@@ -44,6 +44,7 @@ public:
 	void addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, AVLAnimStep eventAVL);
 	void addNodeDrawablesDelete(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, AVLAnimStep eventAVL);
 	void addNodeDrawablesUpdate(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, AVLAnimStep eventAVL);
+	void drawPseudocodeWindow(AVLAnimStep eventAVL);
 	// Draw nodes and links, depending on eventList
 	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::vector<std::unique_ptr<sf::Drawable>>& drawableListDefaultView);
 	void displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout);
@@ -114,6 +115,7 @@ public:
 	static constexpr sf::Color    normalNodeHeightColor   = sf::Color(6, 64, 43, 255);
 	static constexpr sf::Color    highlightCircleColor    = sf::Color::Green;
 	static constexpr sf::Color    highlightFoundCircleColor = sf::Color::Red;
+	static constexpr sf::Color    highlightCodeColor      = sf::Color::Green;
 
 
 private:

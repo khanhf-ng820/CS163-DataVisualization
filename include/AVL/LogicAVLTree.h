@@ -3,6 +3,7 @@
 #include "AVL/LogicAVLNode.h"
 #include "AVL/VisualAVLNode.h"
 #include "AVL/AVLAnimStep.h"
+#include "AVL/AVLSourceCode.h"
 
 
 
@@ -38,6 +39,7 @@ public:
 	bool snapshotTreeReminder = false; // Snapshot after rotation
 	AVLAnimType animTypeReminder = AVLAnimType::NONE;
 	std::string descriptionReminder = "";
+	std::vector<int> highlightCodeLineIdxReminder;
 	// Remind to snapshot tree after insertion/rotation
 	void snapshotTree(int key, std::vector<AVLAnimStep>& events, std::vector<LogicAVLTree>& treeSnapshots);
 
@@ -56,7 +58,7 @@ private:
 	void clear(LogicAVLNode*& node);
 
 	// Helper functions for animation events generation
-	void setSnapshotReminder(AVLAnimType animType, std::string desc);
+	void setSnapshotReminder(AVLAnimType animType, std::string desc, std::vector<int> highlightCodeLineIndices);
 	void clearSnapshotReminder();
 
 

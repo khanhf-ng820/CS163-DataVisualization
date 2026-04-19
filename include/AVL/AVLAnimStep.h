@@ -29,6 +29,13 @@ enum class AVLAnimType : unsigned char {
 };
 
 
+enum class AVLDisplayPseudocode {
+	NORMAL,
+	DELETION,
+	INSERTION
+};
+
+
 
 class AVLAnimStep {
 public:
@@ -49,6 +56,9 @@ public:
 
 	// Whether this step happens at/after when copying minimum successor node
 	bool afterCopyMinimumSucc = false;
+
+	// Display deletion or insertion pseudocode
+	AVLDisplayPseudocode displayPseudocode = AVLDisplayPseudocode::NORMAL;
 };
 
 

@@ -49,27 +49,27 @@ void AVLVisEngine::resetParams() {
 // -- SEARCHING --
 void AVLVisEngine::getEventsSearchStep(std::vector<AVLAnimStep>& events, LogicAVLNode* root, int key) {
 	if (!root) {
-		events.push_back(AVLAnimStep(AVLAnimType::NONE, "Found null node, element not found.", {}));
+		events.push_back(AVLAnimStep(AVLAnimType::NONE, "Found null node, element not found.", {1,2}));
 		return;
 	}
 	if (root->key == key) {
-		events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(root->key), {}, root->key));
-		events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_FOUND_NODE, "Found element " + std::to_string(key), {}, root->key));
+		events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(root->key), {3}, root->key));
+		events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_FOUND_NODE, "Found element " + std::to_string(key), {3,4}, root->key));
 		return;
 	} else if (root->key > key) {
-		events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(root->key), {}, root->key));
-		events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_LEFT_DOWN, "Looking at left subtree of node " + std::to_string(root->key), {}, root->key));
+		events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(root->key), {5}, root->key));
+		events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_LEFT_DOWN, "Looking at left subtree of node " + std::to_string(root->key), {5,6}, root->key));
 		getEventsSearchStep(events, root->left, key);
 	} else {
-		events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(root->key), {}, root->key));
-		events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN, "Looking at right subtree of node " + std::to_string(root->key), {}, root->key));
+		events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(root->key), {7}, root->key));
+		events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN, "Looking at right subtree of node " + std::to_string(root->key), {7,8}, root->key));
 		getEventsSearchStep(events, root->right, key);
 	}
 }
 
 std::vector<AVLAnimStep> AVLVisEngine::getEventsSearch(int key) {
 	std::vector<AVLAnimStep> events;
-	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before searching key " + std::to_string(key), {}));
+	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before searching key " + std::to_string(key), {0}));
 	getEventsSearchStep(events, tree.root, key);
 	return events;
 }
@@ -83,13 +83,13 @@ std::vector<AVLAnimStep> AVLVisEngine::getEventsInsert(int key) {
 	oldTreeSnapshots.push_back(tree);
 	tree.inorderPrint(); // DEBUG
 
-	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before inserting key " + std::to_string(key), {}, key, 0));
+	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before inserting key " + std::to_string(key), {0}, key, 0));
 	// Insert node into tree and get animation events
 	tree.root = tree.generateInsertEvents(tree.root, key, events, oldTreeSnapshots);
 	// Remind to snapshot tree after insertion/rotation
 	tree.snapshotTree(key, events, oldTreeSnapshots);
 
-	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting key " + std::to_string(key), {}, key, -1));
+	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting key " + std::to_string(key), {21}, key, -1));
 
 	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
 	tree.inorderPrint(); // DEBUG
@@ -107,13 +107,13 @@ std::vector<AVLAnimStep> AVLVisEngine::getEventsDelete(int key) {
 	oldTreeSnapshots.push_back(tree);
 	tree.inorderPrint(); // DEBUG
 
-	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before deleting key " + std::to_string(key), {}, key, 0));
+	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before deleting key " + std::to_string(key), {0}, key, 0));
 	// Delete node into tree and get animation events
 	tree.root = tree.generateDeleteEvents(tree.root, key, events, oldTreeSnapshots);
 	// Remind to snapshot tree after deletion/rotation
 	tree.snapshotTree(key, events, oldTreeSnapshots);
 
-	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Finished deleting key " + std::to_string(key), {}, key, oldTreeSnapshots.size() -1));
+	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Finished deleting key " + std::to_string(key), {31}, key, oldTreeSnapshots.size() -1));
 
 	// Change 'afterCopyMinimumSucc' property of each anim event
 	bool copiedMinSucc = false;
@@ -141,13 +141,13 @@ std::vector<AVLAnimStep> AVLVisEngine::getEventsUpdate(int oldKey, int newKey) {
 	tree.inorderPrint(); // DEBUG
 
 	// -- Deletion step
-	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before deleting key " + std::to_string(oldKey), {}, oldKey, 0));
+	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before deleting key " + std::to_string(oldKey), {0}, oldKey, 0));
 	// Delete node into tree and get animation events
 	tree.root = tree.generateDeleteEvents(tree.root, oldKey, events, oldTreeSnapshots);
 	// Remind to snapshot tree after deletion/rotation
 	tree.snapshotTree(oldKey, events, oldTreeSnapshots);
 
-	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Finished deleting key " + std::to_string(oldKey), {}, oldKey, oldTreeSnapshots.size() -1));
+	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Finished deleting key " + std::to_string(oldKey), {31}, oldKey, oldTreeSnapshots.size() -1));
 
 	// Change 'afterCopyMinimumSucc' property of each anim event
 	bool copiedMinSucc = false;
@@ -158,25 +158,38 @@ std::vector<AVLAnimStep> AVLVisEngine::getEventsUpdate(int oldKey, int newKey) {
 			event.afterCopyMinimumSucc = true;
 	}
 
+	// Only display "deletion" pseudocode
+	for (auto& event : events) {
+		event.displayPseudocode = AVLDisplayPseudocode::DELETION;
+	}
+
+	unsigned int numDeletionEvents = events.size();
+
 	std::cerr << "Done generating deletion events!" << std::endl; // DEBUG
 	tree.inorderPrint(); // DEBUG
 	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
 
 	// -- Insertion step
 	oldTreeSnapshots.push_back(tree);
-	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before inserting key " + std::to_string(newKey), {}, newKey, oldTreeSnapshots.size() -1));
+	events.push_back(AVLAnimStep(AVLAnimType::NONE, "Before inserting key " + std::to_string(newKey), {0}, newKey, oldTreeSnapshots.size() -1));
 	// Insert node into tree and get animation events
 	tree.root = tree.generateInsertEvents(tree.root, newKey, events, oldTreeSnapshots);
 	// Remind to snapshot tree after insertion/rotation
 	tree.snapshotTree(newKey, events, oldTreeSnapshots);
 
-	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting key " + std::to_string(newKey), {}, newKey, -1));
+	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting key " + std::to_string(newKey), {21}, newKey, -1));
 
 	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
 	tree.inorderPrint(); // DEBUG
 	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
 
 	events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_FOUND_NODE, "Finished updating operation" , {}, newKey, oldTreeSnapshots.size() -1));
+
+	// Only display "insertion" pseudocode
+	for (int i = numDeletionEvents; i < events.size(); i++) {
+		events[i].displayPseudocode = AVLDisplayPseudocode::INSERTION;
+	}
+
 	return events;
 }
 
@@ -566,6 +579,79 @@ void AVLVisEngine::addNodeDrawablesUpdate(std::vector<std::unique_ptr<sf::Drawab
 
 
 
+// Create AND display ImGui window to highlight source code (pseudocode)
+void AVLVisEngine::drawPseudocodeWindow(AVLAnimStep eventAVL) {
+	ImGui::Begin("Pseudocode", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+
+	switch (visMode) {
+	case AVLVisMode::SEARCH:
+		for (int i = 0; i < AVL_CODE_SEARCH.size(); i++) {
+			bool highlightLine = vecContains(eventAVL.highlightCodeLineIndex, i);
+			if (highlightLine)
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", AVL_CODE_SEARCH[i].c_str());
+			if (highlightLine)
+				ImGui::PopStyleColor();
+		}
+		break;
+	case AVLVisMode::UPDATE:
+		switch (eventAVL.displayPseudocode) {
+		case AVLDisplayPseudocode::DELETION:
+			for (int i = 0; i < AVL_CODE_DELETE.size(); i++) {
+				bool highlightLine = vecContains(eventAVL.highlightCodeLineIndex, i);
+				if (highlightLine)
+					ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+				ImGui::Text("%s", AVL_CODE_DELETE[i].c_str());
+				if (highlightLine)
+					ImGui::PopStyleColor();
+			}
+			break;
+		case AVLDisplayPseudocode::INSERTION:
+		default:
+			for (int i = 0; i < AVL_CODE_INSERT.size(); i++) {
+				bool highlightLine = vecContains(eventAVL.highlightCodeLineIndex, i);
+				if (highlightLine)
+					ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+				ImGui::Text("%s", AVL_CODE_INSERT[i].c_str());
+				if (highlightLine)
+					ImGui::PopStyleColor();
+			}
+			break;
+		}
+		break;
+	case AVLVisMode::INSERT:
+		for (int i = 0; i < AVL_CODE_INSERT.size(); i++) {
+			bool highlightLine = vecContains(eventAVL.highlightCodeLineIndex, i);
+			if (highlightLine)
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", AVL_CODE_INSERT[i].c_str());
+			if (highlightLine)
+				ImGui::PopStyleColor();
+		}
+		break;
+	case AVLVisMode::REMOVE:
+		for (int i = 0; i < AVL_CODE_DELETE.size(); i++) {
+			bool highlightLine = vecContains(eventAVL.highlightCodeLineIndex, i);
+			if (highlightLine)
+				ImGui::PushStyleColor(ImGuiCol_Text, highlightCodeColor);
+			ImGui::Text("%s", AVL_CODE_DELETE[i].c_str());
+			if (highlightLine)
+				ImGui::PopStyleColor();
+		}
+		break;
+	default:
+		ImGui::Text("(Nothing to visualize.)");
+		break;
+	}
+
+	ImGui::End();
+}
+
+
+
+
+
+
 
 
 
@@ -607,19 +693,19 @@ void AVLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 	if (visMode == AVLVisMode::INSERT) {
 		// INSERT MODE
 		addNodeDrawablesInsert(drawableList, eventAVL);
-		// drawPseudocodeWindow(eventAVL);
+		drawPseudocodeWindow(eventAVL);
 	} else if (visMode == AVLVisMode::REMOVE) {
 		// REMOVE MODE
 		addNodeDrawablesDelete(drawableList, eventAVL);
-		// drawPseudocodeWindow(eventAVL);
+		drawPseudocodeWindow(eventAVL);
 	} else if (visMode == AVLVisMode::UPDATE) {
 		// UPDATE MODE
 		addNodeDrawablesUpdate(drawableList, eventAVL);
-		// drawPseudocodeWindow(eventAVL);
+		drawPseudocodeWindow(eventAVL);
 	} else {
 		// SEARCH MODE
 		addNodeDrawables(drawableList, eventAVL);
-		// drawPseudocodeWindow(eventAVL);
+		drawPseudocodeWindow(eventAVL);
 	}
 
 
