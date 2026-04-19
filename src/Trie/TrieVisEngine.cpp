@@ -441,6 +441,7 @@ void TrieVisEngine::drawPseudocodeWindow(TrieAnimStep eventTrie) {
 			}
 			break;
 		}
+		break;
 	case TrieVisMode::INSERT:
 		for (int i = 0; i < TRIE_CODE_INSERT.size(); i++) {
 			bool highlightLine = vecContains(eventTrie.highlightCodeLineIndex, i);
