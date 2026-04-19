@@ -163,6 +163,7 @@ private:
 
 	// SFML shapes to draw
 	std::map<ProgramState, std::unique_ptr<sfLayout>> sfDrawables;
+	std::map<ProgramState, std::unique_ptr<sfLayout>> sfDrawablesDefaultView;
 
 	// Visualization engines
 	SLLVisEngine visEngine_SLL; // Engine for visualizing SLL
@@ -180,7 +181,8 @@ private:
 	char* buf = new char[25];
 	float f = 0.36;
 
-	/// Input buffers for settings
+
+	///// Input buffers for settings /////
 	const char* resolutionOptions[6]                  = { "800×600", "1920×1080", "1366×768", "1440×900", "1280×720", "1024×768" }; // Removed 2560×1440
 	const std::vector<sf::Vector2u> resolutionVectors = { {800,600}, {1920,1080}, {1366,768}, {1440,900}, {1280,720}, {1024,768} };
 	const char* appThemeOptions[3]               = { "Light", "Dark", "Purple" };
@@ -195,12 +197,12 @@ private:
 	const std::string SIZE_INPUT_WARNING_STRING   = "Table Size (min. 2, max. " + std::to_string(MAX_INIT_HASHTABLE_SIZE) + ")";
 	const std::string MODULO_INPUT_WARNING_STRING = "Modulo M (min. 2, max. " + std::to_string(MAX_INIT_HASHTABLE_MODULO) + ")";
 
-	char* customDataSLLbuf      = new char[CUSTOM_DATA_BUF_SIZE];
-	char* customDataHashbuf     = new char[CUSTOM_DATA_BUF_SIZE];
-	char* customDataAVLbuf      = new char[CUSTOM_DATA_BUF_SIZE];
-	char* customDataTriebuf     = new char[CUSTOM_DATA_BUF_SIZE];
-	char* customDataMSTPrimbuf  = new char[CUSTOM_DATA_BUF_SIZE];
-	char* customDataDijkstrabuf = new char[CUSTOM_DATA_BUF_SIZE];
+	char customDataSLLBuf[CUSTOM_DATA_BUF_SIZE];
+	char customDataHashBuf[CUSTOM_DATA_BUF_SIZE];
+	char customDataAVLBuf[CUSTOM_DATA_BUF_SIZE];
+	char customDataTrieBuf[CUSTOM_DATA_BUF_SIZE];
+	char customDataMSTPrimBuf[CUSTOM_DATA_BUF_SIZE];
+	char customDataDijkstraBuf[CUSTOM_DATA_BUF_SIZE];
 
 
 
@@ -222,5 +224,6 @@ private:
 	bool initHashTable(const int dataInitOption);
 	bool initAVL(const int dataInitOption);
 	bool initTrie(const int dataInitOption);
-	bool initGraph(const int dataInitOption);
+	bool initGraph(const int dataInitOption, const GraphReader::GraphInitMethod graphInitMethod,
+		const char customDataBuf[], const fs::path& DATA_FILEPATH, const std::ifstream& dataFile);
 };

@@ -11,6 +11,7 @@
 void Program::initVisDijkstraScreen() {
 	// Push back to vector
 	sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN]->drawables.clear();
+	sfDrawablesDefaultView[ProgramState::VIS_DIJKSTRA_SCREEN]->drawables.clear();
 	// printf("VisDijkstra SFML init function called\n"); // DEBUG
 }
 
@@ -23,13 +24,14 @@ void Program::displayVisDijkstraScreenSFML() {
 	case DijkstraVisMode::NONE:
 		visEngine_Dijkstra.eventList = std::vector<DijkstraAnimStep>();
 		visEngine_Dijkstra.createDrawables(
-			sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_DIJKSTRA_SCREEN]->drawables
 		);
 		// Draw all drawables in both views (zoomable view and window's default view)
 		window.setView(view);
 		sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN]->displayAll();
 		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
-		visEngine_Dijkstra.drawableListDefaultView->displayAll();
+		sfDrawablesDefaultView[ProgramState::VIS_DIJKSTRA_SCREEN]->displayAll();
 
 		if (!visEngine_Dijkstra.animPaused)
 			visEngine_Dijkstra.increaseTime();
@@ -38,13 +40,14 @@ void Program::displayVisDijkstraScreenSFML() {
 	case DijkstraVisMode::DIJKSTRA:
 		// visEngine_Dijkstra.eventList = visEngine_Dijkstra.getEventsSearch(visEngine_Dijkstra.startVertexID);
 		visEngine_Dijkstra.createDrawables(
-			sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_DIJKSTRA_SCREEN]->drawables
 		);
 		// Draw all drawables in both views (zoomable view and window's default view)
 		window.setView(view);
 		sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN]->displayAll();
 		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
-		visEngine_Dijkstra.drawableListDefaultView->displayAll();
+		sfDrawablesDefaultView[ProgramState::VIS_DIJKSTRA_SCREEN]->displayAll();
 
 		// If not paused, just increase / decrease time
 		if (visEngine_Dijkstra.animPaused) {

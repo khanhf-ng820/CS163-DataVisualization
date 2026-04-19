@@ -11,6 +11,7 @@
 void Program::initVisTrieScreen() {
 	// Push back to vector
 	sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables.clear();
+	sfDrawablesDefaultView[ProgramState::VIS_TRIE_SCREEN]->drawables.clear();
 	// printf("VisTrie SFML init function called\n"); // DEBUG
 }
 
@@ -23,9 +24,15 @@ void Program::displayVisTrieScreenSFML() {
 	case TrieVisMode::NONE:
 		visEngine_Trie.eventList = std::vector<TrieAnimStep>();
 		visEngine_Trie.createDrawables(
-			sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_TRIE_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		sfDrawablesDefaultView[ProgramState::VIS_TRIE_SCREEN]->displayAll();
+
 		if (!visEngine_Trie.animPaused)
 			visEngine_Trie.increaseTime();
 		break;
@@ -33,9 +40,14 @@ void Program::displayVisTrieScreenSFML() {
 	case TrieVisMode::SEARCH:
 		// visEngine_Trie.eventList = visEngine_Trie.getEventsSearch(visEngine_Trie.keyToSearch);
 		visEngine_Trie.createDrawables(
-			sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_TRIE_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		sfDrawablesDefaultView[ProgramState::VIS_TRIE_SCREEN]->displayAll();
 
 		// If not paused, just increase / decrease time
 		if (visEngine_Trie.animPaused) {
@@ -54,9 +66,14 @@ void Program::displayVisTrieScreenSFML() {
 	case TrieVisMode::INSERT:
 		// visEngine_Trie.eventList = visEngine_Trie.getEventsInsert(visEngine_Trie.keyToInsert);
 		visEngine_Trie.createDrawables(
-			sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_TRIE_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		sfDrawablesDefaultView[ProgramState::VIS_TRIE_SCREEN]->displayAll();
 
 		// If not paused, just increase / decrease time
 		if (visEngine_Trie.animPaused) {
@@ -75,9 +92,14 @@ void Program::displayVisTrieScreenSFML() {
 	case TrieVisMode::REMOVE:
 		// visEngine_Trie.eventList = visEngine_Trie.getEventsRemove(visEngine_Trie.keyToRemove);
 		visEngine_Trie.createDrawables(
-			sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_TRIE_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		sfDrawablesDefaultView[ProgramState::VIS_TRIE_SCREEN]->displayAll();
 
 		// If not paused, just increase / decrease time
 		if (visEngine_Trie.animPaused) {
@@ -96,9 +118,14 @@ void Program::displayVisTrieScreenSFML() {
 	case TrieVisMode::UPDATE:
 		// visEngine_Trie.eventList = visEngine_Trie.getEventsUpdate(visEngine_Trie.oldKeyToUpdate, visEngine_Trie.newKeyToUpdate);
 		visEngine_Trie.createDrawables(
-			sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_TRIE_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_TRIE_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_TRIE_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		sfDrawablesDefaultView[ProgramState::VIS_TRIE_SCREEN]->displayAll();
 
 		// If not paused, just increase / decrease time
 		if (visEngine_Trie.animPaused) {

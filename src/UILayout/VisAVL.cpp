@@ -11,6 +11,7 @@
 void Program::initVisAVLScreen() {
 	// Push back to vector
 	sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables.clear();
+	sfDrawablesDefaultView[ProgramState::VIS_AVL_SCREEN]->drawables.clear();
 	// printf("VisAVL SFML init function called\n"); // DEBUG
 }
 
@@ -23,9 +24,15 @@ void Program::displayVisAVLScreenSFML() {
 	case AVLVisMode::NONE:
 		visEngine_AVL.eventList = std::vector<AVLAnimStep>();
 		visEngine_AVL.createDrawables(
-			sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_AVL_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_AVL_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		sfDrawablesDefaultView[ProgramState::VIS_AVL_SCREEN]->displayAll();
+
 		if (!visEngine_AVL.animPaused)
 			visEngine_AVL.increaseTime();
 		break;
@@ -33,9 +40,14 @@ void Program::displayVisAVLScreenSFML() {
 	case AVLVisMode::SEARCH:
 		// visEngine_AVL.eventList = visEngine_AVL.getEventsSearch(visEngine_AVL.keyToSearch);
 		visEngine_AVL.createDrawables(
-			sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_AVL_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_AVL_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		sfDrawablesDefaultView[ProgramState::VIS_AVL_SCREEN]->displayAll();
 
 		// If not paused, just increase / decrease time
 		if (visEngine_AVL.animPaused) {
@@ -54,9 +66,14 @@ void Program::displayVisAVLScreenSFML() {
 	case AVLVisMode::INSERT:
 		// visEngine_AVL.eventList = visEngine_AVL.getEventsInsert(visEngine_AVL.keyToInsert);
 		visEngine_AVL.createDrawables(
-			sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_AVL_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_AVL_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		sfDrawablesDefaultView[ProgramState::VIS_AVL_SCREEN]->displayAll();
 
 		// If not paused, just increase / decrease time
 		if (visEngine_AVL.animPaused) {
@@ -75,9 +92,14 @@ void Program::displayVisAVLScreenSFML() {
 	case AVLVisMode::REMOVE:
 		// visEngine_AVL.eventList = visEngine_AVL.getEventsRemove(visEngine_AVL.keyToRemove);
 		visEngine_AVL.createDrawables(
-			sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_AVL_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_AVL_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		sfDrawablesDefaultView[ProgramState::VIS_AVL_SCREEN]->displayAll();
 
 		// If not paused, just increase / decrease time
 		if (visEngine_AVL.animPaused) {
@@ -96,9 +118,14 @@ void Program::displayVisAVLScreenSFML() {
 	case AVLVisMode::UPDATE:
 		// visEngine_AVL.eventList = visEngine_AVL.getEventsUpdate(visEngine_AVL.oldKeyToUpdate, visEngine_AVL.newKeyToUpdate);
 		visEngine_AVL.createDrawables(
-			sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_AVL_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_AVL_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_AVL_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		sfDrawablesDefaultView[ProgramState::VIS_AVL_SCREEN]->displayAll();
 
 		// If not paused, just increase / decrease time
 		if (visEngine_AVL.animPaused) {

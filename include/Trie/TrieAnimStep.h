@@ -18,6 +18,13 @@ enum class TrieAnimType : unsigned char {
 };
 
 
+enum class TrieDisplayPseudocode : unsigned char {
+	NORMAL,
+	DELETION,
+	INSERTION
+};
+
+
 
 class TrieAnimStep {
 public:
@@ -39,6 +46,9 @@ public:
 	int oldTreeSnapshotIndex = -1; // Index of old tree snapshot
 	// (if transitioning from tree index A to B, the variable is B)
 	// (-1 means current tree)
+
+	// Which pseudocode to display and highlight
+	TrieDisplayPseudocode displayPseudocode = TrieDisplayPseudocode::NORMAL;
 };
 
 

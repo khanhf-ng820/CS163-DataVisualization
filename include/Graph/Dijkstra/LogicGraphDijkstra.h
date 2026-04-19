@@ -13,7 +13,10 @@
 class LogicGraphDijkstra : public LogicGraph {
 public:
 	explicit LogicGraphDijkstra(unsigned int numVertex);
+	explicit LogicGraphDijkstra(std::mt19937& rng);
+	explicit LogicGraphDijkstra(std::vector<std::vector<int>>& adjMatrix);
 	explicit LogicGraphDijkstra(std::vector<std::vector<Edge>>& adjList);
+	explicit LogicGraphDijkstra(unsigned int numVertex, std::vector<GraphReader::GraphEdge>& edgeList);
 	// LogicGraphDijkstra(const LogicGraphDijkstra& other); // Copy constructor
 
 	// LogicGraphDijkstra& operator=(const LogicGraphDijkstra& other); // Assignment op
