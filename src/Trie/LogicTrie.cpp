@@ -228,7 +228,7 @@ LogicTrieNode* LogicTrie::generateDeleteEventsHelper(LogicTrieNode*& node, std::
 			treeSnapshots.push_back(*this);
 		}
 
-		events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Node \'" + std::string(1, node->key) + "\' is not leaf, and is not deleted", {3,8}, node->getID(), treeSnapshots.size() - 1));
+		// events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Node \'" + std::string(1, node->key) + "\' is not leaf, and is not deleted", {3,8}, node->getID(), treeSnapshots.size() - 1));
 
 		return node;
 	}
@@ -250,7 +250,7 @@ LogicTrieNode* LogicTrie::generateDeleteEventsHelper(LogicTrieNode*& node, std::
 		treeSnapshots.push_back(*this);
 	}
 
-	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Node \'" + std::string(1, node->key) + "\' is not leaf, and is not deleted", {14}, node->getID(), treeSnapshots.size() - 1));
+	// events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Node \'" + std::string(1, node->key) + "\' is not leaf, and is not deleted", {14}, node->getID(), treeSnapshots.size() - 1));
 	
 	return node;
 }
