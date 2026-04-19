@@ -5,7 +5,6 @@
 
 DijkstraVisEngine::DijkstraVisEngine(unsigned int numVertex, sf::RenderWindow* window, sf::Font* font, sf::View* view)
 	: windowPtr(window), fontPtr(font), viewPtr(view)
-	, drawableListDefaultView(std::make_unique<sfLayout>(windowPtr))
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 	, graph(numVertex) , visualNodesCur(numVertex)
 {
@@ -15,40 +14,60 @@ DijkstraVisEngine::DijkstraVisEngine(unsigned int numVertex, sf::RenderWindow* w
 	}
 }
 
-// DijkstraVisEngine::DijkstraVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font, sf::View* view)
-// 	: windowPtr(window), fontPtr(font), viewPtr(view)
-// 	, drawableListDefaultView(std::make_unique<sfLayout>(windowPtr))
-// 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
-// 	, graph(numVertex) , visualNodesCur(numVertex)
-// {
-// 	std::uniform_int_distribution<size_t> size_distrib(Dijkstra_INIT_MIN_SIZE, Dijkstra_INIT_MAX_SIZE);
-// 	std::uniform_int_distribution<size_t> wordLen_distrib(Dijkstra_INIT_WORD_MIN_LENGTH, Dijkstra_INIT_WORD_MAX_LENGTH);
-// 	std::uniform_int_distribution<int> char_distrib(Dijkstra_RANDOM_DISTRIB_KEY_MIN, Dijkstra_RANDOM_DISTRIB_KEY_MAX);
 
-// 	size_t wordCount = size_distrib(rng);
-// 	for (size_t i = 0; i < wordCount; i++) {
-// 		size_t wordLen = wordLen_distrib(rng);
-// 		std::string wordInit(wordLen, 'a');
-// 		for (char& c : wordInit)
-// 			c = static_cast<char>(char_distrib(rng));
-// 		graph.insertWord(wordInit);
-// 	}
-// }
+DijkstraVisEngine::DijkstraVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font, sf::View* view)
+	: windowPtr(window), fontPtr(font), viewPtr(view)
+	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
+	, graph(rng) /*, visualNodesCur(numVertex)*/
+{
+	visualNodesCur = std::vector<VisualGraphVertex>(graph.getNumVertex());
 
-// DijkstraVisEngine::DijkstraVisEngine(std::vector<std::vector<Edge>>& adjList, sf::RenderWindow* window, sf::Font* font, sf::View* view)
-// 	: windowPtr(window), fontPtr(font), viewPtr(view)
-// 	, drawableListDefaultView(std::make_unique<sfLayout>(windowPtr))
-// 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
-// 	, graph(numVertex) , visualNodesCur(numVertex)
-// {
-// 	size_t wordCount = words.size();
-// 	for (size_t i = 0; i < wordCount; i++) {
-// 		graph.insertWord(words[i]);
-// 	}
-// }
+	///// ONLY FOR TESTING, WILL DELETE LATER /////
+	for (int i = 0; i < graph.getNumVertex(); i++) {
+		visualNodesCur[i] = VisualGraphVertex(i, {cos(3.14f/5*i) * 100.f, sin(3.14f/5*i) * 100.f});
+	}
+}
 
-// Delete all dynamically allocated memory
-DijkstraVisEngine::~DijkstraVisEngine() {}
+
+DijkstraVisEngine::DijkstraVisEngine(std::vector<std::vector<int>>& adjMatrix, 
+sf::RenderWindow* window, sf::Font* font, sf::View* view)
+	: windowPtr(window), fontPtr(font), viewPtr(view)
+	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
+	, graph(adjMatrix) , visualNodesCur(adjMatrix.size())
+{
+	///// ONLY FOR TESTING, WILL DELETE LATER /////
+	for (int i = 0; i < graph.getNumVertex(); i++) {
+		visualNodesCur[i] = VisualGraphVertex(i, {cos(3.14f/5*i) * 100.f, sin(3.14f/5*i) * 100.f});
+	}
+}
+
+
+DijkstraVisEngine::DijkstraVisEngine(std::vector<std::vector<Edge>>& adjList, sf::RenderWindow* window, sf::Font* font, sf::View* view)
+	: windowPtr(window), fontPtr(font), viewPtr(view)
+	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
+	, graph(adjList) , visualNodesCur(adjList.size())
+{
+	///// ONLY FOR TESTING, WILL DELETE LATER /////
+	for (int i = 0; i < graph.getNumVertex(); i++) {
+		visualNodesCur[i] = VisualGraphVertex(i, {cos(3.14f/5*i) * 100.f, sin(3.14f/5*i) * 100.f});
+	}
+}
+
+
+DijkstraVisEngine::DijkstraVisEngine(unsigned int numVertex, std::vector<GraphReader::GraphEdge>& edgeList, 
+sf::RenderWindow* window, sf::Font* font, sf::View* view)
+	: windowPtr(window), fontPtr(font), viewPtr(view)
+	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
+	, graph(numVertex, edgeList) /*, visualNodesCur(numVertex)*/
+{
+	visualNodesCur = std::vector<VisualGraphVertex>(graph.getNumVertex());
+
+	///// ONLY FOR TESTING, WILL DELETE LATER /////
+	for (int i = 0; i < numVertex; i++) {
+		visualNodesCur[i] = VisualGraphVertex(i, {cos(3.14f/5*i) * 100.f, sin(3.14f/5*i) * 100.f});
+	}
+}
+
 
 
 
@@ -321,7 +340,7 @@ std::string DijkstraVisEngine::getShortestPathString(int startVertex, int endVer
 	std::reverse(path.begin(), path.end());
 
 	if (oldGraphSnapshots.back()[endVertex].prevVertex == -1 && startVertex != endVertex) {
-		return "No path from vertex " + std::to_string(startVertexID) + " to vertex " + std::to_string(endVertex) + "exists.";
+		return "No path from vertex " + std::to_string(startVertexID) + " to vertex " + std::to_string(endVertex) + " exists.";
 	}
 	std::string shortestPathString = "Shortest path from vertex " + std::to_string(startVertexID) + " to vertex " + std::to_string(endVertex) + ":\n";
 
@@ -345,10 +364,10 @@ std::string DijkstraVisEngine::getShortestPathString(int startVertex, int endVer
 
 
 // Draw nodes and links, depending on eventList
-void DijkstraVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList) {
+void DijkstraVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::vector<std::unique_ptr<sf::Drawable>>& drawableListDefaultView) {
 	refreshOriginPos(); // Refresh properties when window size changes
 	drawableList.clear();
-	drawableListDefaultView->clear();
+	drawableListDefaultView.clear();
 
 
 	// If STILL mode, stop here
@@ -401,7 +420,7 @@ void DijkstraVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable
 	descriptionText->setPosition(descriptionTextPos);
 	descriptionText->setPosition(round(descriptionText->getPosition()));
 
-	drawableListDefaultView->drawables.push_back(std::move(descriptionText));
+	drawableListDefaultView.push_back(std::move(descriptionText));
 
 
 	std::cout << drawableList.size() << ' ' << time << " init done" << std::endl; // DEBUG

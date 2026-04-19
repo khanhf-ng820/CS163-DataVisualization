@@ -539,8 +539,9 @@ void HashVisEngine::addNodeDrawablesUpdate(std::vector<std::unique_ptr<sf::Drawa
 
 
 // --- Create DRAWABLES to draw later ---
-void HashVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList) {
+void HashVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::vector<std::unique_ptr<sf::Drawable>>& drawableListDefaultView) {
 	drawableList.clear();
+	drawableListDefaultView.clear();
 
 
 	// If STILL mode, stop here
@@ -593,10 +594,10 @@ void HashVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 	// Display description for algorithm visualization
 	auto descriptionText = std::make_unique<sf::Text>(*fontPtr, eventHash.desc, descriptionFontSize);
 	descriptionText->setFillColor(sf::Color::Black);
-	descriptionText->setPosition(originPos - originPosDisplacement + descriptionTextPos);
+	descriptionText->setPosition(descriptionTextPos);
 	descriptionText->setPosition(round(descriptionText->getPosition()));
 
-	drawableList.push_back(std::move(descriptionText));
+	drawableListDefaultView.push_back(std::move(descriptionText));
 
 
 	std::cout << drawableList.size() << ' ' << time << " init done" << std::endl; // DEBUG

@@ -56,7 +56,7 @@ public:
 	// UPDATE MODE
 	void addNodeDrawablesUpdate(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, HashAnimStep eventHash);
 	// Draw nodes and links, depending on eventList
-	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList);
+	void createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::vector<std::unique_ptr<sf::Drawable>>& drawableListDefaultView);
 	void displayDrawables(std::unique_ptr<sfLayout>& sfmlLayout);
 
 

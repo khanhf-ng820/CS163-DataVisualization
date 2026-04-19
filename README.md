@@ -33,7 +33,7 @@ Open the Terminal (Command Prompt), and navigate to the directory where you want
 
 Clone this repository using *git*:
 ```bash
-git clone --single-branch --branch main https://github.com/khanhf-ng820/CS163-DataVisualization.git
+git clone --single-branch --branch Release https://github.com/khanhf-ng820/CS163-DataVisualization.git
 ```
 Enter the repository folder:
 ```bash

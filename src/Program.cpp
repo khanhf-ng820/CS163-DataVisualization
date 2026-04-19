@@ -52,6 +52,25 @@ Program::Program()
 	sfDrawables[ProgramState::VIS_MST_PRIM_SCREEN] = std::make_unique<sfLayout>(&window);
 	sfDrawables[ProgramState::VIS_DIJKSTRA_SCREEN] = std::make_unique<sfLayout>(&window);
 
+	// -- Initialize sfDrawablesDefaultView map to draw later
+	sfDrawablesDefaultView[ProgramState::MAIN_MENU] = std::make_unique<sfLayout>(&window);
+	sfDrawablesDefaultView[ProgramState::SETTINGS_MENU] = std::make_unique<sfLayout>(&window);
+	sfDrawablesDefaultView[ProgramState::CHOOSE_DS_MENU] = std::make_unique<sfLayout>(&window);
+	sfDrawablesDefaultView[ProgramState::VIS_SLL_SCREEN] = std::make_unique<sfLayout>(&window);
+	sfDrawablesDefaultView[ProgramState::VIS_HASH_SCREEN] = std::make_unique<sfLayout>(&window);
+	sfDrawablesDefaultView[ProgramState::VIS_AVL_SCREEN] = std::make_unique<sfLayout>(&window);
+	sfDrawablesDefaultView[ProgramState::VIS_TRIE_SCREEN] = std::make_unique<sfLayout>(&window);
+	sfDrawablesDefaultView[ProgramState::VIS_MST_PRIM_SCREEN] = std::make_unique<sfLayout>(&window);
+	sfDrawablesDefaultView[ProgramState::VIS_DIJKSTRA_SCREEN] = std::make_unique<sfLayout>(&window);
+
+	// -- Initialize custom data initialization buffers
+	customDataSLLBuf[0] = '\0';
+	customDataHashBuf[0] = '\0';
+	customDataAVLBuf[0] = '\0';
+	customDataTrieBuf[0] = '\0';
+	customDataMSTPrimBuf[0] = '\0';
+	customDataDijkstraBuf[0] = '\0';
+
 	// -- Create and Open data .txt files
 	createAndOpen(SLL_DATA_FILEPATH); // SLL
 	createAndOpen(HASH_DATA_FILEPATH); // HASH TABLE
@@ -67,12 +86,12 @@ Program::Program()
 Program::~Program() {
 	// Delete everything on the heap
 	delete[] buf;
-	delete[] customDataSLLbuf;
-	delete[] customDataHashbuf;
-	delete[] customDataAVLbuf;
-	delete[] customDataTriebuf;
-	delete[] customDataMSTPrimbuf;
-	delete[] customDataDijkstrabuf;
+	// delete[] customDataSLLBuf;
+	// delete[] customDataHashBuf;
+	// delete[] customDataAVLBuf;
+	// delete[] customDataTrieBuf;
+	// delete[] customDataMSTPrimBuf;
+	// delete[] customDataDijkstraBuf;
 }
 
 

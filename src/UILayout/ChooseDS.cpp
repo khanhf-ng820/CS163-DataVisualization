@@ -211,7 +211,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 	ImGui::SetNextItemWidth(DSComboWidth);
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + Im_gui_window_size.x/2.f - DSComboWidth/2);
 
-	// Draw combo
+	// Draw combo (dropdown list)
 	const char* DSOptions[] = ALL_DS_TYPE_LIST;
 	const std::vector<std::string> DSVectors = ALL_DS_TYPE_LIST;
 	static int current_DS_item = 0;
@@ -231,6 +231,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 		ImGui::EndCombo();
 	}
 	// ImGui::PopStyleColor();
+
 	// --- Selected DS type ---
 	DSType chosenDSType = strToDSType(DSVectors[current_DS_item]);
 
@@ -245,7 +246,11 @@ void Program::displayChooseDSMenuScreenGUI() {
 	ImGui::Text("%s", titleText.c_str());
 
 	ImGui::BeginGroup();
+	// Data init method (empty, random, file, string)
 	static int dataInitOption = DATA_INIT_EMPTY; // State variable to hold the selected option's value
+	// Graph data init method
+	static GraphReader::GraphInitMethod graphInitOption = GraphReader::GraphInitMethod::ADJ_MATRIX; // State variable to hold the selected option's value
+
 	ImGui::RadioButton("Empty data", &dataInitOption, DATA_INIT_EMPTY); // Value 0
 	ImGui::SameLine();
 	ImGui::RadioButton("Randomized data", &dataInitOption, DATA_INIT_RANDOMIZED); // Value 1
@@ -308,36 +313,67 @@ void Program::displayChooseDSMenuScreenGUI() {
 		std::string dataString; // String of entered data
 		switch (chosenDSType) {
 		case DSType::SINGLY_LINKED_LIST:
-			ImGui::InputTextMultiline("##CustomDataSLL", customDataSLLbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
-			dataString = std::string(customDataSLLbuf);
+			ImGui::InputTextMultiline("##CustomDataSLL", customDataSLLBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			dataString = std::string(customDataSLLBuf);
 			invalidDataCustom = !validDataSLLString(dataString);
 			break;
 		case DSType::HASH_TABLE:
-			ImGui::InputTextMultiline("##CustomDataHash", customDataHashbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
-			dataString = std::string(customDataHashbuf);
+			ImGui::InputTextMultiline("##CustomDataHash", customDataHashBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			dataString = std::string(customDataHashBuf);
 			invalidDataCustom = !validDataHashTableString(dataString);
 			break;
 		case DSType::AVL_TREE:
-			ImGui::InputTextMultiline("##CustomDataAVL", customDataAVLbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
-			dataString = std::string(customDataAVLbuf);
+			ImGui::InputTextMultiline("##CustomDataAVL", customDataAVLBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			dataString = std::string(customDataAVLBuf);
 			invalidDataCustom = !validDataAVLString(dataString);
 			break;
 		case DSType::TRIE_TREE:
-			ImGui::InputTextMultiline("##CustomDataTrie", customDataTriebuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
-			dataString = std::string(customDataTriebuf);
+			ImGui::InputTextMultiline("##CustomDataTrie", customDataTrieBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			dataString = std::string(customDataTrieBuf);
 			invalidDataCustom = !validDataTrieString(dataString);
 			break;
 		case DSType::MST_PRIM_GRAPH:
-			ImGui::InputTextMultiline("##CustomDataMST", customDataMSTPrimbuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			ImGui::RadioButton("Adjacency Matrix", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::ADJ_MATRIX); // Value 0
+			ImGui::SameLine();
+			ImGui::RadioButton("Adjacency List", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::ADJ_LIST); // Value 1
+			ImGui::SameLine();
+			ImGui::RadioButton("Edge List", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::EDGE_LIST); // Value 2
+
+			ImGui::InputTextMultiline("##CustomDataMST", customDataMSTPrimBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			
+			dataString = std::string(customDataMSTPrimBuf);
+			invalidDataCustom = !GraphReader::validDataGraphString(dataString, graphInitOption);
 			break;
 		case DSType::DIJKSTRA_GRAPH:
-			ImGui::InputTextMultiline("##CustomDataDijkstra", customDataDijkstrabuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			ImGui::RadioButton("Adjacency Matrix", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::ADJ_MATRIX); // Value 0
+			ImGui::SameLine();
+			ImGui::RadioButton("Adjacency List", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::ADJ_LIST); // Value 1
+			ImGui::SameLine();
+			ImGui::RadioButton("Edge List", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::EDGE_LIST); // Value 2
+
+			ImGui::InputTextMultiline("##CustomDataDijkstra", customDataDijkstraBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
+			
+			dataString = std::string(customDataDijkstraBuf);
+			invalidDataCustom = !GraphReader::validDataGraphString(dataString, graphInitOption);
 			break;
 		default:
 			break;
 		}
 	} else if (dataInitOption == DATA_INIT_FROM_FILE) {
 		std::string dataFileName = getDataFileName(DSVectors[current_DS_item]);
+
+		switch (chosenDSType) {
+		case DSType::MST_PRIM_GRAPH:
+		case DSType::DIJKSTRA_GRAPH:
+			ImGui::RadioButton("Adjacency Matrix", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::ADJ_MATRIX); // Value 0
+			ImGui::SameLine();
+			ImGui::RadioButton("Adjacency List", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::ADJ_LIST); // Value 1
+			ImGui::SameLine();
+			ImGui::RadioButton("Edge List", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::EDGE_LIST); // Value 2
+			break;
+		default:
+			break;
+		}
 
 		// Change ItemSpacing temporarily
 		ImVec2 originalItemSpacing = stylePtr->ItemSpacing;
@@ -391,10 +427,16 @@ void Program::displayChooseDSMenuScreenGUI() {
 			}
 			break;
 		case DSType::MST_PRIM_GRAPH:
-			programState = ProgramState::VIS_MST_PRIM_SCREEN;
+			invalidDataFromFile = !initGraph(dataInitOption, graphInitOption, customDataMSTPrimBuf, GRAPH_DATA_FILEPATH, graph_dataFile);
+			if (!invalidDataFromFile) {
+				programState = ProgramState::VIS_MST_PRIM_SCREEN;
+			}
 			break;
 		case DSType::DIJKSTRA_GRAPH:
-			programState = ProgramState::VIS_DIJKSTRA_SCREEN;
+			invalidDataFromFile = !initGraph(dataInitOption, graphInitOption, customDataDijkstraBuf, GRAPH_DATA_FILEPATH, graph_dataFile);
+			if (!invalidDataFromFile) {
+				programState = ProgramState::VIS_DIJKSTRA_SCREEN;
+			}
 			break;
 		default:
 			break;

@@ -11,6 +11,7 @@
 void Program::initVisHashScreen() {
 	// Push back to vector
 	sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables.clear();
+	sfDrawablesDefaultView[ProgramState::VIS_HASH_SCREEN]->drawables.clear();
 	// printf("VisHash SFML init function called\n"); // DEBUG
 }
 
@@ -23,9 +24,15 @@ void Program::displayVisHashScreenSFML() {
 	case HashVisMode::NONE:
 		visEngine_Hash.eventList = std::vector<HashAnimStep>();
 		visEngine_Hash.createDrawables(
-			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_HASH_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		sfDrawablesDefaultView[ProgramState::VIS_HASH_SCREEN]->displayAll();
+
 		if (!visEngine_Hash.animPaused)
 			visEngine_Hash.increaseTime();
 		break;
@@ -33,9 +40,14 @@ void Program::displayVisHashScreenSFML() {
 	case HashVisMode::SEARCH:
 		visEngine_Hash.eventList = visEngine_Hash.getEventsSearch(visEngine_Hash.keyToSearch);
 		visEngine_Hash.createDrawables(
-			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_HASH_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		sfDrawablesDefaultView[ProgramState::VIS_HASH_SCREEN]->displayAll();
 
 		// If not paused, just increase / decrease time
 		if (visEngine_Hash.animPaused) {
@@ -54,9 +66,14 @@ void Program::displayVisHashScreenSFML() {
 	case HashVisMode::INSERT:
 		visEngine_Hash.eventList = visEngine_Hash.getEventsInsert(visEngine_Hash.keyToInsert);
 		visEngine_Hash.createDrawables(
-			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_HASH_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		sfDrawablesDefaultView[ProgramState::VIS_HASH_SCREEN]->displayAll();
 
 		// If not paused, just increase / decrease time
 		if (visEngine_Hash.animPaused) {
@@ -75,9 +92,14 @@ void Program::displayVisHashScreenSFML() {
 	case HashVisMode::REMOVE:
 		visEngine_Hash.eventList = visEngine_Hash.getEventsRemove(visEngine_Hash.keyToRemove);
 		visEngine_Hash.createDrawables(
-			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_HASH_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		sfDrawablesDefaultView[ProgramState::VIS_HASH_SCREEN]->displayAll();
 
 		// If not paused, just increase / decrease time
 		if (visEngine_Hash.animPaused) {
@@ -96,9 +118,14 @@ void Program::displayVisHashScreenSFML() {
 	case HashVisMode::UPDATE:
 		visEngine_Hash.eventList = visEngine_Hash.getEventsUpdate(visEngine_Hash.oldKeyToUpdate, visEngine_Hash.newKeyToUpdate);
 		visEngine_Hash.createDrawables(
-			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables
+			sfDrawables[ProgramState::VIS_HASH_SCREEN]->drawables,
+			sfDrawablesDefaultView[ProgramState::VIS_HASH_SCREEN]->drawables
 		);
+		// Draw all drawables in both views (zoomable view and window's default view)
+		window.setView(view);
 		sfDrawables[ProgramState::VIS_HASH_SCREEN]->displayAll();
+		window.setView(sf::View(sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize()))));
+		sfDrawablesDefaultView[ProgramState::VIS_HASH_SCREEN]->displayAll();
 
 		// If not paused, just increase / decrease time
 		if (visEngine_Hash.animPaused) {

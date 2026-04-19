@@ -30,7 +30,7 @@ bool Program::initSLL(const int dataInitOption) {
 
 	switch (dataInitOption) {
 	case DATA_INIT_CUSTOM: // Custom data as string
-		dataString = std::string(customDataSLLbuf);
+		dataString = std::string(customDataSLLBuf);
 		validData = validDataSLLString(dataString);
 
 		if (!validData) {
@@ -92,7 +92,7 @@ bool Program::initHashTable(const int dataInitOption) {
 
 	switch (dataInitOption) {
 	case DATA_INIT_CUSTOM: // Custom data as string
-		dataString = std::string(customDataHashbuf);
+		dataString = std::string(customDataHashBuf);
 		validData = validDataHashTableString(dataString);
 
 		if (!validData) {
@@ -146,7 +146,7 @@ bool Program::initAVL(const int dataInitOption) {
 
 	switch (dataInitOption) {
 	case DATA_INIT_CUSTOM: // Custom data as string
-		dataString = std::string(customDataAVLbuf);
+		dataString = std::string(customDataAVLBuf);
 		validData = validDataAVLString(dataString);
 
 		if (!validData) {
@@ -200,7 +200,7 @@ bool Program::initTrie(const int dataInitOption) {
 
 	switch (dataInitOption) {
 	case DATA_INIT_CUSTOM: // Custom data as string
-		dataString = std::string(customDataTriebuf);
+		dataString = std::string(customDataTrieBuf);
 		validData = validDataTrieString(dataString);
 
 		if (!validData) {
@@ -239,5 +239,290 @@ bool Program::initTrie(const int dataInitOption) {
 	default:
 		visEngine_Trie = TrieVisEngine(&window, &textFont);
 		return true;
+	}
+}
+
+
+
+
+
+
+
+
+
+///// GRAPH (adj matrix, adj list, edge list) /////
+
+bool Program::initGraph(const int dataInitOption, const GraphReader::GraphInitMethod graphInitMethod,
+const char customDataBuf[], const fs::path& DATA_FILEPATH, const std::ifstream& dataFile) {
+	bool validData; // Whether data from file/string is valid
+	std::string dataString; // String of data
+	// std::vector<std::vector<int>> graphData; // Data to be initialized into Graph
+
+
+	assert(customDataBuf == customDataMSTPrimBuf || customDataBuf == customDataDijkstraBuf);
+
+
+	// MST_PRIM
+	if (customDataBuf == customDataMSTPrimBuf) {
+		switch (dataInitOption) {
+		// -- CUSTOM DATA AS STRING --
+		case DATA_INIT_CUSTOM:
+			dataString = std::string(customDataBuf);
+
+			switch (graphInitMethod) {
+			case GraphReader::GraphInitMethod::ADJ_MATRIX: {
+				validData = GraphReader::validDataAdjMatString(dataString);
+
+				if (!validData) {
+					//// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+					std::cout << "Invalid data string. Something went wrong!!" << std::endl; // Invalid data
+
+					visEngine_MSTPrim = PrimVisEngine(rng, &window, &textFont, &view);
+					return false;
+				}
+
+				// Data to be initialized into Graph
+				std::vector<std::vector<int>> graphData = GraphReader::getDataAdjMatString(dataString);
+				visEngine_MSTPrim = PrimVisEngine(graphData, &window, &textFont, &view);
+				return true;
+			}
+			case GraphReader::GraphInitMethod::ADJ_LIST: {
+				validData = GraphReader::validDataAdjListString(dataString);
+
+				if (!validData) {
+					//// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+					std::cout << "Invalid data string. Something went wrong!!" << std::endl; // Invalid data
+
+					visEngine_MSTPrim = PrimVisEngine(rng, &window, &textFont, &view);
+					return false;
+				}
+
+				// Data to be initialized into Graph
+				std::vector<std::vector<Edge>> graphData = GraphReader::getDataAdjListString(dataString);
+				visEngine_MSTPrim = PrimVisEngine(graphData, &window, &textFont, &view);
+				return true;
+			}
+			case GraphReader::GraphInitMethod::EDGE_LIST: {
+				validData = GraphReader::validDataEdgeListString(dataString);
+
+				if (!validData) {
+					//// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+					std::cout << "Invalid data string. Something went wrong!!" << std::endl; // Invalid data
+
+					visEngine_MSTPrim = PrimVisEngine(rng, &window, &textFont, &view);
+					return false;
+				}
+
+				// Data to be initialized into Graph
+				unsigned int numVertex;
+				std::vector<GraphReader::GraphEdge> graphData = GraphReader::getDataEdgeListString(dataString, numVertex);
+				visEngine_MSTPrim = PrimVisEngine(numVertex, graphData, &window, &textFont, &view);
+				return true;
+			}
+			}
+
+		// -- DATA FROM FILE --
+		case DATA_INIT_FROM_FILE:
+			graph_dataFile.open(GRAPH_DATA_FILEPATH); // Open data file
+
+			switch (graphInitMethod) {
+			case GraphReader::GraphInitMethod::ADJ_MATRIX: {
+				validData = GraphReader::validDataAdjMatFile(graph_dataFile);
+
+				if (!validData) {
+					//// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+					std::cout << "Invalid data string. Something went wrong!!" << std::endl; // Invalid data
+
+					visEngine_MSTPrim = PrimVisEngine(rng, &window, &textFont, &view);
+					graph_dataFile.close(); // Close the data file
+					return false;
+				}
+
+				// Data to be initialized into Graph
+				std::vector<std::vector<int>> graphData = GraphReader::getDataAdjMatFile(graph_dataFile);
+				visEngine_MSTPrim = PrimVisEngine(graphData, &window, &textFont, &view);
+				return true;
+			}
+			case GraphReader::GraphInitMethod::ADJ_LIST: {
+				validData = GraphReader::validDataAdjListFile(graph_dataFile);
+
+				if (!validData) {
+					//// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+					std::cout << "Invalid data string. Something went wrong!!" << std::endl; // Invalid data
+
+					visEngine_MSTPrim = PrimVisEngine(rng, &window, &textFont, &view);
+					graph_dataFile.close(); // Close the data file
+					return false;
+				}
+
+				// Data to be initialized into Graph
+				std::vector<std::vector<Edge>> graphData = GraphReader::getDataAdjListFile(graph_dataFile);
+				visEngine_MSTPrim = PrimVisEngine(graphData, &window, &textFont, &view);
+				return true;
+			}
+			case GraphReader::GraphInitMethod::EDGE_LIST: {
+				validData = GraphReader::validDataEdgeListFile(graph_dataFile);
+
+				if (!validData) {
+					//// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+					std::cout << "Invalid data string. Something went wrong!!" << std::endl; // Invalid data
+
+					visEngine_MSTPrim = PrimVisEngine(rng, &window, &textFont, &view);
+					graph_dataFile.close(); // Close the data file
+					return false;
+				}
+
+				// Data to be initialized into Graph
+				unsigned int numVertex;
+				std::vector<GraphReader::GraphEdge> graphData = GraphReader::getDataEdgeListFile(graph_dataFile, numVertex);
+				visEngine_MSTPrim = PrimVisEngine(numVertex, graphData, &window, &textFont, &view);
+				return true;
+			}
+			}
+
+			graph_dataFile.close(); // Close the data file
+			return true;
+
+		case DATA_INIT_RANDOMIZED: // Randomized data
+			visEngine_MSTPrim = PrimVisEngine(rng, &window, &textFont, &view);
+			return true;
+		case DATA_INIT_EMPTY: // Empty data
+		default:
+			// visEngine_MSTPrim = PrimVisEngine(&window, &textFont, &view);
+			visEngine_MSTPrim = PrimVisEngine(rng, &window, &textFont, &view);
+			return true;
+		}
+	// DIJKSTRA
+	} else if (customDataBuf == customDataDijkstraBuf) {
+		switch (dataInitOption) {
+		// -- CUSTOM DATA AS STRING --
+		case DATA_INIT_CUSTOM:
+			dataString = std::string(customDataBuf);
+
+			switch (graphInitMethod) {
+			case GraphReader::GraphInitMethod::ADJ_MATRIX: {
+				validData = GraphReader::validDataAdjMatString(dataString);
+
+				if (!validData) {
+					//// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+					std::cout << "Invalid data string. Something went wrong!!" << std::endl; // Invalid data
+
+					visEngine_Dijkstra = DijkstraVisEngine(rng, &window, &textFont, &view);
+					return false;
+				}
+
+				// Data to be initialized into Graph
+				std::vector<std::vector<int>> graphData = GraphReader::getDataAdjMatString(dataString);
+				visEngine_Dijkstra = DijkstraVisEngine(graphData, &window, &textFont, &view);
+				return true;
+			}
+			case GraphReader::GraphInitMethod::ADJ_LIST: {
+				validData = GraphReader::validDataAdjListString(dataString);
+
+				if (!validData) {
+					//// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+					std::cout << "Invalid data string. Something went wrong!!" << std::endl; // Invalid data
+
+					visEngine_Dijkstra = DijkstraVisEngine(rng, &window, &textFont, &view);
+					return false;
+				}
+
+				// Data to be initialized into Graph
+				std::vector<std::vector<Edge>> graphData = GraphReader::getDataAdjListString(dataString);
+				visEngine_Dijkstra = DijkstraVisEngine(graphData, &window, &textFont, &view);
+				return true;
+			}
+			case GraphReader::GraphInitMethod::EDGE_LIST: {
+				validData = GraphReader::validDataEdgeListString(dataString);
+
+				if (!validData) {
+					//// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+					std::cout << "Invalid data string. Something went wrong!!" << std::endl; // Invalid data
+
+					visEngine_Dijkstra = DijkstraVisEngine(rng, &window, &textFont, &view);
+					return false;
+				}
+
+				// Data to be initialized into Graph
+				unsigned int numVertex;
+				std::vector<GraphReader::GraphEdge> graphData = GraphReader::getDataEdgeListString(dataString, numVertex);
+				visEngine_Dijkstra = DijkstraVisEngine(numVertex, graphData, &window, &textFont, &view);
+				return true;
+			}
+			}
+
+		// -- DATA FROM FILE --
+		case DATA_INIT_FROM_FILE:
+			graph_dataFile.open(GRAPH_DATA_FILEPATH); // Open data file
+
+			switch (graphInitMethod) {
+			case GraphReader::GraphInitMethod::ADJ_MATRIX: {
+				validData = GraphReader::validDataAdjMatFile(graph_dataFile);
+
+				if (!validData) {
+					//// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+					std::cout << "Invalid data string. Something went wrong!!" << std::endl; // Invalid data
+
+					visEngine_Dijkstra = DijkstraVisEngine(rng, &window, &textFont, &view);
+					graph_dataFile.close(); // Close the data file
+					return false;
+				}
+
+				// Data to be initialized into Graph
+				std::vector<std::vector<int>> graphData = GraphReader::getDataAdjMatFile(graph_dataFile);
+				visEngine_Dijkstra = DijkstraVisEngine(graphData, &window, &textFont, &view);
+				return true;
+			}
+			case GraphReader::GraphInitMethod::ADJ_LIST: {
+				validData = GraphReader::validDataAdjListFile(graph_dataFile);
+
+				if (!validData) {
+					//// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+					std::cout << "Invalid data string. Something went wrong!!" << std::endl; // Invalid data
+
+					visEngine_Dijkstra = DijkstraVisEngine(rng, &window, &textFont, &view);
+					graph_dataFile.close(); // Close the data file
+					return false;
+				}
+
+				// Data to be initialized into Graph
+				std::vector<std::vector<Edge>> graphData = GraphReader::getDataAdjListFile(graph_dataFile);
+				visEngine_Dijkstra = DijkstraVisEngine(graphData, &window, &textFont, &view);
+				return true;
+			}
+			case GraphReader::GraphInitMethod::EDGE_LIST: {
+				validData = GraphReader::validDataEdgeListFile(graph_dataFile);
+
+				if (!validData) {
+					//// THIS BRANCH SHOULD NOT RUN IN PRACTICE
+					std::cout << "Invalid data string. Something went wrong!!" << std::endl; // Invalid data
+
+					visEngine_Dijkstra = DijkstraVisEngine(rng, &window, &textFont, &view);
+					graph_dataFile.close(); // Close the data file
+					return false;
+				}
+
+				// Data to be initialized into Graph
+				unsigned int numVertex;
+				std::vector<GraphReader::GraphEdge> graphData = GraphReader::getDataEdgeListFile(graph_dataFile, numVertex);
+				visEngine_Dijkstra = DijkstraVisEngine(numVertex, graphData, &window, &textFont, &view);
+				return true;
+			}
+			}
+
+			graph_dataFile.close(); // Close the data file
+			return true;
+
+		case DATA_INIT_RANDOMIZED: // Randomized data
+			visEngine_Dijkstra = DijkstraVisEngine(rng, &window, &textFont, &view);
+			return true;
+		case DATA_INIT_EMPTY: // Empty data
+		default:
+			// visEngine_Dijkstra = DijkstraVisEngine(&window, &textFont, &view);
+			visEngine_Dijkstra = DijkstraVisEngine(rng, &window, &textFont, &view);
+			return true;
+		}
+	} else {
+		return false;
 	}
 }

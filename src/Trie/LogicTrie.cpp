@@ -116,27 +116,27 @@ void LogicTrie::insertWord(std::string word) {
 // -- SEARCHING --
 bool LogicTrie::generateSearchEvents(std::string word, std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots) {
 	LogicTrieNode* node = root;
-	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Looking at root node", {}, root->getID()));
+	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Looking at root node", {1}, root->getID()));
 
 	for (const char& c : word) {
 		if (node->getChild(c) == nullptr) {
-			events.push_back(TrieAnimStep(TrieAnimType::NONE, "Child \'" + std::string(1, c) + "\' does not exist. Word does not exist.", {}, node->getID()));
+			events.push_back(TrieAnimStep(TrieAnimType::NONE, "Child \'" + std::string(1, c) + "\' does not exist. Word does not exist.", {2,3,4}, node->getID()));
 			return false;
 		}
 
 		if (node != root) {
-			events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Looking at node \'" + std::string(1, node->key) + "\'", {}, node->getID()));
+			events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Looking at node \'" + std::string(1, node->key) + "\'", {2}, node->getID()));
 		}
-		events.push_back(TrieAnimStep(TrieAnimType::MOVE_HIGHLIGHT_DOWN, "Going down to \'" + std::string(1, c) + "\' child", {}, node->getID()));
+		events.push_back(TrieAnimStep(TrieAnimType::MOVE_HIGHLIGHT_DOWN, "Going down to \'" + std::string(1, c) + "\' child", {2,5}, node->getID()));
 		events.back().charLink = c;
 
 		node = node->getChild(c);
 	}
 
 	if (node->isEndOfWord) {
-		events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Found node \'" + std::string(1, node->key) + "\', reached end of string, isEndOfWord is true. Word found.", {}, node->getID()));
+		events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Found node \'" + std::string(1, node->key) + "\', reached end of string, isEndOfWord is true. Word found.", {6,7}, node->getID()));
 	} else {
-		events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Found node \'" + std::string(1, node->key) + "\', reached end of string, isEndOfWord is false. Word does not exist.", {}, node->getID()));
+		events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Found node \'" + std::string(1, node->key) + "\', reached end of string, isEndOfWord is false. Word does not exist.", {8,9}, node->getID()));
 	}
 
 	return node->isEndOfWord;
@@ -149,23 +149,23 @@ bool LogicTrie::generateSearchEvents(std::string word, std::vector<TrieAnimStep>
 // -- INSERTION --
 LogicTrieNode* LogicTrie::generateInsertEvents(std::string word, std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots) {
 	LogicTrieNode* node = root;
-	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Looking at root node", {}, root->getID(), treeSnapshots.size() - 1));
+	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Looking at root node", {1}, root->getID(), treeSnapshots.size() - 1));
 
 	for (const char& c : word) {
 		if (node->getChild(c) == nullptr) {
 			std::string eventDescription = "Child \'" + std::string(1, c) + "\' does not exist. Creating child \'" + std::string(1, c) + "\'";
-			events.push_back(TrieAnimStep(TrieAnimType::NONE, eventDescription, {}, node->getID(), treeSnapshots.size() - 1));
+			events.push_back(TrieAnimStep(TrieAnimType::NONE, eventDescription, {2,3}, node->getID(), treeSnapshots.size() - 1));
 
 			node->getChild(c) = newNode(c);
 
 			treeSnapshots.push_back(*this);
-			events.push_back(TrieAnimStep(TrieAnimType::INSERT_NODE, eventDescription, {}, node->getChild(c)->getID(), treeSnapshots.size() - 1));
+			events.push_back(TrieAnimStep(TrieAnimType::INSERT_NODE, eventDescription, {2,3,4}, node->getChild(c)->getID(), treeSnapshots.size() - 1));
 		}
 
 		if (node != root) {
-			events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Looking at node \'" + std::string(1, node->key) + "\'", {}, node->getID(), treeSnapshots.size() - 1));
+			events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Looking at node \'" + std::string(1, node->key) + "\'", {2}, node->getID(), treeSnapshots.size() - 1));
 		}
-		events.push_back(TrieAnimStep(TrieAnimType::MOVE_HIGHLIGHT_DOWN, "Going down to \'" + std::string(1, c) + "\' child", {}, node->getID(), treeSnapshots.size() - 1));
+		events.push_back(TrieAnimStep(TrieAnimType::MOVE_HIGHLIGHT_DOWN, "Going down to \'" + std::string(1, c) + "\' child", {2,5}, node->getID(), treeSnapshots.size() - 1));
 		events.back().charLink = c;
 
 		node = node->getChild(c);
@@ -174,7 +174,7 @@ LogicTrieNode* LogicTrie::generateInsertEvents(std::string word, std::vector<Tri
 	node->isEndOfWord = true;
 
 	treeSnapshots.push_back(*this);
-	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Set isEndOfWord of node \'" + std::string(1, node->key) + "\' to true", {}, node->getID(), treeSnapshots.size() - 1));
+	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Set isEndOfWord of node \'" + std::string(1, node->key) + "\' to true", {6}, node->getID(), treeSnapshots.size() - 1));
 
 	return node;
 }
@@ -186,7 +186,7 @@ LogicTrieNode* LogicTrie::generateInsertEvents(std::string word, std::vector<Tri
 // -- DELETION --
 void LogicTrie::generateDeleteEvents(std::string word, std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots) {
 	deleteSuccessful = false;
-	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Looking at root node", {}, root->getID(), treeSnapshots.size() -1));
+	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Looking at root node", {0}, root->getID(), treeSnapshots.size() -1));
 
 	// Delete node into tree and get animation events
 	root = generateDeleteEventsHelper(root, word, 0, events, treeSnapshots);
@@ -203,7 +203,7 @@ void LogicTrie::generateDeleteEvents(std::string word, std::vector<TrieAnimStep>
 
 LogicTrieNode* LogicTrie::generateDeleteEventsHelper(LogicTrieNode*& node, std::string word, int depth, std::vector<TrieAnimStep>& events, std::vector<LogicTrie>& treeSnapshots) {
 	if (!node) {
-		events.push_back(TrieAnimStep(TrieAnimType::NONE, "Found null node", {}, 0, treeSnapshots.size() - 1));
+		events.push_back(TrieAnimStep(TrieAnimType::NONE, "Found null node", {1,2}, 0, treeSnapshots.size() - 1));
 		return nullptr;
 	}
 
@@ -214,13 +214,13 @@ LogicTrieNode* LogicTrie::generateDeleteEventsHelper(LogicTrieNode*& node, std::
 
 		if (deleteSuccessful) {
 			treeSnapshots.push_back(*this);
-			events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Set isEndOfWord of node \'" + std::string(1, node->key) + "\' to false", {}, node->getID(), treeSnapshots.size() - 1));
+			events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Set isEndOfWord of node \'" + std::string(1, node->key) + "\' to false", {3,4}, node->getID(), treeSnapshots.size() - 1));
 		} else {
-			events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "isEndOfWord of node \'" + std::string(1, node->key) + "\' is false", {}, node->getID(), treeSnapshots.size() - 1));
+			events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "isEndOfWord of node \'" + std::string(1, node->key) + "\' is false", {3,4}, node->getID(), treeSnapshots.size() - 1));
 		}
 
 		if (node != root && node->isLeaf()) {
-			events.push_back(TrieAnimStep(TrieAnimType::DELETE_LEAF_NODE, "Delete leaf node \'" + std::string(1, node->key) + "\'", {}, node->getID(), treeSnapshots.size()));
+			events.push_back(TrieAnimStep(TrieAnimType::DELETE_LEAF_NODE, "Delete leaf node \'" + std::string(1, node->key) + "\'", {3,5,6,7}, node->getID(), treeSnapshots.size()));
 
 			delete node;
 			node = nullptr;
@@ -228,19 +228,21 @@ LogicTrieNode* LogicTrie::generateDeleteEventsHelper(LogicTrieNode*& node, std::
 			treeSnapshots.push_back(*this);
 		}
 
+		events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Node \'" + std::string(1, node->key) + "\' is not leaf, and is not deleted", {3,8}, node->getID(), treeSnapshots.size() - 1));
+
 		return node;
 	}
 
 	if (node != root) {
-		events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Looking at node \'" + std::string(1, node->key) + "\'", {}, node->getID(), treeSnapshots.size() - 1));
+		events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Looking at node \'" + std::string(1, node->key) + "\'", {9,10}, node->getID(), treeSnapshots.size() - 1));
 	}
-	events.push_back(TrieAnimStep(TrieAnimType::MOVE_HIGHLIGHT_DOWN, "Going down to \'" + std::string(1, word[depth]) + "\' child", {}, node->getID(), treeSnapshots.size() - 1));
+	events.push_back(TrieAnimStep(TrieAnimType::MOVE_HIGHLIGHT_DOWN, "Going down to \'" + std::string(1, word[depth]) + "\' child", {9,10}, node->getID(), treeSnapshots.size() - 1));
 	events.back().charLink = word[depth];
 
 	node->getChild(word[depth]) = generateDeleteEventsHelper(node->getChild(word[depth]), word, depth + 1, events, treeSnapshots);
 
 	if (node != root && node->isLeaf() && !node->isEndOfWord) {
-		events.push_back(TrieAnimStep(TrieAnimType::DELETE_LEAF_NODE, "Delete leaf node \'" + std::string(1, node->key) + "\'", {}, node->getID(), treeSnapshots.size()));
+		events.push_back(TrieAnimStep(TrieAnimType::DELETE_LEAF_NODE, "Delete leaf node \'" + std::string(1, node->key) + "\'", {11,12,13}, node->getID(), treeSnapshots.size()));
 
 		delete node;
 		node = nullptr;
@@ -248,6 +250,8 @@ LogicTrieNode* LogicTrie::generateDeleteEventsHelper(LogicTrieNode*& node, std::
 		treeSnapshots.push_back(*this);
 	}
 
+	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_NODE, "Node \'" + std::string(1, node->key) + "\' is not leaf, and is not deleted", {14}, node->getID(), treeSnapshots.size() - 1));
+	
 	return node;
 }
 

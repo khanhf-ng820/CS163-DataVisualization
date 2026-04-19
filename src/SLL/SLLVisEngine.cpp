@@ -797,8 +797,9 @@ void SLLVisEngine::drawPseudocodeWindow(SLLAnimStep eventSLL) {
 
 
 // Draw nodes and links, depending on eventList
-void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList) {
+void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::vector<std::unique_ptr<sf::Drawable>>& drawableListDefaultView) {
 	drawableList.clear();
+	drawableListDefaultView.clear();
 
 
 	// If STILL mode, stop here
@@ -848,7 +849,7 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 	// Display description for algorithm visualization
 	auto descriptionText = std::make_unique<sf::Text>(font, eventSLL.desc, descriptionFontSize);
 	descriptionText->setFillColor(sf::Color::Black);
-	descriptionText->setPosition(originPos - originPosDisplacement + descriptionTextPos);
+	descriptionText->setPosition(descriptionTextPos);
 
 	// Display animation step
 	auto curBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
@@ -898,7 +899,7 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 		curBox->getPosition() + sf::Vector2f(nodeValueRectSize.x/2, 0) - sf::Vector2f(0, 100) + sf::Vector2f(0, nodeRectSize.y)
 	);
 
-	drawableList.push_back(std::move(descriptionText));
+	drawableListDefaultView.push_back(std::move(descriptionText));
 	drawableList.push_back(std::move(curBox));
 	drawableList.push_back(std::move(pCurText));
 

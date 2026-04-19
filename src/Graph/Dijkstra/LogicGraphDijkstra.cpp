@@ -9,20 +9,68 @@ LogicGraphDijkstra::LogicGraphDijkstra(unsigned int numVertex)
 	for (int i = 0; i < numVertex; i++) {
 		logicVertices[i] = LogicGraphVertexDijkstra(i);
 	}
-	///// FOR TESTING ONLY, WILL DELETE LATER /////
-	this->adjList = {
-		{{1,6}, {2,10}},                         // 0
-		{{0,6}, {2,12}, {3,11}, {4,14}},         // 1
-		{{0,10}, {1,12}, {3,12}, {6,8}, {7,16}}, // 2
-		{{1,11}, {2,12}, {5,6}, {6,3}},          // 3
-		{{1,14}, {5,4}, {8,6}},                  // 4
-		{{3,6}, {4,4}, {8,12}},                  // 5
-		{{2,8}, {3,3}, {8,16}, {9,6}},           // 6
-		{{2,16}, {9,8}},                         // 7
-		{{4,6}, {5,12}, {6,16}, {9,13}},         // 8
-		{{6,6}, {7,8}, {8,13}}                   // 9
-	};
+	// ///// FOR TESTING ONLY, WILL DELETE LATER /////
+	// this->adjList = {
+	// 	{{1,6}, {2,10}},                         // 0
+	// 	{{0,6}, {2,12}, {3,11}, {4,14}},         // 1
+	// 	{{0,10}, {1,12}, {3,12}, {6,8}, {7,16}}, // 2
+	// 	{{1,11}, {2,12}, {5,6}, {6,3}},          // 3
+	// 	{{1,14}, {5,4}, {8,6}},                  // 4
+	// 	{{3,6}, {4,4}, {8,12}},                  // 5
+	// 	{{2,8}, {3,3}, {8,16}, {9,6}},           // 6
+	// 	{{2,16}, {9,8}},                         // 7
+	// 	{{4,6}, {5,12}, {6,16}, {9,13}},         // 8
+	// 	{{6,6}, {7,8}, {8,13}}                   // 9
+	// };
 }
+
+
+
+LogicGraphDijkstra::LogicGraphDijkstra(std::mt19937& rng)
+	: LogicGraph(rng)
+{
+	for (int i = 0; i < numVertex; i++) {
+		logicVertices.push_back(LogicGraphVertexDijkstra(i));
+	}
+	// ///// FOR TESTING ONLY, WILL DELETE LATER /////
+	// this->adjList = {
+	// 	{{1,6}, {2,10}},                         // 0
+	// 	{{0,6}, {2,12}, {3,11}, {4,14}},         // 1
+	// 	{{0,10}, {1,12}, {3,12}, {6,8}, {7,16}}, // 2
+	// 	{{1,11}, {2,12}, {5,6}, {6,3}},          // 3
+	// 	{{1,14}, {5,4}, {8,6}},                  // 4
+	// 	{{3,6}, {4,4}, {8,12}},                  // 5
+	// 	{{2,8}, {3,3}, {8,16}, {9,6}},           // 6
+	// 	{{2,16}, {9,8}},                         // 7
+	// 	{{4,6}, {5,12}, {6,16}, {9,13}},         // 8
+	// 	{{6,6}, {7,8}, {8,13}}                   // 9
+	// };
+}
+
+
+
+LogicGraphDijkstra::LogicGraphDijkstra(std::vector<std::vector<int>>& adjMatrix)
+	: LogicGraph(adjMatrix), logicVertices(adjMatrix.size())
+{
+	for (int i = 0; i < numVertex; i++) {
+		logicVertices[i] = LogicGraphVertexDijkstra(i);
+	}
+	// ///// FOR TESTING ONLY, WILL DELETE LATER /////
+	// this->adjList = {
+	// 	{{1,6}, {2,10}},                         // 0
+	// 	{{0,6}, {2,12}, {3,11}, {4,14}},         // 1
+	// 	{{0,10}, {1,12}, {3,12}, {6,8}, {7,16}}, // 2
+	// 	{{1,11}, {2,12}, {5,6}, {6,3}},          // 3
+	// 	{{1,14}, {5,4}, {8,6}},                  // 4
+	// 	{{3,6}, {4,4}, {8,12}},                  // 5
+	// 	{{2,8}, {3,3}, {8,16}, {9,6}},           // 6
+	// 	{{2,16}, {9,8}},                         // 7
+	// 	{{4,6}, {5,12}, {6,16}, {9,13}},         // 8
+	// 	{{6,6}, {7,8}, {8,13}}                   // 9
+	// };
+}
+
+
 
 LogicGraphDijkstra::LogicGraphDijkstra(std::vector<std::vector<Edge>>& adjList)
 	: LogicGraph(adjList), logicVertices(adjList.size())
@@ -30,19 +78,42 @@ LogicGraphDijkstra::LogicGraphDijkstra(std::vector<std::vector<Edge>>& adjList)
 	for (int i = 0; i < adjList.size(); i++) {
 		logicVertices[i] = LogicGraphVertexDijkstra(i);
 	}
-	///// FOR TESTING ONLY, WILL DELETE LATER /////
-	this->adjList = {
-		{{1,6}, {2,10}},                         // 0
-		{{0,6}, {2,12}, {3,11}, {4,14}},         // 1
-		{{0,10}, {1,12}, {3,12}, {6,8}, {7,16}}, // 2
-		{{1,11}, {2,12}, {5,6}, {6,3}},          // 3
-		{{1,14}, {5,4}, {8,6}},                  // 4
-		{{3,6}, {4,4}, {8,12}},                  // 5
-		{{2,8}, {3,3}, {8,16}, {9,6}},           // 6
-		{{2,16}, {9,8}},                         // 7
-		{{4,6}, {5,12}, {6,16}, {9,13}},         // 8
-		{{6,6}, {7,8}, {8,13}}                   // 9
-	};
+	// ///// FOR TESTING ONLY, WILL DELETE LATER /////
+	// this->adjList = {
+	// 	{{1,6}, {2,10}},                         // 0
+	// 	{{0,6}, {2,12}, {3,11}, {4,14}},         // 1
+	// 	{{0,10}, {1,12}, {3,12}, {6,8}, {7,16}}, // 2
+	// 	{{1,11}, {2,12}, {5,6}, {6,3}},          // 3
+	// 	{{1,14}, {5,4}, {8,6}},                  // 4
+	// 	{{3,6}, {4,4}, {8,12}},                  // 5
+	// 	{{2,8}, {3,3}, {8,16}, {9,6}},           // 6
+	// 	{{2,16}, {9,8}},                         // 7
+	// 	{{4,6}, {5,12}, {6,16}, {9,13}},         // 8
+	// 	{{6,6}, {7,8}, {8,13}}                   // 9
+	// };
+}
+
+
+
+LogicGraphDijkstra::LogicGraphDijkstra(unsigned int numVertex, std::vector<GraphReader::GraphEdge>& edgeList)
+	: LogicGraph(numVertex, edgeList), logicVertices(numVertex)
+{
+	for (int i = 0; i < numVertex; i++) {
+		logicVertices[i] = LogicGraphVertexDijkstra(i);
+	}
+	// ///// FOR TESTING ONLY, WILL DELETE LATER /////
+	// this->adjList = {
+	// 	{{1,6}, {2,10}},                         // 0
+	// 	{{0,6}, {2,12}, {3,11}, {4,14}},         // 1
+	// 	{{0,10}, {1,12}, {3,12}, {6,8}, {7,16}}, // 2
+	// 	{{1,11}, {2,12}, {5,6}, {6,3}},          // 3
+	// 	{{1,14}, {5,4}, {8,6}},                  // 4
+	// 	{{3,6}, {4,4}, {8,12}},                  // 5
+	// 	{{2,8}, {3,3}, {8,16}, {9,6}},           // 6
+	// 	{{2,16}, {9,8}},                         // 7
+	// 	{{4,6}, {5,12}, {6,16}, {9,13}},         // 8
+	// 	{{6,6}, {7,8}, {8,13}}                   // 9
+	// };
 }
 
 
@@ -129,6 +200,6 @@ void LogicGraphDijkstra::generateDijkstraEvents(int startVertex, std::vector<Dij
 	}
 
 	graphSnapshots.push_back(dijkstraVertices);
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::FINISHED_DIJKSTRA, "Finished Dijkstra\'s algorithm, right click on a vertex to see shortest path.", {16}, 
+	events.push_back(DijkstraAnimStep(DijkstraAnimType::FINISHED_DIJKSTRA, "Finished Dijkstra\'s algorithm, hold right click on a vertex to see shortest path.", {16}, 
 		-1, -1, graphSnapshots.size() - 1));
 }

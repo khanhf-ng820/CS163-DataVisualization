@@ -13,7 +13,10 @@
 class LogicGraphPrim : public LogicGraph {
 public:
 	explicit LogicGraphPrim(unsigned int numVertex);
+	explicit LogicGraphPrim(std::mt19937& rng);
+	explicit LogicGraphPrim(std::vector<std::vector<int>>& adjMatrix);
 	explicit LogicGraphPrim(std::vector<std::vector<Edge>>& adjList);
+	explicit LogicGraphPrim(unsigned int numVertex, std::vector<GraphReader::GraphEdge>& edgeList);
 	// LogicGraphPrim(const LogicGraphPrim& other); // Copy constructor
 
 	// LogicGraphPrim& operator=(const LogicGraphPrim& other); // Assignment op
