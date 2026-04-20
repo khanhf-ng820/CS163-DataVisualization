@@ -16,7 +16,7 @@ public:
 	~LogicAVLTree();
 	LogicAVLTree(const LogicAVLTree& other); // Copy constructor
 
-	LogicAVLTree& operator=(const LogicAVLTree& other); // assignment op
+	LogicAVLTree& operator=(const LogicAVLTree& other); // Assignment operator
 
 	LogicAVLNode* root = nullptr;
 

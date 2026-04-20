@@ -14,7 +14,9 @@ void Program::initMainMenuScreen() {
 	auto rectangle = std::make_unique<sf::RectangleShape>(sf::Vector2f({NORMAL_WIDTH, NORMAL_HEIGHT}));
 	rectangle->setFillColor(sf::Color::Blue);
 
+	// Letterbox border
 	auto border = std::make_unique<sf::RectangleShape>(sf::Vector2f({NORMAL_WIDTH, NORMAL_HEIGHT}));
+	// auto border = std::make_unique<sf::RectangleShape>(sf::Vector2f(window.getSize()));
 	border->setOrigin({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f}); // origin at center
 	border->setPosition({0.f, 0.f}); // position at 0,0
 	border->setFillColor(sf::Color::Transparent);
@@ -61,11 +63,11 @@ void Program::initMainMenuScreen() {
 	text->setPosition(round(text->getPosition()));
 
 
-	// Push back to vector
+	// Push back SFML drawables to vector
 	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(shape));
 	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(rectangle));
 	// Border for normal aspect ratio
-	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(border));
+	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(border));
 	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(splitCircle));
 	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(cornerBox));
 	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(text));
@@ -74,6 +76,11 @@ void Program::initMainMenuScreen() {
 
 
 void Program::displayMainMenuScreenSFML() {
+	// Set size for letterbox border
+	// auto border = static_cast<sf::RectangleShape*>(sfDrawables[ProgramState::MAIN_MENU]->drawables[0].get());
+	// border->setSize(sf::Vector2f(window.getSize()));
+	// border->setOrigin(sf::Vector2f(window.getSize()) / 2.f); // origin at center
+
 	sfDrawables[ProgramState::MAIN_MENU]->displayAll();
 }
 

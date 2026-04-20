@@ -912,12 +912,21 @@ void AVLVisEngine::drawLerpTreeInsertNode(std::vector<std::unique_ptr<sf::Drawab
 void AVLVisEngine::drawLerpTreeDeleteNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
 	std::map<int, VisualAVLNode>& visualNodes1, LogicAVLTree& logicTree1,
 	std::map<int, VisualAVLNode>& visualNodes2, LogicAVLTree& logicTree2) {
+	// visualNodes1, logicTree1 is before node deletion;
+	// visualNodes2, logicTree2 is after node deletion
 	LogicAVLTree logicTreeBefore = logicTree2;
 	std::map<int, VisualAVLNode> visualNodesBefore = visualNodes2;
 	for (const auto& [key, visNode1] : visualNodes1) {
 		if (key != keyToRemove)
 			visualNodesBefore[key].position = visNode1.position;
 	}
+
+	// FIX: minSucc node should simply be deleted, instead of lerping to the place of the node to delete
+	// std::cerr << "logicTree2.minSuccKey = " << logicTree2.minSuccKey <<std::endl; // DEBUG
+	if (visualNodesBefore.count(logicTree2.minSuccKey) && visualNodes1.count(keyToRemove)) {
+		visualNodesBefore[logicTree2.minSuccKey].position = visualNodes1[keyToRemove].position;
+	}
+
 	// visualNodesBefore[keyToRemove].position = originPos + newNodeStartPos;
 	drawLerpTree(drawableList, visualNodesBefore, logicTreeBefore, visualNodes2, logicTree2);
 }

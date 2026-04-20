@@ -106,7 +106,7 @@ public:
 	static constexpr int          nodeKeyTextFontSize   = 15;
 	static constexpr int          nodeHeightTextFontSize = 12;
 	static constexpr float        nodeLayerSpacing      = 100;
-	static constexpr float        highlightCircleThickness = 5;
+	static constexpr float        highlightCircleThickness = 3.5;
 	static constexpr float        arrowHeadSideLen      = 8;
 	static constexpr float        canvasLeftMargin      = 100;
 
