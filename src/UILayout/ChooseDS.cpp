@@ -251,8 +251,16 @@ void Program::displayChooseDSMenuScreenGUI() {
 	// Graph data init method
 	static GraphReader::GraphInitMethod graphInitOption = GraphReader::GraphInitMethod::ADJ_MATRIX; // State variable to hold the selected option's value
 
-	ImGui::RadioButton("Empty data", &dataInitOption, DATA_INIT_EMPTY); // Value 0
-	ImGui::SameLine();
+	// FIX: No "Empty data" initialization option for graphs
+	switch (chosenDSType) {
+	case DSType::MST_PRIM_GRAPH:
+	case DSType::DIJKSTRA_GRAPH:
+		if (dataInitOption == DATA_INIT_EMPTY) dataInitOption = DATA_INIT_RANDOMIZED;
+		break;
+	default:
+		ImGui::RadioButton("Empty data", &dataInitOption, DATA_INIT_EMPTY); // Value 0
+		ImGui::SameLine();
+	}
 	ImGui::RadioButton("Randomized data", &dataInitOption, DATA_INIT_RANDOMIZED); // Value 1
 	ImGui::SameLine();
 	ImGui::RadioButton("Enter custom data", &dataInitOption, DATA_INIT_CUSTOM); // Value 2
