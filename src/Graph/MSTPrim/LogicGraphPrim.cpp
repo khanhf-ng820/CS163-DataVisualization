@@ -244,6 +244,7 @@ void LogicGraphPrim::generatePrimEvents(int startVertex, std::vector<PrimAnimSte
 		if (logicVertex.parentVertex != -1) MSTEdges++;
 	}
 	isMST &= (MSTEdges == numVertex-1);
+	isMST |= (numVertex == 1);
 
 	std::string resultDescription = isMST
 		? ("Finished Prim\'s algorithm, the total cost of MST is " + std::to_string(edgeSumMST(primVertices)) + ".")

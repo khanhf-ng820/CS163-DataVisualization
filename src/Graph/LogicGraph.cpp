@@ -18,11 +18,14 @@ LogicGraph::LogicGraph(std::mt19937& rng) {
 	numVertex = numVertexDistrib(rng);
 	adjList = std::vector<std::vector<Edge>>(numVertex, std::vector<Edge>());
 
-	std::uniform_real_distribution<float> weightProbThresholdDistrib(1.f / numVertex, 0.5f);
+	float maxWeightProbThreshold = std::max(1.f / numVertex, 3 * (static_cast<float>(std::log(numVertex)) / numVertex));
+	std::uniform_real_distribution<float> weightProbThresholdDistrib(1.f / numVertex, maxWeightProbThreshold);
 	std::uniform_real_distribution<float> weightProbDistrib(0.f, 1.f);
 	std::uniform_int_distribution<int> weightDistrib(GRAPH_INIT_WEIGHT_MIN, GRAPH_INIT_WEIGHT_MAX);
 
 	float weightProbThreshold = weightProbThresholdDistrib(rng);
+	// Testing formula
+	// weightProbThreshold = 2 * (static_cast<float>(std::log(numVertex)) / numVertex);
 
 	// Erdos-Renyi Model
 	for (int i = 0; i < numVertex; i++) {

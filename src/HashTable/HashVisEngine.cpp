@@ -540,6 +540,7 @@ void HashVisEngine::addNodeDrawablesUpdate(std::vector<std::unique_ptr<sf::Drawa
 
 // --- Create DRAWABLES to draw later ---
 void HashVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::vector<std::unique_ptr<sf::Drawable>>& drawableListDefaultView) {
+	refreshOriginPos();
 	drawableList.clear();
 	drawableListDefaultView.clear();
 
@@ -711,6 +712,12 @@ bool HashVisEngine::isUpdatable(int oldKey, int newKey) {
 	return containsKey(oldKey);
 }
 
+
+
+
+void HashVisEngine::refreshOriginPos() {
+	originPos = originPosDisplacement - sf::Vector2f(normalWindowSize) / 2.f;
+}
 
 
 

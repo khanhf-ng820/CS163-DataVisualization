@@ -55,6 +55,7 @@ public:
 
 	sf::RenderWindow* windowPtr;
 	sf::Font* fontPtr;
+	sf::Vector2f normalWindowSize = {800.f, 600.f}; // Window size before rescaling window
 
 	TrieVisMode visMode = TrieVisMode::NONE;
 	std::vector<TrieAnimStep> eventList;

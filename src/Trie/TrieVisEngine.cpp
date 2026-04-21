@@ -5,6 +5,7 @@
 
 TrieVisEngine::TrieVisEngine(sf::RenderWindow* window, sf::Font* font)
 	: windowPtr(window), fontPtr(font)
+	// , normalWindowSize(window->getSize())
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {
 	initInputBuffers();
@@ -12,10 +13,11 @@ TrieVisEngine::TrieVisEngine(sf::RenderWindow* window, sf::Font* font)
 
 TrieVisEngine::TrieVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font)
 	: windowPtr(window), fontPtr(font)
+	// , normalWindowSize(window->getSize())
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {
 	initInputBuffers();
-	std::uniform_int_distribution<size_t> size_distrib(TRIE_INIT_MIN_SIZE, TRIE_INIT_MAX_SIZE);
+	std::uniform_int_distribution<size_t> size_distrib(TRIE_INIT_RANDOM_MIN_SIZE, TRIE_INIT_RANDOM_MAX_SIZE); // Number of words
 	std::uniform_int_distribution<size_t> wordLen_distrib(TRIE_INIT_WORD_MIN_LENGTH, TRIE_INIT_WORD_MAX_LENGTH);
 	std::uniform_int_distribution<int> char_distrib(TRIE_RANDOM_DISTRIB_KEY_MIN, TRIE_RANDOM_DISTRIB_KEY_MAX);
 
@@ -31,6 +33,7 @@ TrieVisEngine::TrieVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Fo
 
 TrieVisEngine::TrieVisEngine(std::vector<std::string>& words, sf::RenderWindow* window, sf::Font* font)
 	: windowPtr(window), fontPtr(font)
+	// , normalWindowSize(window->getSize())
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {
 	initInputBuffers();
@@ -569,7 +572,7 @@ void TrieVisEngine::generateAllVisNodePosXHelper(std::map<int, VisualTrieNode>& 
 	visualNodes.clear();
 	unsigned int size = logicTree.countLeaf();
 	float xPos = canvasLeftMargin;
-	float dx = (windowPtr->getSize().x - 2 * canvasLeftMargin) / (size > 1 ? size-1 : 1);
+	float dx = (normalWindowSize.x - 2 * canvasLeftMargin) / (size > 1 ? size-1 : 1);
 	// Prevent nodes overlapping
 	if (dx < 2 * nodeCircleRadius) dx = 2 * nodeCircleRadius;
 
@@ -829,5 +832,5 @@ void TrieVisEngine::initInputBuffers() {
 }
 
 void TrieVisEngine::refreshOriginPos() {
-	originPos = originPosDisplacement - sf::Vector2f(windowPtr->getSize()) / 2.f;
+	originPos = originPosDisplacement - sf::Vector2f(normalWindowSize) / 2.f;
 }

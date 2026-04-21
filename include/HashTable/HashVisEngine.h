@@ -62,6 +62,7 @@ public:
 
 	sf::RenderWindow* windowPtr;
 	sf::Font* fontPtr;
+	sf::Vector2f normalWindowSize = {800.f, 600.f};
 
 	HashVisMode visMode = HashVisMode::NONE;
 	std::vector<HashAnimStep> eventList;
@@ -165,6 +166,7 @@ private:
 	bool containsKey(int key);
 	bool isFull();
 
+	void refreshOriginPos();
 	// Create AND display ImGui window to highlight source code (pseudocode)
 	void drawPseudocodeWindow(HashAnimStep eventHash);
 

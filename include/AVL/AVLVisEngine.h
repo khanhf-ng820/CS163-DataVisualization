@@ -52,6 +52,7 @@ public:
 
 	sf::RenderWindow* windowPtr;
 	sf::Font* fontPtr;
+	sf::Vector2f normalWindowSize = {800.f, 600.f}; // Window size before rescaling window
 
 	AVLVisMode visMode = AVLVisMode::NONE;
 	std::vector<AVLAnimStep> eventList;

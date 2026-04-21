@@ -5,14 +5,16 @@
 
 AVLVisEngine::AVLVisEngine(sf::RenderWindow* window, sf::Font* font)
 	: windowPtr(window), fontPtr(font)
+	// , normalWindowSize(window->getSize())
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {}
 
 AVLVisEngine::AVLVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font)
 	: windowPtr(window), fontPtr(font)
+	// , normalWindowSize(window->getSize())
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {
-	std::uniform_int_distribution<unsigned int> size_distrib(AVL_INIT_MIN_SIZE, AVL_INIT_MAX_SIZE);
+	std::uniform_int_distribution<unsigned int> size_distrib(AVL_INIT_RANDOM_MIN_SIZE, AVL_INIT_RANDOM_MAX_SIZE);
 	std::uniform_int_distribution<int> key_distrib(AVL_RANDOM_DISTRIB_KEY_MIN, AVL_RANDOM_DISTRIB_KEY_MAX);
 
 	unsigned int initTreeSize = size_distrib(rng);
@@ -24,6 +26,7 @@ AVLVisEngine::AVLVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font
 
 AVLVisEngine::AVLVisEngine(std::vector<int>& numbers, sf::RenderWindow* window, sf::Font* font)
 	: windowPtr(window), fontPtr(font)
+	// , normalWindowSize(window->getSize())
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {
 	for (const int& initKey : numbers) {
@@ -737,13 +740,18 @@ void AVLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 // Uses inorder positioning
 void AVLVisEngine::generateAllVisNodePos(std::map<int, VisualAVLNode>& visualNodes, LogicAVLTree& logicTree) {
 	generateAllVisNodePosHelper(visualNodes, logicTree, logicTree.root);
+	// Center the tree horizontally
+	float avgPosX = 0;
+	for (const auto& [key, visNode] : visualNodes) avgPosX += visNode.position.x;
+	avgPosX /= visualNodes.size();
+	for (auto& [key, visNode] : visualNodes) visNode.position.x -= avgPosX;
 }
 
 void AVLVisEngine::generateAllVisNodePosHelper(std::map<int, VisualAVLNode>& visualNodes, LogicAVLTree& logicTree, LogicAVLNode* root) {
 	visualNodes.clear();
 	unsigned int size = logicTree.getSize();
 	float xPos = canvasLeftMargin;
-	float dx = (windowPtr->getSize().x - 2 * canvasLeftMargin) / (size > 1 ? size-1 : 1);
+	float dx = (normalWindowSize.x - 2 * canvasLeftMargin) / (size > 1 ? size-1 : 1);
 	int layerY = 0;
 	// Prevent nodes overlapping
 	if (dx < 2 * nodeCircleRadius) dx = 2 * nodeCircleRadius;
@@ -976,5 +984,5 @@ void AVLVisEngine::drawNodeArrow(std::vector<std::unique_ptr<sf::Drawable>>& dra
 
 
 void AVLVisEngine::refreshOriginPos() {
-	originPos = originPosDisplacement - sf::Vector2f(windowPtr->getSize()) / 2.f;
+	originPos = originPosDisplacement - sf::Vector2f(normalWindowSize) / 2.f;
 }
