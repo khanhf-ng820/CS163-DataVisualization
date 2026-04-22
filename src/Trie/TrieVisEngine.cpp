@@ -88,6 +88,7 @@ std::vector<TrieAnimStep> TrieVisEngine::getEventsInsert(std::string word) {
 	std::vector<TrieAnimStep> events;
 	oldTreeSnapshots.clear();
 	oldTreeSnapshots.push_back(tree);
+	unsigned int numWordsBefore = tree.getNumWords();
 
 	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before inserting word: \"" + word + "\"", {0}, 0, oldTreeSnapshots.size() - 1));
 	// Insert node into tree and get animation events
@@ -95,7 +96,10 @@ std::vector<TrieAnimStep> TrieVisEngine::getEventsInsert(std::string word) {
 	// // Remind to snapshot tree after insertion/rotation
 	// tree.snapshotTree(key, events, oldTreeSnapshots);
 
-	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting word: \"" + word + "\"", {7}, lastInsertedNode->getID(), -1));
+	std::string descriptionString = (numWordsBefore != tree.getNumWords())
+		? ("Finished inserting word: \"" + word + "\"")
+		: ("Word \"" + word + "\" already exists, can\'t insert duplicates.");
+	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, descriptionString, {7}, lastInsertedNode->getID(), -1));
 
 	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
 	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
@@ -128,7 +132,7 @@ std::vector<TrieAnimStep> TrieVisEngine::getEventsUpdate(std::string oldWord, st
 	oldTreeSnapshots.clear();
 	oldTreeSnapshots.push_back(tree);
 
-	// -- Deletion step
+	// --- Deletion step
 	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before deleting word: \"" + oldWord + "\"", {0}, 0, oldTreeSnapshots.size() -1));
 	tree.generateDeleteEvents(oldWord, events, oldTreeSnapshots);
 
@@ -140,7 +144,10 @@ std::vector<TrieAnimStep> TrieVisEngine::getEventsUpdate(std::string oldWord, st
 	}
 	unsigned int numDeletionEvents = events.size();
 
-	// -- Insertion step
+
+	// --- Insertion step
+	unsigned int numWordsBefore = tree.getNumWords();
+
 	oldTreeSnapshots.push_back(tree);
 	events.push_back(TrieAnimStep(TrieAnimType::NONE, "Before inserting word: \"" + newWord + "\"", {0}, 0, oldTreeSnapshots.size() - 1));
 	// Insert node into tree and get animation events
@@ -148,12 +155,15 @@ std::vector<TrieAnimStep> TrieVisEngine::getEventsUpdate(std::string oldWord, st
 	// // Remind to snapshot tree after insertion/rotation
 	// tree.snapshotTree(key, events, oldTreeSnapshots);
 
-	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Finished inserting word: \"" + newWord + "\"", {7}, lastInsertedNode->getID(), -1));
+	std::string descriptionString = (numWordsBefore != tree.getNumWords())
+		? ("Finished inserting word: \"" + newWord + "\"")
+		: ("Word \"" + newWord + "\" already exists, can\'t insert duplicates.");
+	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, descriptionString, {7}, lastInsertedNode->getID(), -1));
 
 	std::cerr << "Done generating insertion events!" << std::endl; // DEBUG
 	std::cerr << ", size = " << tree.getSize() << std::endl; // DEBUG
 
-	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Finished updating operation" , {}, lastInsertedNode->getID(), oldTreeSnapshots.size() -1));
+	events.push_back(TrieAnimStep(TrieAnimType::HIGHLIGHT_FOUND_NODE, "Finished updating operation." , {}, lastInsertedNode->getID(), oldTreeSnapshots.size() -1));
 
 	for (int i = numDeletionEvents; i < events.size(); i++) {
 		events[i].displayPseudocode = TrieDisplayPseudocode::INSERTION;
