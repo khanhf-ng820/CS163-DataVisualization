@@ -9,6 +9,19 @@
 // Drawing GUI: The top-left of the window is (0, 0) coordinates
 // Display main menu screen
 void Program::initMainMenuScreen() {
+	// Clear drawables vector
+	sfDrawables[ProgramState::MAIN_MENU]->drawables.clear();
+	sfDrawablesDefaultView[ProgramState::MAIN_MENU]->drawables.clear();
+}
+
+
+
+void Program::displayMainMenuScreenSFML() {
+	// Clear drawables vector
+	sfDrawables[ProgramState::MAIN_MENU]->drawables.clear();
+	sfDrawablesDefaultView[ProgramState::MAIN_MENU]->drawables.clear();
+
+	// --- Add SFML shapes ---
 	auto shape = std::make_unique<sf::CircleShape>(100.0f);
 	shape->setFillColor(sf::Color::Green);
 	auto rectangle = std::make_unique<sf::RectangleShape>(sf::Vector2f({NORMAL_WIDTH, NORMAL_HEIGHT}));
@@ -38,29 +51,29 @@ void Program::initMainMenuScreen() {
 	cornerBox->setPosition({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f});
 
 
-	auto text = std::make_unique<sf::Text>(textFont, "Data Structure Visualizer", 40);
-	text->setFillColor(sf::Color::Black);
+	auto titleText = std::make_unique<sf::Text>(textFont, "Data Structure Visualizer", 40);
+	titleText->setFillColor(titleColor);
 
 	// Measure unscaled text
-	sf::FloatRect bounds = text->getLocalBounds();
+	sf::FloatRect bounds = titleText->getLocalBounds();
 
 	// Scale so the width matches the desired width
 	const float targetWidth = NORMAL_WIDTH * 0.625;
 	float scale = targetWidth / bounds.size.x;
-	// text->setScale({scale, scale});
-	// text->setScale({round(scale), round(scale)});
-	text->setCharacterSize(round(scale * 40));
+	// titleText->setScale({scale, scale});
+	// titleText->setScale({round(scale), round(scale)});
+	titleText->setCharacterSize(round(scale * 40));
 
 	// Set origin to the visual center
-	bounds = text->getLocalBounds();
-	text->setOrigin({
+	bounds = titleText->getLocalBounds();
+	titleText->setOrigin({
 		bounds.size.x / 2.f,
 		bounds.size.y / 2.f
 	});
 	// Position the center where you want it
 	sf::Vector2u window_size = window.getSize();
-	text->setPosition({0.f, -static_cast<float>(window_size.y) / 4});
-	text->setPosition(round(text->getPosition()));
+	titleText->setPosition({0.f, -static_cast<float>(window_size.y) / 4});
+	titleText->setPosition(round(titleText->getPosition()));
 
 
 	// Push back SFML drawables to vector
@@ -70,12 +83,9 @@ void Program::initMainMenuScreen() {
 	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(border));
 	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(splitCircle));
 	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(cornerBox));
-	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(text));
-}
+	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(titleText));
 
 
-
-void Program::displayMainMenuScreenSFML() {
 	// Set size for letterbox border
 	// auto border = static_cast<sf::RectangleShape*>(sfDrawables[ProgramState::MAIN_MENU]->drawables[0].get());
 	// border->setSize(sf::Vector2f(window.getSize()));

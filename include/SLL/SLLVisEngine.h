@@ -8,6 +8,7 @@
 #include <cmath>
 #include <random>
 
+#include "Themes/Themes.h"
 #include "sfLayout/sfLayout.h"
 #include "utils/readData.hpp"
 #include "SLL/SLLAnimStep.h"
@@ -45,6 +46,9 @@ public:
 	void initSLLData(); // Empty SLL
 	void initSLLData(std::mt19937& rng); // Randomized SLL
 	void initSLLData(std::vector<int>& initData); // Specific data SLL
+
+	// Set vis theme
+	void setVisTheme(VIS_THEME visTheme);
 
 	// Draw nodes: Iterate through linked list and draw nodes
 	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, SLLAnimStep eventSLL);
@@ -105,21 +109,25 @@ public:
 	static constexpr int RANDOM_DISTRIB_VALUE_MAX = 100;
 
 
+private:
 	static constexpr sf::Vector2f originPosDisplacement = {75, 50};
 	static constexpr sf::Vector2f headPosDisplacement = {-50, 0};
 	sf::Vector2f originPos;
-	static constexpr sf::Vector2f descriptionTextPos = {50, 10};
-	static constexpr sf::Vector2f nodeRectSize = {50, 30};
-	static constexpr sf::Vector2f nodeValueRectSize = {30, 30};
-	static constexpr float        nodeLayerSpacing = 20 + 30; // 30 is nodeRectSize.y
-	static constexpr float        linkArrowLength = 20;
-	static constexpr int          valueFontSize = 10;
+	static constexpr sf::Vector2f descriptionTextPos  = {50, 10};
+	static constexpr sf::Vector2f nodeRectSize        = {50, 30};
+	static constexpr sf::Vector2f nodeValueRectSize   = {30, 30};
+	static constexpr float        nodeLayerSpacing    = 20 + 30; // 30 is nodeRectSize.y
+	static constexpr float        linkArrowLength     = 20;
+	static constexpr int          valueFontSize       = 10;
 	static constexpr int          descriptionFontSize = 15;
-	static constexpr float        arrowHeadSideLen = 7.5;
+	static constexpr float        arrowHeadSideLen    = 7.5;
 
+	static inline    sf::Color    normalNodeColor         = sf::Color::Black;
+	static inline    sf::Color    nullDiagonalColor       = sf::Color(0, 0, 0, 255/2);
+	static inline    sf::Color    highlightFoundNodeColor = sf::Color::Green;
 	static constexpr ImVec4       highlightCodeColor = {0.4f, 1.f, 0.f, 1.f};
 
-private:
+
 	void initSLLvector(std::vector<int>& values); // Init SLL from std::vector<int>
 
 	// Create AND display ImGui window to highlight source code (pseudocode)
@@ -127,4 +135,19 @@ private:
 
 	sf::Vector2f lerp(sf::Vector2f v1, sf::Vector2f v2, float k) const;
 	void drawArrow(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f v1, sf::Vector2f v2) const;
+
+
+
+
+	// Predefined colors for vis themes
+	static constexpr sf::Color lightNormalNodeColor         = sf::Color::Black;
+	static constexpr sf::Color lightNullDiagonalColor       = sf::Color(0, 0, 0, 255/2);
+	static constexpr sf::Color lightHighlightFoundNodeColor = sf::Color::Green;
+
+	static constexpr sf::Color darkNormalNodeColor         = sf::Color::White;
+	static constexpr sf::Color darkNullDiagonalColor       = sf::Color(255, 255, 255, 255/2);
+	static constexpr sf::Color darkHighlightFoundNodeColor = sf::Color::Green;
+
+	void setLightVisTheme();
+	void setDarkVisTheme();
 };

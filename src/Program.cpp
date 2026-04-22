@@ -302,10 +302,13 @@ void Program::mainLoop() {
 		};
 
 
+		// Refresh vis theme
+		refreshVisThemes();
+
 
 		// window.clear();
 		// window.clear(sf::Color(20, 100, 20));
-		window.clear(sf::Color::White);
+		window.clear(backgroundColor);
 
 		// Use view of app (centered and scaled)
 		window.setView(view);
@@ -406,4 +409,44 @@ void Program::mainLoop() {
 float Program::calculateZoomFactor() {
 	sf::Vector2f currentSize = view.getSize();
 	return currentSize.x / window.getSize().x;
+}
+
+
+
+
+
+// Set vis theme for engines
+void Program::setLightVisTheme() {
+	backgroundColor = sf::Color::White;
+	titleColor = sf::Color::Black;
+	// --- MAKE SURE ALL DATA STRUCTURES ARE SET ---
+	visEngine_SLL.setVisTheme(VIS_THEME::LIGHT);
+	visEngine_Hash.setVisTheme(VIS_THEME::LIGHT);
+	visEngine_AVL.setVisTheme(VIS_THEME::LIGHT);
+	visEngine_Trie.setVisTheme(VIS_THEME::LIGHT);
+	visEngine_MSTPrim.setVisTheme(VIS_THEME::LIGHT);
+	visEngine_Dijkstra.setVisTheme(VIS_THEME::LIGHT);
+}
+
+void Program::setDarkVisTheme() {
+	backgroundColor = sf::Color(0x101010FF);
+	titleColor = sf::Color::White;
+	// --- MAKE SURE ALL DATA STRUCTURES ARE SET ---
+	visEngine_SLL.setVisTheme(VIS_THEME::DARK);
+	visEngine_Hash.setVisTheme(VIS_THEME::DARK);
+	visEngine_AVL.setVisTheme(VIS_THEME::DARK);
+	visEngine_Trie.setVisTheme(VIS_THEME::DARK);
+	visEngine_MSTPrim.setVisTheme(VIS_THEME::DARK);
+	visEngine_Dijkstra.setVisTheme(VIS_THEME::DARK);
+}
+
+void Program::refreshVisThemes() {
+	switch (currentVisTheme) {
+	case VIS_THEME::LIGHT:
+		setLightVisTheme();
+		break;
+	case VIS_THEME::DARK:
+		setDarkVisTheme();
+		break;
+	};
 }

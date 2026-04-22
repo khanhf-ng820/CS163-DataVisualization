@@ -3,6 +3,7 @@
 
 
 
+// ImGui Theme
 enum class APP_THEME : unsigned char {
 	LIGHT,
 	DARK,
@@ -10,7 +11,8 @@ enum class APP_THEME : unsigned char {
 };
 
 
-enum class SFML_THEME : unsigned char {
+// VisEngine Theme
+enum class VIS_THEME : unsigned char {
 	LIGHT,
 	DARK
 };

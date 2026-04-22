@@ -10,6 +10,7 @@
 #include <chrono>
 #include <random>
 
+#include "Themes/Themes.h"
 #include "sfLayout/sfLayout.h"
 #include "utils/readData.hpp"
 #include "utils/utils.h"
@@ -46,6 +47,9 @@ public:
 
 	// Reset all properties to get ready for visualize new action
 	void resetParams();
+
+	// Set vis theme
+	void setVisTheme(VIS_THEME visTheme);
 
 
 	// Keeps track of which node is dragged, set position of that node
@@ -92,6 +96,7 @@ public:
 
 
 
+private:
 	static constexpr sf::Vector2f originPosDisplacement = {0, 70};
 	sf::Vector2f originPos;
 	static constexpr sf::Vector2f newNodeStartPos       = {50, 50};
@@ -105,25 +110,24 @@ public:
 	static constexpr int          nodeHeightTextFontSize = 12;
 	static constexpr int          nodeInfoTextFontSize  = 12;
 	static constexpr float        nodeLayerSpacing      = 60;
-	static constexpr float        highlightCircleThickness = 5;
+	static constexpr float        highlightCircleThickness = 3.5;
 
 	static constexpr int          edgeWeightTextFontSize = 14;
 	static constexpr float        highlightEdgeThickness   = 3;
 	static constexpr float        arrowHeadSideLen      = 8;
 
-	static constexpr sf::Color    normalNodeColor         = sf::Color::Black;
-	static constexpr sf::Color    normalNodeKeyColor      = sf::Color::Blue;
-	static constexpr sf::Color    visitedNodeColor        = sf::Color(144, 238, 144, 255); // sf::Color(255, 116, 108, 102);
-	static constexpr sf::Color    draggedNodeColor        = sf::Color::Cyan;
-	static constexpr sf::Color    weightTextColor         = sf::Color::Red;
-	static constexpr sf::Color    nodeInfoTextColor       = sf::Color(6, 64, 43, 255);
-	static constexpr sf::Color    highlightCircleColor    = sf::Color::Blue;
-	static constexpr sf::Color    highlightFoundCircleColor = sf::Color::Red;
-	static constexpr sf::Color    highlightEdgeColor      = sf::Color::Blue;
-	static constexpr sf::Color    highlightCodeColor      = sf::Color::Green;
+	static inline    sf::Color    normalNodeColor         = sf::Color::Black;
+	static inline    sf::Color    normalNodeKeyColor      = sf::Color::Blue;
+	static inline    sf::Color    visitedNodeColor        = sf::Color(144, 238, 144, 255); // sf::Color(255, 116, 108, 102);
+	static inline    sf::Color    draggedNodeColor        = sf::Color::Cyan;
+	static inline    sf::Color    weightTextColor         = sf::Color::Red;
+	static inline    sf::Color    nodeInfoTextColor       = sf::Color(6, 64, 43, 255);
+	static inline    sf::Color    highlightCircleColor    = sf::Color::Blue;
+	static inline    sf::Color    highlightFoundCircleColor = sf::Color::Red;
+	static inline    sf::Color    highlightEdgeColor      = sf::Color::Blue;
+	static inline    sf::Color    highlightCodeColor      = sf::Color::Green;
 
 
-private:
 	void refreshOriginPos();
 
 	// Draw nodes: Iterate through graph and draw nodes
@@ -184,4 +188,33 @@ private:
 	void drawEdgeLine(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end);
 	void drawEdgeWeightText(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end, int weight);
 	void drawHighlightEdge(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end);
+
+
+
+
+	// Predefined colors for vis themes
+	static constexpr sf::Color lightNormalNodeColor         = sf::Color::Black;
+	static constexpr sf::Color lightNormalNodeKeyColor      = sf::Color::Blue;
+	static constexpr sf::Color lightVisitedNodeColor        = sf::Color(144, 238, 144, 255); // sf::Color(255, 116, 108, 102);
+	static constexpr sf::Color lightDraggedNodeColor        = sf::Color::Cyan;
+	static constexpr sf::Color lightWeightTextColor         = sf::Color::Red;
+	static constexpr sf::Color lightNodeInfoTextColor       = sf::Color(6, 64, 43, 255);
+	static constexpr sf::Color lightHighlightCircleColor    = sf::Color::Blue;
+	static constexpr sf::Color lightHighlightFoundCircleColor = sf::Color::Red;
+	static constexpr sf::Color lightHighlightEdgeColor      = sf::Color::Blue;
+	static constexpr sf::Color lightHighlightCodeColor      = sf::Color::Green;
+
+	static constexpr sf::Color darkNormalNodeColor         = sf::Color::White;
+	static constexpr sf::Color darkNormalNodeKeyColor      = sf::Color(0x90D5FFFF);
+	static constexpr sf::Color darkVisitedNodeColor        = sf::Color(0x06402BFF); // sf::Color(0x2E6F40FF);
+	static constexpr sf::Color darkDraggedNodeColor        = sf::Color(0x545555FF);
+	static constexpr sf::Color darkWeightTextColor         = sf::Color(0xFF746CFF);
+	static constexpr sf::Color darkNodeInfoTextColor       = sf::Color::Green;      //sf::Color(0x80EF80FF);
+	static constexpr sf::Color darkHighlightCircleColor    = sf::Color(0x3A5D9CFF);
+	static constexpr sf::Color darkHighlightFoundCircleColor = sf::Color(0xFF746CFF);
+	static constexpr sf::Color darkHighlightEdgeColor      = sf::Color(0x3A5D9CFF);
+	static constexpr sf::Color darkHighlightCodeColor      = sf::Color::Green;
+
+	void setLightVisTheme();
+	void setDarkVisTheme();
 };

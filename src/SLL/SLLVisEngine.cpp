@@ -90,12 +90,14 @@ void SLLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 	// Draw pHead
 	auto headBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
 	headBox->setFillColor(sf::Color::Transparent);
-	headBox->setOutlineColor(sf::Color::Black);
+	headBox->setOutlineColor(normalNodeColor);
 	headBox->setOutlineThickness(2.f);
 	headBox->setPosition(originPos + headPosDisplacement);
 	auto pHeadText = std::make_unique<sf::Text>(font, "pHead", valueFontSize);
-	pHeadText->setFillColor(sf::Color::Black);
-	pHeadText->setPosition(originPos + headPosDisplacement);
+	sf::FloatRect pHeadTextLocalBounds = pHeadText->getLocalBounds();
+	pHeadText->setOrigin({pHeadTextLocalBounds.position.x + pHeadTextLocalBounds.size.x / 2.f, pHeadTextLocalBounds.position.y + pHeadTextLocalBounds.size.y / 2.f});
+	pHeadText->setFillColor(normalNodeColor);
+	pHeadText->setPosition(originPos + headPosDisplacement + nodeValueRectSize / 2.f);
 	drawableList.push_back(std::move(headBox));
 	drawableList.push_back(std::move(pHeadText));
 
@@ -112,8 +114,8 @@ void SLLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 		auto bigNodeBox = std::make_unique<sf::RectangleShape>(nodeRectSize);
 		bigNodeBox->setFillColor(sf::Color::Transparent);
 		bigNodeBox->setOutlineColor(
-			// (cur == visCur && visCur == pSearch && time >= 1) ? sf::Color::Green : sf::Color::Black
-			(cur == pSearch) ? sf::Color::Green : sf::Color::Black
+			// (cur == visCur && visCur == pSearch && time >= 1) ? highlightFoundNodeColor : normalNodeColor
+			(cur == pSearch) ? highlightFoundNodeColor : normalNodeColor
 		);
 		bigNodeBox->setOutlineThickness(2.f);
 		bigNodeBox->setPosition(originPos 
@@ -123,8 +125,8 @@ void SLLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 		auto smallNodeBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
 		smallNodeBox->setFillColor(sf::Color::Transparent);
 		smallNodeBox->setOutlineColor(
-			// (cur == visCur && visCur == pSearch && time >= 1) ? sf::Color::Green : sf::Color::Black
-			(cur == pSearch) ? sf::Color::Green : sf::Color::Black
+			// (cur == visCur && visCur == pSearch && time >= 1) ? highlightFoundNodeColor : normalNodeColor
+			(cur == pSearch) ? highlightFoundNodeColor : normalNodeColor
 		);
 		smallNodeBox->setOutlineThickness(2.f);
 		smallNodeBox->setPosition(originPos 
@@ -137,7 +139,7 @@ void SLLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 		auto valueText = std::make_unique<sf::Text>(font, std::to_string(cur->val), valueFontSize);
 		sf::FloatRect localBounds = valueText->getLocalBounds();
 		valueText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
-		valueText->setFillColor(sf::Color::Black);
+		valueText->setFillColor(normalNodeColor);
 		valueText->setPosition(originPos 
 			+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 			+ nodeValueRectSize / 2.f
@@ -165,7 +167,7 @@ void SLLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 	// Draw null node
 	auto bigNullBox = std::make_unique<sf::RectangleShape>(nodeRectSize);
 	bigNullBox->setFillColor(sf::Color::Transparent);
-	bigNullBox->setOutlineColor(sf::Color::Black);
+	bigNullBox->setOutlineColor(normalNodeColor);
 	bigNullBox->setOutlineThickness(2.f);
 	bigNullBox->setPosition(originPos 
 		+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
@@ -175,16 +177,16 @@ void SLLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 	(*nullDiagonal)[0].position = originPos 
 		+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 		+ sf::Vector2f(nodeRectSize.x, 0.f);
-	(*nullDiagonal)[0].color    = sf::Color::Black;
+	(*nullDiagonal)[0].color    = nullDiagonalColor;
 	(*nullDiagonal)[1].position = originPos 
 		+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 		+ sf::Vector2f(0.f, nodeRectSize.y);
-	(*nullDiagonal)[1].color    = sf::Color::Black;
+	(*nullDiagonal)[1].color    = nullDiagonalColor;
 
 	auto nullText = std::make_unique<sf::Text>(font, "NULL", valueFontSize);
 	sf::FloatRect localBounds = nullText->getLocalBounds();
 	nullText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
-	nullText->setFillColor(sf::Color::Black);
+	nullText->setFillColor(normalNodeColor);
 	nullText->setPosition(originPos 
 		+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 		+ nodeRectSize / 2.f
@@ -202,12 +204,14 @@ void SLLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 	// Draw pHead
 	auto headBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
 	headBox->setFillColor(sf::Color::Transparent);
-	headBox->setOutlineColor(sf::Color::Black);
+	headBox->setOutlineColor(normalNodeColor);
 	headBox->setOutlineThickness(2.f);
 	headBox->setPosition(originPos + headPosDisplacement);
 	auto pHeadText = std::make_unique<sf::Text>(font, "pHead", valueFontSize);
-	pHeadText->setFillColor(sf::Color::Black);
-	pHeadText->setPosition(originPos + headPosDisplacement);
+	sf::FloatRect pHeadTextLocalBounds = pHeadText->getLocalBounds();
+	pHeadText->setOrigin({pHeadTextLocalBounds.position.x + pHeadTextLocalBounds.size.x / 2.f, pHeadTextLocalBounds.position.y + pHeadTextLocalBounds.size.y / 2.f});
+	pHeadText->setFillColor(normalNodeColor);
+	pHeadText->setPosition(originPos + headPosDisplacement + nodeValueRectSize / 2.f);
 
 	drawableList.push_back(std::move(headBox));
 	drawableList.push_back(std::move(pHeadText));
@@ -257,8 +261,8 @@ void SLLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 		auto bigNodeBox = std::make_unique<sf::RectangleShape>(nodeRectSize);
 		bigNodeBox->setFillColor(sf::Color::Transparent);
 		bigNodeBox->setOutlineColor(
-			// (cur == visCur && visCur == pSearch && time >= 1) ? sf::Color::Green : sf::Color::Black
-			(cur == pSearch) ? sf::Color::Green : sf::Color::Black
+			// (cur == visCur && visCur == pSearch && time >= 1) ? highlightFoundNodeColor : normalNodeColor
+			(cur == pSearch) ? highlightFoundNodeColor : normalNodeColor
 		);
 		bigNodeBox->setOutlineThickness(2.f);
 		bigNodeBox->setPosition(originPos 
@@ -270,8 +274,8 @@ void SLLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 		auto smallNodeBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
 		smallNodeBox->setFillColor(sf::Color::Transparent);
 		smallNodeBox->setOutlineColor(
-			// (cur == visCur && visCur == pSearch && time >= 1) ? sf::Color::Green : sf::Color::Black
-			(cur == pSearch) ? sf::Color::Green : sf::Color::Black
+			// (cur == visCur && visCur == pSearch && time >= 1) ? highlightFoundNodeColor : normalNodeColor
+			(cur == pSearch) ? highlightFoundNodeColor : normalNodeColor
 		);
 		smallNodeBox->setOutlineThickness(2.f);
 		smallNodeBox->setPosition(originPos 
@@ -283,7 +287,7 @@ void SLLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 		auto valueText = std::make_unique<sf::Text>(font, std::to_string(cur->val), valueFontSize);
 		sf::FloatRect localBounds = valueText->getLocalBounds();
 		valueText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
-		valueText->setFillColor(sf::Color::Black);
+		valueText->setFillColor(normalNodeColor);
 		valueText->setPosition(originPos 
 			+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 			+ nodeValueRectSize / 2.f
@@ -334,7 +338,7 @@ void SLLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 	// Draw null node
 	auto bigNullBox = std::make_unique<sf::RectangleShape>(nodeRectSize);
 	bigNullBox->setFillColor(sf::Color::Transparent);
-	bigNullBox->setOutlineColor(sf::Color::Black);
+	bigNullBox->setOutlineColor(normalNodeColor);
 	bigNullBox->setOutlineThickness(2.f);
 	bigNullBox->setPosition(originPos 
 		+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
@@ -348,18 +352,18 @@ void SLLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 		+ sf::Vector2f(nodeRectSize.x, 0.f)
 		// for INSERT mode
 		+ ((eventSLL.type == SLLAnimType::MOVE_NODES_INSERT_K || eventSLL.type == SLLAnimType::MOVE_NODES_INSERT_BEG) ? lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time)) : sf::Vector2f());
-	(*nullDiagonal)[0].color    = sf::Color::Black;
+	(*nullDiagonal)[0].color    = nullDiagonalColor;
 	(*nullDiagonal)[1].position = originPos 
 		+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 		+ sf::Vector2f(0.f, nodeRectSize.y)
 		// for INSERT mode
 		+ ((eventSLL.type == SLLAnimType::MOVE_NODES_INSERT_K || eventSLL.type == SLLAnimType::MOVE_NODES_INSERT_BEG) ? lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time)) : sf::Vector2f());
-	(*nullDiagonal)[1].color    = sf::Color::Black;
+	(*nullDiagonal)[1].color    = nullDiagonalColor;
 
 	auto nullText = std::make_unique<sf::Text>(font, "NULL", valueFontSize);
 	sf::FloatRect localBounds = nullText->getLocalBounds();
 	nullText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
-	nullText->setFillColor(sf::Color::Black);
+	nullText->setFillColor(normalNodeColor);
 	nullText->setPosition(originPos 
 		+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 		+ nodeRectSize / 2.f
@@ -375,7 +379,7 @@ void SLLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 	if (pInsert != nullptr && eventSLL.type != SLLAnimType::CREATE_CUR && eventSLL.type != SLLAnimType::MOVE_CUR_FORWARD) {
 		auto bigInsertBox = std::make_unique<sf::RectangleShape>(nodeRectSize);
 		bigInsertBox->setFillColor(sf::Color::Transparent);
-		bigInsertBox->setOutlineColor(sf::Color::Black);
+		bigInsertBox->setOutlineColor(normalNodeColor);
 		bigInsertBox->setOutlineThickness(2.f);
 		bigInsertBox->setPosition(originPos 
 			+ static_cast<float>(idxInsert) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
@@ -386,7 +390,7 @@ void SLLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 
 		auto smallInsertBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
 		smallInsertBox->setFillColor(sf::Color::Transparent);
-		smallInsertBox->setOutlineColor(sf::Color::Black);
+		smallInsertBox->setOutlineColor(normalNodeColor);
 		smallInsertBox->setOutlineThickness(2.f);
 		smallInsertBox->setPosition(originPos 
 			+ static_cast<float>(idxInsert) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
@@ -398,7 +402,7 @@ void SLLVisEngine::addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawab
 		auto valueTextInsert = std::make_unique<sf::Text>(font, std::to_string(pInsert->val), valueFontSize);
 		sf::FloatRect localBounds = valueTextInsert->getLocalBounds();
 		valueTextInsert->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
-		valueTextInsert->setFillColor(sf::Color::Black);
+		valueTextInsert->setFillColor(normalNodeColor);
 		valueTextInsert->setPosition(originPos 
 			+ static_cast<float>(idxInsert) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 			+ nodeValueRectSize / 2.f
@@ -477,12 +481,14 @@ void SLLVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawab
 	// Draw pHead
 	auto headBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
 	headBox->setFillColor(sf::Color::Transparent);
-	headBox->setOutlineColor(sf::Color::Black);
+	headBox->setOutlineColor(normalNodeColor);
 	headBox->setOutlineThickness(2.f);
 	headBox->setPosition(originPos + headPosDisplacement);
 	auto pHeadText = std::make_unique<sf::Text>(font, "pHead", valueFontSize);
-	pHeadText->setFillColor(sf::Color::Black);
-	pHeadText->setPosition(originPos + headPosDisplacement);
+	sf::FloatRect pHeadTextLocalBounds = pHeadText->getLocalBounds();
+	pHeadText->setOrigin({pHeadTextLocalBounds.position.x + pHeadTextLocalBounds.size.x / 2.f, pHeadTextLocalBounds.position.y + pHeadTextLocalBounds.size.y / 2.f});
+	pHeadText->setFillColor(normalNodeColor);
+	pHeadText->setPosition(originPos + headPosDisplacement + nodeValueRectSize / 2.f);
 
 	drawableList.push_back(std::move(headBox));
 	drawableList.push_back(std::move(pHeadText));
@@ -525,7 +531,7 @@ void SLLVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawab
 		auto bigNodeBox = std::make_unique<sf::RectangleShape>(nodeRectSize);
 		bigNodeBox->setFillColor(sf::Color::Transparent);
 		bigNodeBox->setOutlineColor(
-			(cur == pSearch) ? sf::Color::Green : sf::Color::Black
+			(cur == pSearch) ? highlightFoundNodeColor : normalNodeColor
 		);
 		bigNodeBox->setOutlineThickness(2.f);
 		bigNodeBox->setPosition(originPos 
@@ -538,7 +544,7 @@ void SLLVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawab
 		auto smallNodeBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
 		smallNodeBox->setFillColor(sf::Color::Transparent);
 		smallNodeBox->setOutlineColor(
-			(cur == pSearch) ? sf::Color::Green : sf::Color::Black
+			(cur == pSearch) ? highlightFoundNodeColor : normalNodeColor
 		);
 		smallNodeBox->setOutlineThickness(2.f);
 		smallNodeBox->setPosition(originPos 
@@ -551,7 +557,7 @@ void SLLVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawab
 		auto valueText = std::make_unique<sf::Text>(font, std::to_string(cur->val), valueFontSize);
 		sf::FloatRect localBounds = valueText->getLocalBounds();
 		valueText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
-		valueText->setFillColor(sf::Color::Black);
+		valueText->setFillColor(normalNodeColor);
 		valueText->setPosition(originPos 
 			+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 			+ nodeValueRectSize / 2.f
@@ -613,7 +619,7 @@ void SLLVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawab
 	// Draw null node
 	auto bigNullBox = std::make_unique<sf::RectangleShape>(nodeRectSize);
 	bigNullBox->setFillColor(sf::Color::Transparent);
-	bigNullBox->setOutlineColor(sf::Color::Black);
+	bigNullBox->setOutlineColor(normalNodeColor);
 	bigNullBox->setOutlineThickness(2.f);
 	bigNullBox->setPosition(originPos 
 		+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
@@ -631,7 +637,7 @@ void SLLVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawab
 		// + ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time)) : sf::Vector2f());
 		+ ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time))
 			: ((eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD || eventSLL.type == SLLAnimType::REMOVE_NODE) ? sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f) * -1.f : sf::Vector2f()));
-	(*nullDiagonal)[0].color    = sf::Color::Black;
+	(*nullDiagonal)[0].color    = nullDiagonalColor;
 	(*nullDiagonal)[1].position = originPos 
 		+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 		+ sf::Vector2f(0.f, nodeRectSize.y)
@@ -639,12 +645,12 @@ void SLLVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawab
 		// + ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time)) : sf::Vector2f());
 		+ ((eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_K || eventSLL.type == SLLAnimType::MOVE_NODES_REMOVE_BEG) ? -1.f * lerp(sf::Vector2f(), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time))
 			: ((eventSLL.type == SLLAnimType::CHANGE_LINK_OF_CUR || eventSLL.type == SLLAnimType::CHANGE_LINK_OF_HEAD || eventSLL.type == SLLAnimType::REMOVE_NODE) ? sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f) * -1.f : sf::Vector2f()));
-	(*nullDiagonal)[1].color    = sf::Color::Black;
+	(*nullDiagonal)[1].color    = nullDiagonalColor;
 
 	auto nullText = std::make_unique<sf::Text>(font, "NULL", valueFontSize);
 	sf::FloatRect localBounds = nullText->getLocalBounds();
 	nullText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
-	nullText->setFillColor(sf::Color::Black);
+	nullText->setFillColor(normalNodeColor);
 	nullText->setPosition(originPos 
 		+ static_cast<float>(index) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 		+ nodeRectSize / 2.f
@@ -662,7 +668,7 @@ void SLLVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawab
 	if (eventSLL.type != SLLAnimType::REMOVE_NODE) {
 		auto bigRemoveBox = std::make_unique<sf::RectangleShape>(nodeRectSize);
 		bigRemoveBox->setFillColor(sf::Color::Transparent);
-		bigRemoveBox->setOutlineColor(sf::Color::Black);
+		bigRemoveBox->setOutlineColor(normalNodeColor);
 		bigRemoveBox->setOutlineThickness(2.f);
 		bigRemoveBox->setPosition(originPos 
 			+ static_cast<float>(idxRemove) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
@@ -674,7 +680,7 @@ void SLLVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawab
 
 		auto smallRemoveBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
 		smallRemoveBox->setFillColor(sf::Color::Transparent);
-		smallRemoveBox->setOutlineColor(sf::Color::Black);
+		smallRemoveBox->setOutlineColor(normalNodeColor);
 		smallRemoveBox->setOutlineThickness(2.f);
 		smallRemoveBox->setPosition(originPos 
 			+ static_cast<float>(idxRemove) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
@@ -687,7 +693,7 @@ void SLLVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawab
 		auto valueTextRemove = std::make_unique<sf::Text>(font, std::to_string(oldRemoveVal), valueFontSize);
 		sf::FloatRect localBounds = valueTextRemove->getLocalBounds();
 		valueTextRemove->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
-		valueTextRemove->setFillColor(sf::Color::Black);
+		valueTextRemove->setFillColor(normalNodeColor);
 		valueTextRemove->setPosition(originPos 
 			+ static_cast<float>(idxRemove) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 			+ nodeValueRectSize / 2.f
@@ -848,12 +854,14 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 
 	// Display description for algorithm visualization
 	auto descriptionText = std::make_unique<sf::Text>(font, eventSLL.desc, descriptionFontSize);
-	descriptionText->setFillColor(sf::Color::Black);
+	descriptionText->setFillColor(normalNodeColor);
 	descriptionText->setPosition(descriptionTextPos);
 
 	// Display animation step
 	auto curBox = std::make_unique<sf::RectangleShape>(nodeValueRectSize);
 	auto pCurText = std::make_unique<sf::Text>(font, "pCur", valueFontSize);
+	sf::FloatRect pCurTextLocalBounds = pCurText->getLocalBounds();
+	pCurText->setOrigin({pCurTextLocalBounds.position.x + pCurTextLocalBounds.size.x / 2.f, pCurTextLocalBounds.position.y + pCurTextLocalBounds.size.y / 2.f});
 	switch (eventSLL.type) {
 	case SLLAnimType::NONE:
 		curBox->setPosition(originPos
@@ -861,7 +869,7 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 			// + static_cast<float>(visCurIndex) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 			+ static_cast<float>(eventSLL.curIndex) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 		);
-		pCurText->setPosition(curBox->getPosition());
+		pCurText->setPosition(curBox->getPosition() + nodeValueRectSize / 2.f);
 		break;
 	case SLLAnimType::CREATE_CUR:
 		visCur = pHead;
@@ -871,7 +879,7 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 			+ sf::Vector2f(0, 100)
 			+ static_cast<float>(eventSLL.curIndex) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 		);
-		pCurText->setPosition(curBox->getPosition());
+		pCurText->setPosition(curBox->getPosition() + nodeValueRectSize / 2.f);
 		break;
 	case SLLAnimType::MOVE_CUR_FORWARD:
 		curBox->setPosition(originPos
@@ -879,20 +887,20 @@ void SLLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 			+ static_cast<float>(eventSLL.curIndex) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 			+ lerp(sf::Vector2f(0, 0), sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f), fract(time))
 		);
-		pCurText->setPosition(curBox->getPosition());
+		pCurText->setPosition(curBox->getPosition() + nodeValueRectSize / 2.f);
 		break;
 	default:
 		curBox->setPosition(originPos
 			+ sf::Vector2f(0, 100)
 			+ static_cast<float>(eventSLL.curIndex) * sf::Vector2f(nodeRectSize.x + linkArrowLength, 0.f)
 		);
-		pCurText->setPosition(curBox->getPosition());
+		pCurText->setPosition(curBox->getPosition() + nodeValueRectSize / 2.f);
 		break;
 	}
 	curBox->setFillColor(sf::Color::Transparent);
-	curBox->setOutlineColor(sf::Color::Black);
+	curBox->setOutlineColor(normalNodeColor);
 	curBox->setOutlineThickness(2.f);
-	pCurText->setFillColor(sf::Color::Black);
+	pCurText->setFillColor(normalNodeColor);
 	// pCur arrow
 	drawArrow(drawableList,
 		curBox->getPosition() + sf::Vector2f(nodeValueRectSize.x/2, 0),
@@ -1016,18 +1024,44 @@ void SLLVisEngine::drawArrow(std::vector<std::unique_ptr<sf::Drawable>>& drawabl
 
 	auto arrowBody = std::make_unique<sf::VertexArray>(sf::PrimitiveType::Lines, 2);
 	(*arrowBody)[0].position = v1;
-	(*arrowBody)[0].color = sf::Color::Black;
+	(*arrowBody)[0].color = normalNodeColor;
 	(*arrowBody)[1].position = v2;
-	(*arrowBody)[1].color = sf::Color::Black;
+	(*arrowBody)[1].color = normalNodeColor;
 
 	auto arrowHead = std::make_unique<sf::VertexArray>(sf::PrimitiveType::Triangles, 3);
 	(*arrowHead)[0].position = v2;
-	(*arrowHead)[0].color = sf::Color::Black;
+	(*arrowHead)[0].color = normalNodeColor;
 	(*arrowHead)[1].position = sf::Vector2f(leftX, leftY);
-	(*arrowHead)[1].color = sf::Color::Black;
+	(*arrowHead)[1].color = normalNodeColor;
 	(*arrowHead)[2].position = sf::Vector2f(rightX, rightY);
-	(*arrowHead)[2].color = sf::Color::Black;
+	(*arrowHead)[2].color = normalNodeColor;
 
 	drawableList.push_back(std::move(arrowBody));
 	drawableList.push_back(std::move(arrowHead));
+}
+
+
+
+
+
+// Set vis themes
+void SLLVisEngine::setVisTheme(VIS_THEME visTheme) {
+	switch (visTheme) {
+	case VIS_THEME::LIGHT:
+		setLightVisTheme();
+		break;
+	case VIS_THEME::DARK:
+		setDarkVisTheme();
+		break;
+	}
+}
+void SLLVisEngine::setLightVisTheme() {
+	normalNodeColor = lightNormalNodeColor;
+	nullDiagonalColor = lightNullDiagonalColor;
+	highlightFoundNodeColor = lightHighlightFoundNodeColor;
+}
+void SLLVisEngine::setDarkVisTheme() {
+	normalNodeColor = darkNormalNodeColor;
+	nullDiagonalColor = darkNullDiagonalColor;
+	highlightFoundNodeColor = darkHighlightFoundNodeColor;
 }

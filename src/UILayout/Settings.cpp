@@ -138,9 +138,9 @@ void Program::displaySettingsMenuScreenGUI() {
 		std::cout << "-- Go to main menu." << std::endl;
 		resizeView();
 	}
+
 	ImGui::Separator();
 	ImGui::Text("Window resolution: ");
-
 	// ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(173.f/255, 216.f/255, 230.f/255, 1.f));
 	if (ImGui::BeginCombo("##resolution_combo", resolutionOptions[current_resolution_item])) { // Pass the "current" item name as the preview
 		for (int n = 0; n < IM_ARRAYSIZE(resolutionOptions); n++) {
@@ -160,7 +160,7 @@ void Program::displaySettingsMenuScreenGUI() {
 
 
 	ImGui::Separator();
-	ImGui::Text("Theme: ");
+	ImGui::Text("UI Theme: ");
 	if (ImGui::BeginCombo("##appTheme_combo", appThemeOptions[current_appTheme_item])) { // Pass the "current" item name as the preview
 		for (int n = 0; n < IM_ARRAYSIZE(appThemeOptions); n++) {
 			bool is_selected = (current_appTheme_item == n);
@@ -178,9 +178,28 @@ void Program::displaySettingsMenuScreenGUI() {
 
 
 	ImGui::Separator();
-	if (ImGui::Button("Apply Settings")) {
+	ImGui::Text("Visualization Theme: ");
+	if (ImGui::BeginCombo("##visTheme_combo", visThemeOptions[current_visTheme_item])) { // Pass the "current" item name as the preview
+		for (int n = 0; n < IM_ARRAYSIZE(visThemeOptions); n++) {
+			bool is_selected = (current_visTheme_item == n);
+			if (ImGui::Selectable(visThemeOptions[n], is_selected)) {
+				current_visTheme_item = n;
+			}
+
+			// Set the initial focus when opening the combo (scrolling + keyboard navigation)
+			if (is_selected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+
+	ImGui::Separator();
+	if (ImGui::Button("Apply All Settings")) {
 		window.setSize(resolutionVectors[current_resolution_item]);
 
+		// Setting app GUI theme
 		switch (appThemeVectors[current_appTheme_item]) {
 		case APP_THEME::LIGHT:
 			ImGui::StyleColorsLight(); // Light theme
@@ -192,6 +211,18 @@ void Program::displaySettingsMenuScreenGUI() {
 			ImGui::StyleColorsClassic(); // Purple theme
 			break;
 		}
+
+		// Setting vis engine theme
+		// switch (visThemeVectors[current_visTheme_item]) {
+		// case VIS_THEME::LIGHT: // Light theme
+		// 	currentVisTheme = VIS_THEME::LIGHT;
+		// 	break;
+		// case VIS_THEME::DARK: // Dark theme
+		// 	currentVisTheme = VIS_THEME::DARK;
+		// 	break;
+		// }
+		currentVisTheme = visThemeVectors[current_visTheme_item];
+		refreshVisThemes();
 	}
 	ImGui::End();
 }

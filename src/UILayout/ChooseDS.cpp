@@ -245,6 +245,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + Im_gui_window_size.x/2.f - textSize.x/2.f);
 	ImGui::Text("%s", titleText.c_str());
 
+
 	ImGui::BeginGroup();
 	// Data init method (empty, random, file, string)
 	static int dataInitOption = DATA_INIT_EMPTY; // State variable to hold the selected option's value
@@ -266,6 +267,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 	ImGui::RadioButton("Enter custom data", &dataInitOption, DATA_INIT_CUSTOM); // Value 2
 	ImGui::SameLine();
 	ImGui::RadioButton("Data from \".txt\" file", &dataInitOption, DATA_INIT_FROM_FILE); // Value 3
+
 
 	bool invalidDataCustom = false; // To print error messages when invalid data
 
