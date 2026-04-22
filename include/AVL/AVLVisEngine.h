@@ -121,7 +121,7 @@ private:
 	static inline sf::Color normalNodeHeightColor     = sf::Color(6, 64, 43, 255);
 	static inline sf::Color highlightCircleColor      = sf::Color::Green;
 	static inline sf::Color highlightFoundCircleColor = sf::Color::Red;
-	static inline sf::Color highlightCodeColor        = sf::Color::Green;
+	static inline sf::Color highlightCodeColor        = sf::Color(0x3CB371FF);
 
 
 	void refreshOriginPos();

@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <cctype>
 
+#include "Trie/const.h"
+
 
 
 static inline constexpr float EPSILON_TIME = 1e-6;
@@ -85,7 +87,7 @@ inline const bool isValidTrieChar(const char c) {
 	return isLowercaseAZChar(c);
 }
 inline const bool isValidTrieString(const std::string& str) {
-	return isLowercaseAZStr(str);
+	return isLowercaseAZStr(str) && str.size() >= TRIE_INIT_WORD_MIN_LENGTH && str.size() <= TRIE_INIT_WORD_MAX_LENGTH;
 }
 
 

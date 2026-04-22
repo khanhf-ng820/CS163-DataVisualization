@@ -11,9 +11,9 @@ bool GraphReader::validDataEdgeListFile(std::ifstream& ifile) {
 	std::map<std::pair<unsigned short int, unsigned short int>, unsigned short int> edgeList;
 
 	// Read number of vertices |V|
-	unsigned short int numVertices;
+	unsigned long long int numVertices;
 	if (ifile >> numVertices) {
-		if (numVertices > GRAPH_INIT_NUM_VERTICES_MAX) {
+		if (numVertices > GRAPH_INIT_NUM_VERTICES_MAX || ifile.fail() || ifile.bad()) {
 			ifile.clear(); // Cleanup
 			ifile.seekg(0, std::ios::beg);
 			return false;
@@ -25,7 +25,7 @@ bool GraphReader::validDataEdgeListFile(std::ifstream& ifile) {
 	}
 
 	// Read each edge
-	unsigned short int vertex1, vertex2, weight;
+	unsigned long long int vertex1, vertex2, weight;
 	bool read = false;
 	// unsigned int inputCount = 0;
 
@@ -38,8 +38,10 @@ bool GraphReader::validDataEdgeListFile(std::ifstream& ifile) {
 		// 	return false;
 		// }
 
-		// Weight must be > 0, vertex must be between 0 and numVertices
-		if (weight == 0 || vertex1 < 0 || vertex1 >= numVertices || vertex2 < 0 || vertex2 >= numVertices) {
+		// Weight must be > 0, <= USHRT_MAX
+		// Vertex must be between 0 and numVertices
+		if (weight == 0 || weight > USHRT_MAX || vertex1 < 0 || vertex1 >= numVertices || vertex2 < 0 || vertex2 >= numVertices
+			|| ifile.fail() || ifile.bad()) {
 			ifile.clear(); // Cleanup
 			ifile.seekg(0, std::ios::beg);
 			return false;
@@ -78,9 +80,9 @@ bool GraphReader::validDataEdgeListString(std::string& data) {
 	std::map<std::pair<unsigned short int, unsigned short int>, unsigned short int> edgeList;
 	
 	// Read number of vertices |V|
-	unsigned short int numVertices;
+	unsigned long long int numVertices;
 	if (iss >> numVertices) {
-		if (numVertices > GRAPH_INIT_NUM_VERTICES_MAX) {
+		if (numVertices > GRAPH_INIT_NUM_VERTICES_MAX || iss.fail() || iss.bad()) {
 			return false;
 		}
 	} else {
@@ -88,7 +90,7 @@ bool GraphReader::validDataEdgeListString(std::string& data) {
 	}
 
 	// Read each edge
-	unsigned short int vertex1, vertex2, weight;
+	unsigned long long int vertex1, vertex2, weight;
 	bool read = false;
 	// unsigned int inputCount = 0;
 
@@ -99,8 +101,10 @@ bool GraphReader::validDataEdgeListString(std::string& data) {
 		// 	return false;
 		// }
 
-		// Weight must be > 0, vertex must be between 0 and numVertices
-		if (weight == 0 || vertex1 < 0 || vertex1 >= numVertices || vertex2 < 0 || vertex2 >= numVertices) {
+		// Weight must be > 0, <= USHRT_MAX
+		// Vertex must be between 0 and numVertices
+		if (weight == 0 || weight > USHRT_MAX || vertex1 < 0 || vertex1 >= numVertices || vertex2 < 0 || vertex2 >= numVertices
+			|| iss.fail() || iss.bad()) {
 			return false;
 		}
 

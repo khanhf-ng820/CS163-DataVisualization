@@ -125,7 +125,7 @@ private:
 	static inline sf::Color normalNodeEOW_BGColor     = sf::Color(144, 238, 144, 127);
 	static inline sf::Color highlightCircleColor      = sf::Color::Green;
 	static inline sf::Color highlightFoundCircleColor = sf::Color::Red;
-	static inline sf::Color highlightCodeColor        = sf::Color::Green;
+	static inline sf::Color highlightCodeColor        = sf::Color(0x3CB371FF);
 
 
 	void initInputBuffers();

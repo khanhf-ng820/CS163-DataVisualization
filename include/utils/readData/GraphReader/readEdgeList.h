@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <climits>
 
 #include "utils/utils.h"
 #include "utils/readData/GraphReader/GraphInitMethod.h"

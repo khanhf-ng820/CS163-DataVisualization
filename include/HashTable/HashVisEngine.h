@@ -163,7 +163,7 @@ private:
 	static inline    sf::Color    normalSlotIndexColor    = sf::Color::Blue;
 	static inline    sf::Color    highlightSlotColor      = sf::Color::Red;
 	static inline    sf::Color    highlightFoundSlotColor = sf::Color::Green;
-	static constexpr ImVec4       highlightCodeColor      = {0.4f, 1.f, 0.f, 1.f};
+	static constexpr sf::Color    highlightCodeColor      = sf::Color(0x3CB371FF);	// {0.4f, 1.f, 0.f, 1.f};
 
 
 	int hashFunc(int key);

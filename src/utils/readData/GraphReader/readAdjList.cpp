@@ -11,10 +11,10 @@ bool GraphReader::validDataAdjListFile(std::ifstream& ifile) {
 	std::map<std::pair<unsigned short int, unsigned short int>, unsigned short int> edgeList;
 
 	std::string line;
-	unsigned short int numVertices;
+	unsigned long long int numVertices;
 	bool doneReadNumVertices = false;
 	bool read = false;
-	unsigned short int vertexIdx = 0; // Current vertex index
+	unsigned long long int vertexIdx = 0; // Current vertex index
 
 	while (std::getline(ifile, line)) {
 		std::istringstream iss(line);
@@ -22,7 +22,7 @@ bool GraphReader::validDataAdjListFile(std::ifstream& ifile) {
 		// Read number of vertices |V|
 		if (!doneReadNumVertices) {
 			if (iss >> numVertices) {
-				if (numVertices > GRAPH_INIT_NUM_VERTICES_MAX) {
+				if (numVertices > GRAPH_INIT_NUM_VERTICES_MAX || iss.fail() || iss.bad()) {
 					ifile.clear(); // Cleanup
 					ifile.seekg(0, std::ios::beg);
 					return false;
@@ -36,14 +36,15 @@ bool GraphReader::validDataAdjListFile(std::ifstream& ifile) {
 			read = true;
 		} else {
 		// Read edges (vertexTo, weight)
-			unsigned short int vertexTo, weight;
+			unsigned long long int vertexTo, weight;
 
 			// reads whitespace-separated numbers
 			while (iss >> vertexTo >> weight) {
 				read = true;
 
-				// Weight must be > 0, vertex must be between 0 and numVertices
-				if (weight == 0 || vertexTo < 0 || vertexTo >= numVertices) {
+				// Weight must be > 0, <= USHRT_MAX
+				// Vertex must be between 0 and numVertices
+				if (weight == 0 || weight > USHRT_MAX || vertexTo < 0 || vertexTo >= numVertices || iss.fail() || iss.bad()) {
 					ifile.clear(); // Cleanup
 					ifile.seekg(0, std::ios::beg);
 					return false;
@@ -87,10 +88,10 @@ bool GraphReader::validDataAdjListString(std::string& data) {
 	std::map<std::pair<unsigned short int, unsigned short int>, unsigned short int> edgeList;
 
 	std::string line;
-	unsigned short int numVertices;
+	unsigned long long int numVertices;
 	bool doneReadNumVertices = false;
 	bool read = false;
-	unsigned short int vertexIdx = 0; // Current vertex index
+	unsigned long long int vertexIdx = 0; // Current vertex index
 
 	while (std::getline(dataStream, line)) {
 		std::istringstream iss(line);
@@ -98,7 +99,7 @@ bool GraphReader::validDataAdjListString(std::string& data) {
 		// Read number of vertices |V|
 		if (!doneReadNumVertices) {
 			if (iss >> numVertices) {
-				if (numVertices > GRAPH_INIT_NUM_VERTICES_MAX) {
+				if (numVertices > GRAPH_INIT_NUM_VERTICES_MAX || iss.fail() || iss.bad()) {
 					return false;
 				}
 			} else {
@@ -108,14 +109,15 @@ bool GraphReader::validDataAdjListString(std::string& data) {
 			read = true;
 		} else {
 		// Read edges (vertexTo, weight)
-			unsigned short int vertexTo, weight;
+			unsigned long long int vertexTo, weight;
 
 			// reads whitespace-separated numbers
 			while (iss >> vertexTo >> weight) {
 				read = true;
 
-				// Weight must be > 0, vertex must be between 0 and numVertices
-				if (weight == 0 || vertexTo < 0 || vertexTo >= numVertices) {
+				// Weight must be > 0, <= USHRT_MAX
+				// Vertex must be between 0 and numVertices
+				if (weight == 0 || weight > USHRT_MAX || vertexTo < 0 || vertexTo >= numVertices || iss.fail() || iss.bad()) {
 					return false;
 				}
 
