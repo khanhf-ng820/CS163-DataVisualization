@@ -121,7 +121,8 @@ void Program::displaySettingsMenuScreenGUI() {
 
 
 
-	sf::Vector2u gui_window_size(400, 500);
+	// sf::Vector2u gui_window_size(400, 500);
+	sf::Vector2u gui_window_size(sfml_window_size.x / 2, sfml_window_size.y * 0.75f);
 	ImGui::SetNextWindowPos(sfml_window_size / 2U - gui_window_size / 2U);
 	ImGui::SetNextWindowSize(gui_window_size, ImGuiCond_Always);
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -133,14 +134,14 @@ void Program::displaySettingsMenuScreenGUI() {
 	);
 	ImGui::PopStyleColor();
 
-	if (ImGui::Button("Go back")) {
+	if (ImGui::Button("<- Go back")) {
 		programState = ProgramState::MAIN_MENU;
 		std::cout << "-- Go to main menu." << std::endl;
 		resizeView();
 	}
-	ImGui::Separator();
-	ImGui::Text("Window resolution: ");
 
+	ImGui::Separator();
+	ImGui::Text("Window resolution:");
 	// ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(173.f/255, 216.f/255, 230.f/255, 1.f));
 	if (ImGui::BeginCombo("##resolution_combo", resolutionOptions[current_resolution_item])) { // Pass the "current" item name as the preview
 		for (int n = 0; n < IM_ARRAYSIZE(resolutionOptions); n++) {
@@ -160,7 +161,7 @@ void Program::displaySettingsMenuScreenGUI() {
 
 
 	ImGui::Separator();
-	ImGui::Text("Theme: ");
+	ImGui::Text("GUI Theme:");
 	if (ImGui::BeginCombo("##appTheme_combo", appThemeOptions[current_appTheme_item])) { // Pass the "current" item name as the preview
 		for (int n = 0; n < IM_ARRAYSIZE(appThemeOptions); n++) {
 			bool is_selected = (current_appTheme_item == n);
@@ -178,9 +179,38 @@ void Program::displaySettingsMenuScreenGUI() {
 
 
 	ImGui::Separator();
-	if (ImGui::Button("Apply Settings")) {
+	ImGui::Text("GUI Font Size:");
+	static int ui_size_step = 1;
+	static float real_ui_scale = 1 + (ui_size_step - 1) * 0.25f;
+	if (ImGui::SliderInt("##UI Font Size", &ui_size_step, 1, 5)) {
+		real_ui_scale = 1 + (ui_size_step - 1) * 0.25f;
+	}
+
+
+	ImGui::Separator();
+	ImGui::Text("Visualization Theme: ");
+	if (ImGui::BeginCombo("##visTheme_combo", visThemeOptions[current_visTheme_item])) { // Pass the "current" item name as the preview
+		for (int n = 0; n < IM_ARRAYSIZE(visThemeOptions); n++) {
+			bool is_selected = (current_visTheme_item == n);
+			if (ImGui::Selectable(visThemeOptions[n], is_selected)) {
+				current_visTheme_item = n;
+			}
+
+			// Set the initial focus when opening the combo (scrolling + keyboard navigation)
+			if (is_selected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+
+
+	ImGui::Separator();
+	if (ImGui::Button("Apply All Settings")) {
 		window.setSize(resolutionVectors[current_resolution_item]);
 
+		// Setting app GUI theme
 		switch (appThemeVectors[current_appTheme_item]) {
 		case APP_THEME::LIGHT:
 			ImGui::StyleColorsLight(); // Light theme
@@ -192,7 +222,40 @@ void Program::displaySettingsMenuScreenGUI() {
 			ImGui::StyleColorsClassic(); // Purple theme
 			break;
 		}
+
+		// Setting vis engine theme
+		// switch (visThemeVectors[current_visTheme_item]) {
+		// case VIS_THEME::LIGHT: // Light theme
+		// 	currentVisTheme = VIS_THEME::LIGHT;
+		// 	break;
+		// case VIS_THEME::DARK: // Dark theme
+		// 	currentVisTheme = VIS_THEME::DARK;
+		// 	break;
+		// }
+		currentVisTheme = visThemeVectors[current_visTheme_item];
+		refreshVisThemes();
+
+		// Set UI font size
+		// ioPtr->FontGlobalScale = real_ui_scale;
+		ioPtr->Fonts->Clear();
+		ioPtr->Fonts->AddFontFromFileTTF((fs::path(ASSET_DIR) / "Roboto/Roboto-VariableFont_wdth,wght.ttf").string().c_str(),
+			UI_FONT_SIZE * real_ui_scale);
+
+		// IMPORTANT for imgui-sfml: Re-create the font texture
+		ImGui::SFML::UpdateFontTexture();
+		// Scale all UI elements (paddings, spacing) to match
+		// ImGui::GetStyle().ScaleAllSizes(real_ui_scale);
+
+
+
+		// Set size for SFML text in default view
+		// auto sfmlText = static_cast<sf::Text*>(sfDrawables[ProgramState::MAIN_MENU]->drawables[0].get());
+		// sf::FloatRect bounds = titleText->getLocalBounds();
+		// sfmlText->setSize(sf::Vector2f(window.getSize()));
+		// sfmlText->setOrigin(sf::Vector2f(window.getSize()) / 2.f); // origin at center
 	}
+
+
 	ImGui::End();
 }
 

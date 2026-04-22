@@ -5,14 +5,16 @@
 
 AVLVisEngine::AVLVisEngine(sf::RenderWindow* window, sf::Font* font)
 	: windowPtr(window), fontPtr(font)
+	// , normalWindowSize(window->getSize())
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {}
 
 AVLVisEngine::AVLVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font)
 	: windowPtr(window), fontPtr(font)
+	// , normalWindowSize(window->getSize())
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {
-	std::uniform_int_distribution<unsigned int> size_distrib(AVL_INIT_MIN_SIZE, AVL_INIT_MAX_SIZE);
+	std::uniform_int_distribution<unsigned int> size_distrib(AVL_INIT_RANDOM_MIN_SIZE, AVL_INIT_RANDOM_MAX_SIZE);
 	std::uniform_int_distribution<int> key_distrib(AVL_RANDOM_DISTRIB_KEY_MIN, AVL_RANDOM_DISTRIB_KEY_MAX);
 
 	unsigned int initTreeSize = size_distrib(rng);
@@ -24,6 +26,7 @@ AVLVisEngine::AVLVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font
 
 AVLVisEngine::AVLVisEngine(std::vector<int>& numbers, sf::RenderWindow* window, sf::Font* font)
 	: windowPtr(window), fontPtr(font)
+	// , normalWindowSize(window->getSize())
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {
 	for (const int& initKey : numbers) {
@@ -712,7 +715,7 @@ void AVLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 
 	// Display description for algorithm visualization
 	auto descriptionText = std::make_unique<sf::Text>(*fontPtr, eventAVL.description, descriptionFontSize);
-	descriptionText->setFillColor(sf::Color::Black);
+	descriptionText->setFillColor(normalNodeColor);
 	descriptionText->setPosition(descriptionTextPos);
 	descriptionText->setPosition(round(descriptionText->getPosition()));
 
@@ -737,13 +740,18 @@ void AVLVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& d
 // Uses inorder positioning
 void AVLVisEngine::generateAllVisNodePos(std::map<int, VisualAVLNode>& visualNodes, LogicAVLTree& logicTree) {
 	generateAllVisNodePosHelper(visualNodes, logicTree, logicTree.root);
+	// Center the tree horizontally
+	float avgPosX = 0;
+	for (const auto& [key, visNode] : visualNodes) avgPosX += visNode.position.x;
+	avgPosX /= visualNodes.size();
+	for (auto& [key, visNode] : visualNodes) visNode.position.x -= avgPosX;
 }
 
 void AVLVisEngine::generateAllVisNodePosHelper(std::map<int, VisualAVLNode>& visualNodes, LogicAVLTree& logicTree, LogicAVLNode* root) {
 	visualNodes.clear();
 	unsigned int size = logicTree.getSize();
 	float xPos = canvasLeftMargin;
-	float dx = (windowPtr->getSize().x - 2 * canvasLeftMargin) / (size > 1 ? size-1 : 1);
+	float dx = (normalWindowSize.x - 2 * canvasLeftMargin) / (size > 1 ? size-1 : 1);
 	int layerY = 0;
 	// Prevent nodes overlapping
 	if (dx < 2 * nodeCircleRadius) dx = 2 * nodeCircleRadius;
@@ -912,12 +920,21 @@ void AVLVisEngine::drawLerpTreeInsertNode(std::vector<std::unique_ptr<sf::Drawab
 void AVLVisEngine::drawLerpTreeDeleteNode(std::vector<std::unique_ptr<sf::Drawable>>& drawableList,
 	std::map<int, VisualAVLNode>& visualNodes1, LogicAVLTree& logicTree1,
 	std::map<int, VisualAVLNode>& visualNodes2, LogicAVLTree& logicTree2) {
+	// visualNodes1, logicTree1 is before node deletion;
+	// visualNodes2, logicTree2 is after node deletion
 	LogicAVLTree logicTreeBefore = logicTree2;
 	std::map<int, VisualAVLNode> visualNodesBefore = visualNodes2;
 	for (const auto& [key, visNode1] : visualNodes1) {
 		if (key != keyToRemove)
 			visualNodesBefore[key].position = visNode1.position;
 	}
+
+	// FIX: minSucc node should simply be deleted, instead of lerping to the place of the node to delete
+	// std::cerr << "logicTree2.minSuccKey = " << logicTree2.minSuccKey <<std::endl; // DEBUG
+	if (visualNodesBefore.count(logicTree2.minSuccKey) && visualNodes1.count(keyToRemove)) {
+		visualNodesBefore[logicTree2.minSuccKey].position = visualNodes1[keyToRemove].position;
+	}
+
 	// visualNodesBefore[keyToRemove].position = originPos + newNodeStartPos;
 	drawLerpTree(drawableList, visualNodesBefore, logicTreeBefore, visualNodes2, logicTree2);
 }
@@ -948,17 +965,17 @@ void AVLVisEngine::drawNodeArrow(std::vector<std::unique_ptr<sf::Drawable>>& dra
 
 	auto arrowBody = std::make_unique<sf::VertexArray>(sf::PrimitiveType::Lines, 2);
 	(*arrowBody)[0].position = start;
-	(*arrowBody)[0].color = sf::Color::Black;
+	(*arrowBody)[0].color = normalNodeColor;
 	(*arrowBody)[1].position = end;
-	(*arrowBody)[1].color = sf::Color::Black;
+	(*arrowBody)[1].color = normalNodeColor;
 
 	auto arrowHead = std::make_unique<sf::VertexArray>(sf::PrimitiveType::Triangles, 3);
 	(*arrowHead)[0].position = end;
-	(*arrowHead)[0].color = sf::Color::Black;
+	(*arrowHead)[0].color = normalNodeColor;
 	(*arrowHead)[1].position = sf::Vector2f(leftX, leftY);
-	(*arrowHead)[1].color = sf::Color::Black;
+	(*arrowHead)[1].color = normalNodeColor;
 	(*arrowHead)[2].position = sf::Vector2f(rightX, rightY);
-	(*arrowHead)[2].color = sf::Color::Black;
+	(*arrowHead)[2].color = normalNodeColor;
 
 	drawableList.push_back(std::move(arrowBody));
 	drawableList.push_back(std::move(arrowHead));
@@ -967,5 +984,32 @@ void AVLVisEngine::drawNodeArrow(std::vector<std::unique_ptr<sf::Drawable>>& dra
 
 
 void AVLVisEngine::refreshOriginPos() {
-	originPos = originPosDisplacement - sf::Vector2f(windowPtr->getSize()) / 2.f;
+	originPos = originPosDisplacement - sf::Vector2f(normalWindowSize) / 2.f;
+}
+
+
+// Set vis themes
+void AVLVisEngine::setVisTheme(VIS_THEME visTheme) {
+	switch (visTheme) {
+	case VIS_THEME::LIGHT:
+		setLightVisTheme();
+		break;
+	case VIS_THEME::DARK:
+		setDarkVisTheme();
+		break;
+	}
+}
+void AVLVisEngine::setLightVisTheme() {
+	normalNodeColor           = lightNormalNodeColor;
+	normalNodeKeyColor        = lightNormalNodeKeyColor;
+	normalNodeHeightColor     = lightNormalNodeHeightColor;
+	highlightCircleColor      = lightHighlightCircleColor;
+	highlightFoundCircleColor = lightHighlightFoundCircleColor;
+}
+void AVLVisEngine::setDarkVisTheme() {
+	normalNodeColor           = darkNormalNodeColor;
+	normalNodeKeyColor        = darkNormalNodeKeyColor;
+	normalNodeHeightColor     = darkNormalNodeHeightColor;
+	highlightCircleColor      = darkHighlightCircleColor;
+	highlightFoundCircleColor = darkHighlightFoundCircleColor;
 }

@@ -417,7 +417,7 @@ void PrimVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 
 	// Display description for algorithm visualization
 	auto descriptionText = std::make_unique<sf::Text>(*fontPtr, eventPrim.description, descriptionFontSize);
-	descriptionText->setFillColor(sf::Color::Black);
+	descriptionText->setFillColor(normalNodeColor);
 	descriptionText->setPosition(descriptionTextPos);
 	descriptionText->setPosition(round(descriptionText->getPosition()));
 
@@ -670,17 +670,17 @@ void PrimVisEngine::drawEdgeLine(std::vector<std::unique_ptr<sf::Drawable>>& dra
 
 	auto arrowBody = std::make_unique<sf::VertexArray>(sf::PrimitiveType::Lines, 2);
 	(*arrowBody)[0].position = start;
-	(*arrowBody)[0].color = sf::Color::Black;
+	(*arrowBody)[0].color = normalNodeColor;
 	(*arrowBody)[1].position = end;
-	(*arrowBody)[1].color = sf::Color::Black;
+	(*arrowBody)[1].color = normalNodeColor;
 
 	// auto arrowHead = std::make_unique<sf::VertexArray>(sf::PrimitiveType::Triangles, 3);
 	// (*arrowHead)[0].position = end;
-	// (*arrowHead)[0].color = sf::Color::Black;
+	// (*arrowHead)[0].color = normalNodeColor;
 	// (*arrowHead)[1].position = sf::Vector2f(leftX, leftY);
-	// (*arrowHead)[1].color = sf::Color::Black;
+	// (*arrowHead)[1].color = normalNodeColor;
 	// (*arrowHead)[2].position = sf::Vector2f(rightX, rightY);
-	// (*arrowHead)[2].color = sf::Color::Black;
+	// (*arrowHead)[2].color = normalNodeColor;
 
 	drawableList.push_back(std::move(arrowBody));
 	// drawableList.push_back(std::move(arrowHead));
@@ -736,4 +736,46 @@ void PrimVisEngine::drawHighlightEdge(std::vector<std::unique_ptr<sf::Drawable>>
 
 void PrimVisEngine::refreshOriginPos() {
 	originPos = originPosDisplacement - sf::Vector2f(windowPtr->getSize()) / 2.f;
+}
+
+
+
+
+
+// Set vis themes
+void PrimVisEngine::setVisTheme(VIS_THEME visTheme) {
+	switch (visTheme) {
+	case VIS_THEME::LIGHT:
+		setLightVisTheme();
+		break;
+	case VIS_THEME::DARK:
+		setDarkVisTheme();
+		break;
+	}
+}
+void PrimVisEngine::setLightVisTheme() {
+	normalNodeColor           = lightNormalNodeColor;
+	normalNodeKeyColor        = lightNormalNodeKeyColor;
+	visitedNodeColor          = lightVisitedNodeColor;
+	draggedNodeColor          = lightDraggedNodeColor;
+	weightTextColor           = lightWeightTextColor;
+	nodeInfoTextColor         = lightNodeInfoTextColor;
+	highlightCircleColor      = lightHighlightCircleColor;
+	highlightFoundCircleColor = lightHighlightFoundCircleColor;
+	highlightEdgeColor        = lightHighlightEdgeColor;
+	highlightEdgeInMSTColor   = lightHighlightEdgeInMSTColor;
+	highlightCodeColor        = lightHighlightCodeColor;
+}
+void PrimVisEngine::setDarkVisTheme() {
+	normalNodeColor           = darkNormalNodeColor;
+	normalNodeKeyColor        = darkNormalNodeKeyColor;
+	visitedNodeColor          = darkVisitedNodeColor;
+	draggedNodeColor          = darkDraggedNodeColor;
+	weightTextColor           = darkWeightTextColor;
+	nodeInfoTextColor         = darkNodeInfoTextColor;
+	highlightCircleColor      = darkHighlightCircleColor;
+	highlightFoundCircleColor = darkHighlightFoundCircleColor;
+	highlightEdgeColor        = darkHighlightEdgeColor;
+	highlightEdgeInMSTColor   = darkHighlightEdgeInMSTColor;
+	highlightCodeColor        = darkHighlightCodeColor;
 }

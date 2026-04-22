@@ -10,6 +10,7 @@
 #include <chrono>
 #include <random>
 
+#include "Themes/Themes.h"
 #include "sfLayout/sfLayout.h"
 #include "utils/readData.hpp"
 #include "utils/utils.h"
@@ -42,6 +43,9 @@ public:
 	// Reset all properties to get ready for visualize new action
 	void resetParams();
 
+	// Set vis theme
+	void setVisTheme(VIS_THEME visTheme);
+
 	// Draw nodes: Iterate through linked list and draw nodes
 	void addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, TrieAnimStep eventTrie);
 	void addNodeDrawablesInsert(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, TrieAnimStep eventTrie);
@@ -55,6 +59,7 @@ public:
 
 	sf::RenderWindow* windowPtr;
 	sf::Font* fontPtr;
+	sf::Vector2f normalWindowSize = {800.f, 600.f}; // Window size before rescaling window
 
 	TrieVisMode visMode = TrieVisMode::NONE;
 	std::vector<TrieAnimStep> eventList;
@@ -99,6 +104,7 @@ public:
 
 
 
+private:
 	static constexpr sf::Vector2f originPosDisplacement = {0, 70};
 	sf::Vector2f originPos;
 	static constexpr sf::Vector2f newNodeStartPos       = {50, 50};
@@ -109,19 +115,19 @@ public:
 	static constexpr int          nodeKeyTextFontSize   = 15;
 	static constexpr int          nodeHeightTextFontSize = 12;
 	static constexpr float        nodeLayerSpacing      = 60;
-	static constexpr float        highlightCircleThickness = 5;
+	static constexpr float        highlightCircleThickness = 3.5;
 	static constexpr float        arrowHeadSideLen      = 8;
 	static constexpr float        canvasLeftMargin      = 100;
 
-	static constexpr sf::Color    normalNodeColor         = sf::Color::Black;
-	static constexpr sf::Color    normalNodeKeyColor      = sf::Color::Blue;
-	static constexpr sf::Color    normalNodeEOW_BGColor   = sf::Color(144, 238, 144, 127);
-	static constexpr sf::Color    highlightCircleColor    = sf::Color::Green;
-	static constexpr sf::Color    highlightFoundCircleColor = sf::Color::Red;
-	static constexpr sf::Color    highlightCodeColor      = sf::Color::Green;
+	static inline sf::Color normalNodeColor           = sf::Color::Black;
+	static inline sf::Color normalNodeKeyColor        = sf::Color::Blue;
+	static inline sf::Color normalNodeArrowColor      = sf::Color(0x00000080);
+	static inline sf::Color normalNodeEOW_BGColor     = sf::Color(144, 238, 144, 127);
+	static inline sf::Color highlightCircleColor      = sf::Color::Green;
+	static inline sf::Color highlightFoundCircleColor = sf::Color::Red;
+	static inline sf::Color highlightCodeColor        = sf::Color::Green;
 
 
-private:
 	void initInputBuffers();
 	void refreshOriginPos();
 	// Helper algorithm functions
@@ -169,4 +175,25 @@ private:
 
 	// Helper drawing functions
 	void drawNodeArrow(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, sf::Vector2f start, sf::Vector2f end);
+
+
+
+
+	// Predefined colors for vis themes
+	static constexpr sf::Color lightNormalNodeColor           = sf::Color::Black;
+	static constexpr sf::Color lightNormalNodeKeyColor        = sf::Color::Blue;
+	static constexpr sf::Color lightNormalNodeArrowColor      = sf::Color(0x00000080);
+	static constexpr sf::Color lightNormalNodeEOW_BGColor     = sf::Color(144, 238, 144, 127);
+	static constexpr sf::Color lightHighlightCircleColor      = sf::Color::Green;
+	static constexpr sf::Color lightHighlightFoundCircleColor = sf::Color::Red;
+
+	static constexpr sf::Color darkNormalNodeColor           = sf::Color::White;
+	static constexpr sf::Color darkNormalNodeKeyColor        = sf::Color(0x90D5FFFF);
+	static constexpr sf::Color darkNormalNodeArrowColor      = sf::Color(0xFFFFFF80);
+	static constexpr sf::Color darkNormalNodeEOW_BGColor     = sf::Color(144, 238, 144, 127);
+	static constexpr sf::Color darkHighlightCircleColor      = sf::Color::Green;
+	static constexpr sf::Color darkHighlightFoundCircleColor = sf::Color::Red;
+
+	void setLightVisTheme();
+	void setDarkVisTheme();
 };

@@ -179,7 +179,8 @@ void Program::displayChooseDSMenuScreenGUI() {
 
 
 
-	sf::Vector2u gui_window_size(640, 500);
+	// sf::Vector2u gui_window_size(640, 500);
+	sf::Vector2u gui_window_size(sfml_window_size.x * 0.8f, sfml_window_size.y * 0.75f);
 	ImVec2 Im_gui_window_size = sf::Vector2f(gui_window_size);
 	ImGui::SetNextWindowPos(sfml_window_size / 2U - gui_window_size / 2U);
 	ImGui::SetNextWindowSize(gui_window_size, ImGuiCond_Always);
@@ -245,19 +246,29 @@ void Program::displayChooseDSMenuScreenGUI() {
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + Im_gui_window_size.x/2.f - textSize.x/2.f);
 	ImGui::Text("%s", titleText.c_str());
 
+
 	ImGui::BeginGroup();
 	// Data init method (empty, random, file, string)
 	static int dataInitOption = DATA_INIT_EMPTY; // State variable to hold the selected option's value
 	// Graph data init method
 	static GraphReader::GraphInitMethod graphInitOption = GraphReader::GraphInitMethod::ADJ_MATRIX; // State variable to hold the selected option's value
 
-	ImGui::RadioButton("Empty data", &dataInitOption, DATA_INIT_EMPTY); // Value 0
-	ImGui::SameLine();
+	// FIX: No "Empty data" initialization option for graphs
+	switch (chosenDSType) {
+	case DSType::MST_PRIM_GRAPH:
+	case DSType::DIJKSTRA_GRAPH:
+		if (dataInitOption == DATA_INIT_EMPTY) dataInitOption = DATA_INIT_RANDOMIZED;
+		break;
+	default:
+		ImGui::RadioButton("Empty data", &dataInitOption, DATA_INIT_EMPTY); // Value 0
+		ImGui::SameLine();
+	}
 	ImGui::RadioButton("Randomized data", &dataInitOption, DATA_INIT_RANDOMIZED); // Value 1
 	ImGui::SameLine();
 	ImGui::RadioButton("Enter custom data", &dataInitOption, DATA_INIT_CUSTOM); // Value 2
 	ImGui::SameLine();
 	ImGui::RadioButton("Data from \".txt\" file", &dataInitOption, DATA_INIT_FROM_FILE); // Value 3
+
 
 	bool invalidDataCustom = false; // To print error messages when invalid data
 
