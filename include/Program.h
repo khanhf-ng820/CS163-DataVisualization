@@ -128,6 +128,7 @@ private:
 	const unsigned int FRAMERATE_LIMIT = 60;
 	const sf::Vector2u MINIMUM_WINDOW_SIZE = {800U, 600U};
 	const float SCALING_FACTOR = 1.1; // When zooming
+	const float UI_FONT_SIZE = 16.f; // Before scaling
 
 	// SFML global vars
 	sf::RenderWindow window;

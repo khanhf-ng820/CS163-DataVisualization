@@ -33,6 +33,12 @@ Program::Program()
 	ImGuiStyle& style = ImGui::GetStyle();
 	ioPtr = &io;
 	stylePtr = &style;
+	// -- Font and font size for UI
+	ioPtr->Fonts->Clear();
+	ioPtr->Fonts->AddFontFromFileTTF((fs::path(ASSET_DIR) / "Roboto/Roboto-VariableFont_wdth,wght.ttf").string().c_str(),
+		UI_FONT_SIZE);
+	// IMPORTANT for imgui-sfml: Re-create the font texture
+	ImGui::SFML::UpdateFontTexture();
 	// -- Modify the window background color (RGB alpha)
 	// style.Colors[ImGuiCol_WindowBg] = ImVec4(0.6f, 0.4f, 0.6f, 0.9f);
 	// style.Colors[ImGuiCol_WindowBg] = ImVec4(173.f/255, 216.f/255, 230.f/255, 0.6f);

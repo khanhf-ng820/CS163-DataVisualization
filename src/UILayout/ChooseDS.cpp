@@ -179,7 +179,8 @@ void Program::displayChooseDSMenuScreenGUI() {
 
 
 
-	sf::Vector2u gui_window_size(640, 500);
+	// sf::Vector2u gui_window_size(640, 500);
+	sf::Vector2u gui_window_size(sfml_window_size.x * 0.8f, sfml_window_size.y * 0.75f);
 	ImVec2 Im_gui_window_size = sf::Vector2f(gui_window_size);
 	ImGui::SetNextWindowPos(sfml_window_size / 2U - gui_window_size / 2U);
 	ImGui::SetNextWindowSize(gui_window_size, ImGuiCond_Always);

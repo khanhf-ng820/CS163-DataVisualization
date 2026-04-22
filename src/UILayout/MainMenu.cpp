@@ -80,7 +80,7 @@ void Program::displayMainMenuScreenSFML() {
 	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(shape));
 	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(rectangle));
 	// Border for normal aspect ratio
-	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(border));
+	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(border));
 	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(splitCircle));
 	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(cornerBox));
 	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(titleText));
@@ -137,6 +137,10 @@ void Program::displayMainMenuScreenGUI() {
 	// ImGui::End();
 
 
+	// Set WindowPadding to 0,0 before starting the window
+	// ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+
 	sf::Vector2u btnSize, btnPosition;
 	btnSize = sf::Vector2u(120, 40);
 	btnPosition = sfml_window_size / 2U;
@@ -148,6 +152,7 @@ void Program::displayMainMenuScreenGUI() {
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
 		// ImGuiWindowFlags_NoBackground |
+		ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoScrollbar
 	);
 
@@ -169,6 +174,7 @@ void Program::displayMainMenuScreenGUI() {
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
 		// ImGuiWindowFlags_NoBackground |
+		ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoScrollbar
 	);
 
@@ -189,6 +195,7 @@ void Program::displayMainMenuScreenGUI() {
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
 		// ImGuiWindowFlags_NoBackground |
+		ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoScrollbar
 	);
 
@@ -197,6 +204,9 @@ void Program::displayMainMenuScreenGUI() {
 		window.close();
 	}
 	ImGui::End();
+
+
+	// ImGui::PopStyleVar();
 }
 
 
