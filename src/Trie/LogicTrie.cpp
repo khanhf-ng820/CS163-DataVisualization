@@ -52,6 +52,9 @@ LogicTrieNode* LogicTrie::newNode(char c, bool isEndOfWord) {
 unsigned int LogicTrie::getSize() {
 	return getSizeHelper(root);
 }
+unsigned int LogicTrie::getNumWords() {
+	return getNumWordsHelper(root);
+}
 
 unsigned int LogicTrie::countLeaf() {
 	unsigned int totalCnt = 0;
@@ -300,9 +303,17 @@ LogicTrieNode* LogicTrie::copyTree(const LogicTrieNode* node) {
 
 unsigned int LogicTrie::getSizeHelper(LogicTrieNode* node) {
 	if (!node) return 0;
-	unsigned int totalSize = 1U;
+	unsigned int totalSize = 1;
 	for (int i = 0; i < TRIE_ALPHABET_SIZE; i++) {
 		totalSize += getSizeHelper(node->children[i]);
+	}
+	return totalSize;
+}
+unsigned int LogicTrie::getNumWordsHelper(LogicTrieNode* node) {
+	if (!node) return 0;
+	unsigned int totalSize = node->isEndOfWord;
+	for (int i = 0; i < TRIE_ALPHABET_SIZE; i++) {
+		totalSize += getNumWordsHelper(node->children[i]);
 	}
 	return totalSize;
 }

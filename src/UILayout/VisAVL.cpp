@@ -207,7 +207,7 @@ void Program::displayVisAVLScreenGUI() {
 
 	// -- SEARCH OPERATION --
 	ImGui::BeginDisabled(visEngine_AVL.animInProgress);
-	ImGui::Text("Enter key of slot to search:");
+	ImGui::Text("Enter key to search:");
 	ImGui::InputInt("Key to search", &visEngine_AVL.keyToSearchInput);
 	// float f;
 	// ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
@@ -252,7 +252,7 @@ void Program::displayVisAVLScreenGUI() {
 
 	// -- REMOVE OPERATION --
 	ImGui::BeginDisabled(visEngine_AVL.animInProgress);
-	ImGui::Text("Enter key of slot to remove:");
+	ImGui::Text("Enter key to remove:");
 	ImGui::InputInt("Key to remove", &visEngine_AVL.keyToRemoveInput);
 
 	if (ImGui::Button("Remove")) {
