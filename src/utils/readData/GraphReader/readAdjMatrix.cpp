@@ -10,14 +10,15 @@ bool GraphReader::validDataAdjMatFile(std::ifstream& ifile) {
 
 	std::vector<unsigned short int> weights;
 
-	unsigned short int weight;
+	unsigned long long int weight;
 	bool read = false;
 	unsigned int inputCount = 0;
 
 	while (ifile >> weight) {
 		read = true; // Successfully read an int
 		inputCount++;
-		if (inputCount > GRAPH_INIT_NUM_VERTICES_MAX * GRAPH_INIT_NUM_VERTICES_MAX) {
+		if (inputCount > GRAPH_INIT_NUM_VERTICES_MAX * GRAPH_INIT_NUM_VERTICES_MAX
+			|| weight > USHRT_MAX || ifile.fail() || ifile.bad()) {
 			ifile.clear(); // Cleanup
 			ifile.seekg(0, std::ios::beg);
 			return false;
@@ -54,14 +55,15 @@ bool GraphReader::validDataAdjMatString(std::string& data) {
 
 	std::vector<unsigned short int> weights;
 
-	unsigned short int weight;
+	unsigned long long int weight;
 	bool read = false;
 	unsigned int inputCount = 0;
 
 	while (iss >> weight) {
 		read = true;
 		inputCount++;
-		if (inputCount > GRAPH_INIT_NUM_VERTICES_MAX * GRAPH_INIT_NUM_VERTICES_MAX) {
+		if (inputCount > GRAPH_INIT_NUM_VERTICES_MAX * GRAPH_INIT_NUM_VERTICES_MAX
+			|| weight > USHRT_MAX || iss.fail() || iss.bad()) {
 			return false;
 		}
 

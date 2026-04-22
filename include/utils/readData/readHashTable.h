@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <climits>
 
 #include "utils/utils.h"
 
@@ -14,9 +15,15 @@ inline const bool validSlotInput(std::string input) {
 	if (input == "n" || input == "N") return true;
 	try {
 		int convertedInput = std::stoi(input);
+		if (convertedInput < SHRT_MIN || convertedInput > SHRT_MAX) {
+			return false;
+		}
 		return true;
 	} catch (const std::invalid_argument& e) {
-		std::cerr << "-- An error occured: " << e.what() << std::endl;
+		std::cerr << "-- An error occured: Invalid argument: " << e.what() << std::endl;
+	} catch (const std::out_of_range& e) {
+		std::cerr << "-- An error occured: Out of range: " << e.what() << std::endl;
+		return false;
 	}
 	return false;
 }

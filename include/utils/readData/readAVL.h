@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <climits>
 
 #include "utils/utils.h"
 #include "AVL/const.h"
@@ -15,13 +16,14 @@ inline const bool validDataAVLFile(std::ifstream& ifile) {
 	if (!ifile.is_open())
 		return false; // Can't open file
 
-	short int num;
+	long long int num;
 	bool read = false;
 	unsigned int inputCount = 0;
+
 	while (ifile >> num) {
 		read = true; // Successfully read an int
 		inputCount++;
-		if (inputCount > AVL_INIT_MAX_SIZE) {
+		if (num < SHRT_MIN || num > SHRT_MAX || inputCount > AVL_INIT_MAX_SIZE || ifile.fail() || ifile.bad()) {
 			ifile.clear(); // Cleanup
 			ifile.seekg(0, std::ios::beg);
 			return false;
@@ -38,13 +40,14 @@ inline const bool validDataAVLString(std::string& data) {
 	std::string trimmedData = trim(data);
 	std::istringstream iss(trimmedData);
 
-	short int num;
+	long long int num;
 	bool read = false;
 	unsigned int inputCount = 0;
+
 	while (iss >> num) {
 		read = true;
 		inputCount++;
-		if (inputCount > AVL_INIT_MAX_SIZE) {
+		if (num < SHRT_MIN || num > SHRT_MAX || inputCount > AVL_INIT_MAX_SIZE || iss.fail() || iss.bad()) {
 			return false;
 		}
 	}
