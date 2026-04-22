@@ -12,35 +12,37 @@ The application displays the existing data within the structure in a clear and e
 
 This project contains visualizations and operations for these data structures and algorithms:
 
-- Singly linked list
+- **Singly linked list**
 	- Searching a value
 	- Inserting a value at a specific index
-	- Deleting a value
+	- Deleting a value at a specific index
 	- Updating a value at a specific index
 
-- Hash table *(Linear probing)*
+- **Hash table *(Linear probing)***
 	- Searching a key
 	- Inserting a key
 	- Deleting a key
 	- Updating a key (deleting old key & inserting new key)
 
-- **Trees:** AVL Tree, Trie *(26-ary trie)*
+- **Trees: AVL Tree, Trie *(26-ary trie)***
 	- Searching a key/word
 	- Inserting a key/word
 	- Deleting a key/word
 	- Updating a key/word (deleting old key/word & inserting new key/word)
 
-- **Graphs:** Minimum Spanning Tree *(Prim's algorithm)*, Shortest Path *(Dijkstra's algorithm)*
+- **Graphs: Minimum Spanning Tree *(Prim's algorithm)*, Shortest Path *(Dijkstra's algorithm)***
 	- *Prim's algorithm:* Single source vertex and finding the minimum spanning tree in an *undirected weighted* graph
 	- *Dijkstra's algorithm:* Single source vertex and finding shortest paths (if exist) to all other vertices in an *undirected weighted* graph
 
 ### Technology stack:
-- **C++, CMake**
+- **C++17, CMake**
 - 2D Graphics: **[SFML v3.0.2](https://github.com/SFML/SFML)**
 - GUI: **[Dear ImGui v1.91.1](https://github.com/ocornut/imgui)**, **[ImGui-SFML v3.0](https://github.com/SFML/imgui-sfml)**
 - File dialog box: **[tinyfiledialogs](https://github.com/native-toolkit/libtinyfiledialogs)**
 
 ## Main features
+
+The main features of this application include:
 
 - Interactive graphical user interface
 - Support for both step-by-step and run-at-once visualization
