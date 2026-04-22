@@ -8,6 +8,10 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
+extern "C" {
+	#include "tinyfiledialogs/tinyfiledialogs.h"
+}
+
 #include "Themes/Themes.h"
 #include "utils/readData.hpp"
 #include "sfLayout/sfLayout.h"
@@ -219,11 +223,15 @@ private:
 
 
 
-	inline const static fs::path SLL_DATA_FILEPATH = fs::path(DATA_DIR) / "SLL.txt";
-	inline const static fs::path HASH_DATA_FILEPATH = fs::path(DATA_DIR) / "HashTable.txt";
-	inline const static fs::path AVL_DATA_FILEPATH = fs::path(DATA_DIR) / "AVL.txt";
-	inline const static fs::path TRIE_DATA_FILEPATH = fs::path(DATA_DIR) / "Trie.txt";
-	inline const static fs::path GRAPH_DATA_FILEPATH = fs::path(DATA_DIR) / "Graph.txt";
+	///// File paths for data input /////
+	std::string selectedFile;
+	std::string fileContent;
+
+	static inline fs::path SLL_DATA_FILEPATH = fs::path(DATA_DIR) / "SLL.txt";
+	static inline fs::path HASH_DATA_FILEPATH = fs::path(DATA_DIR) / "HashTable.txt";
+	static inline fs::path AVL_DATA_FILEPATH = fs::path(DATA_DIR) / "AVL.txt";
+	static inline fs::path TRIE_DATA_FILEPATH = fs::path(DATA_DIR) / "Trie.txt";
+	static inline fs::path GRAPH_DATA_FILEPATH = fs::path(DATA_DIR) / "Graph.txt";
 
 	std::ifstream SLL_dataFile, hashTable_dataFile, AVL_dataFile, trie_dataFile, graph_dataFile;
 
