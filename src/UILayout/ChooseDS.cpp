@@ -273,6 +273,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 	bool invalidDataCustom = false; // To print error messages when invalid data
 
 	///// --- MUST FINISH ALL 6 DATA STRUCTURES --- /////
+	// --- Empty initialization ---
 	if (dataInitOption == DATA_INIT_EMPTY) {
 		switch (chosenDSType) {
 		case DSType::HASH_TABLE:
@@ -296,6 +297,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 		default:
 			break;
 		}
+	// --- Randomized initialization ---
 	} else if (dataInitOption == DATA_INIT_RANDOMIZED) {
 		switch (chosenDSType) {
 		case DSType::HASH_TABLE:
@@ -319,6 +321,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 		default:
 			break;
 		}
+	// --- Data as string ---
 	} else if (dataInitOption == DATA_INIT_CUSTOM) {
 		///// --- MUST FINISH ALL 6 DATA STRUCTURES --- /////
 		std::string dataString; // String of entered data
@@ -370,6 +373,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 		default:
 			break;
 		}
+	// --- Data from file ---
 	} else if (dataInitOption == DATA_INIT_FROM_FILE) {
 		std::string dataFileName = getDataFileName(DSVectors[current_DS_item]);
 
@@ -386,16 +390,107 @@ void Program::displayChooseDSMenuScreenGUI() {
 			break;
 		}
 
+
+
+		///// File dialog box
+		if (ImGui::Button("Open File")) {
+			const char* filters[] = { "*.txt" };
+			const char* path = tinyfd_openFileDialog(
+				"Select a file",
+				"",
+				3,
+				filters,
+				"Text / Data files",
+				0 // 0 = single file only
+			);
+
+			if (path) {
+				selectedFile = path;
+
+				// Read file content
+				std::ifstream file(selectedFile);
+				if (file) {
+					std::stringstream buffer;
+					buffer << file.rdbuf();
+					fileContent = buffer.str();
+				} else {
+					fileContent = "Failed to open file.";
+				}
+			}
+		}
+
+		ImGui::Text("Selected file:");
+		ImGui::TextWrapped("%s", selectedFile.c_str());
+
+
+		if (selectedFile.size() && fileContent != "Failed to open file.") {
+			std::filesystem::path path = std::filesystem::u8path(selectedFile.c_str());
+			switch (chosenDSType) {
+			case DSType::SINGLY_LINKED_LIST:
+				SLL_DATA_FILEPATH = path;
+				break;
+			case DSType::HASH_TABLE:
+				HASH_DATA_FILEPATH = path;
+				break;
+			case DSType::AVL_TREE:
+				AVL_DATA_FILEPATH = path;
+				break;
+			case DSType::TRIE_TREE:
+				TRIE_DATA_FILEPATH = path;
+				break;
+			case DSType::MST_PRIM_GRAPH:
+			case DSType::DIJKSTRA_GRAPH:
+				GRAPH_DATA_FILEPATH = path;
+				break;
+			default:
+				break;
+			}
+		}
+
+		ImGui::Separator();
+
+		ImGui::Text("File content:");
+		ImGui::BeginChild("ContentBox", ImVec2(0, 200), true);
+		ImGui::TextWrapped("%s", fileContent.c_str());
+		ImGui::EndChild();
+
+
+
 		// Change ItemSpacing temporarily
 		ImVec2 originalItemSpacing = stylePtr->ItemSpacing;
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, originalItemSpacing.y));
-		ImGui::Text("(Please enter your data in file ");
-		ImGui::SameLine();
-		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.f, 1.f));
-		ImGui::Text("\"data/%s\"", dataFileName.c_str());
-		ImGui::PopStyleColor();
-		ImGui::SameLine();
-		ImGui::Text(" before confirmation.)");
+		if (selectedFile.c_str() && fileContent != "Failed to open file.") {
+			ImGui::Text("(Please enter your data in file ");
+			ImGui::SameLine();
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.f, 1.f));
+
+			switch (chosenDSType) {
+			case DSType::SINGLY_LINKED_LIST:
+				ImGui::Text("\"%s\"", SLL_DATA_FILEPATH.string().c_str());
+				break;
+			case DSType::HASH_TABLE:
+				ImGui::Text("\"%s\"", HASH_DATA_FILEPATH.string().c_str());
+				break;
+			case DSType::AVL_TREE:
+				ImGui::Text("\"%s\"", AVL_DATA_FILEPATH.string().c_str());
+				break;
+			case DSType::TRIE_TREE:
+				ImGui::Text("\"%s\"", TRIE_DATA_FILEPATH.string().c_str());
+				break;
+			case DSType::MST_PRIM_GRAPH:
+			case DSType::DIJKSTRA_GRAPH:
+				ImGui::Text("\"%s\"", GRAPH_DATA_FILEPATH.string().c_str());
+				break;
+			default:
+				break;
+			};
+
+			ImGui::PopStyleColor();
+			ImGui::SameLine();
+			ImGui::Text(" before confirmation.)");
+		} else {
+			ImGui::Text("Error: Cannot open file.");
+		}
 		ImGui::PopStyleVar();
 	}
 	ImGui::EndGroup();
@@ -406,7 +501,8 @@ void Program::displayChooseDSMenuScreenGUI() {
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + Im_gui_window_size.x/2.f - btnSize.x/2.f);
 
 	// Confirm button
-	ImGui::BeginDisabled(dataInitOption == DATA_INIT_CUSTOM && invalidDataCustom);
+	ImGui::BeginDisabled((dataInitOption == DATA_INIT_CUSTOM && invalidDataCustom)
+		|| (dataInitOption == DATA_INIT_FROM_FILE && fileContent == "Failed to open file."));
 	if (ImGui::Button("Confirm", sf::Vector2f(btnSize))) {
 		std::cout << DSVectors[current_DS_item].c_str() <<" "<<  dataInitOption << std::endl; // DEBUG
 

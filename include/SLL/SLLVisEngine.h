@@ -125,7 +125,7 @@ private:
 	static inline    sf::Color    normalNodeColor         = sf::Color::Black;
 	static inline    sf::Color    nullDiagonalColor       = sf::Color(0, 0, 0, 255/2);
 	static inline    sf::Color    highlightFoundNodeColor = sf::Color::Green;
-	static constexpr ImVec4       highlightCodeColor = {0.4f, 1.f, 0.f, 1.f};
+	static constexpr sf::Color    highlightCodeColor = sf::Color(0x3CB371FF);	// {0.4f, 1.f, 0.f, 1.f};
 
 
 	void initSLLvector(std::vector<int>& values); // Init SLL from std::vector<int>
