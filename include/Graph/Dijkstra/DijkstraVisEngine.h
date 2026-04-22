@@ -125,7 +125,7 @@ private:
 	static inline    sf::Color    highlightCircleColor    = sf::Color::Blue;
 	static inline    sf::Color    highlightFoundCircleColor = sf::Color::Red;
 	static inline    sf::Color    highlightEdgeColor      = sf::Color::Blue;
-	static inline    sf::Color    highlightCodeColor      = sf::Color::Green;
+	static inline    sf::Color    highlightCodeColor      = sf::Color(0x3CB371FF);
 
 
 	void refreshOriginPos();
@@ -202,7 +202,7 @@ private:
 	static constexpr sf::Color lightHighlightCircleColor    = sf::Color::Blue;
 	static constexpr sf::Color lightHighlightFoundCircleColor = sf::Color::Red;
 	static constexpr sf::Color lightHighlightEdgeColor      = sf::Color::Blue;
-	static constexpr sf::Color lightHighlightCodeColor      = sf::Color::Green;
+	static constexpr sf::Color lightHighlightCodeColor      = sf::Color(0x3CB371FF);
 
 	static constexpr sf::Color darkNormalNodeColor         = sf::Color::White;
 	static constexpr sf::Color darkNormalNodeKeyColor      = sf::Color(0x90D5FFFF);
@@ -213,7 +213,7 @@ private:
 	static constexpr sf::Color darkHighlightCircleColor    = sf::Color(0x3A5D9CFF);
 	static constexpr sf::Color darkHighlightFoundCircleColor = sf::Color(0xFF746CFF);
 	static constexpr sf::Color darkHighlightEdgeColor      = sf::Color(0x3A5D9CFF);
-	static constexpr sf::Color darkHighlightCodeColor      = sf::Color::Green;
+	static constexpr sf::Color darkHighlightCodeColor      = sf::Color(0x3CB371FF);
 
 	void setLightVisTheme();
 	void setDarkVisTheme();
