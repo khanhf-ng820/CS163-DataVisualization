@@ -14,13 +14,14 @@ inline const bool validDataSLLFile(std::ifstream& ifile) {
 	if (!ifile.is_open())
 		return false; // Can't open file
 
-	short int num;
+	long long int num;
 	bool read = false;
 	unsigned int inputCount = 0;
+
 	while (ifile >> num) {
 		read = true; // Successfully read an int
 		inputCount++;
-		if (inputCount > MAX_SLL_SIZE) {
+		if (inputCount > MAX_SLL_SIZE || ifile.fail() || ifile.bad() || num < SHRT_MIN || num > SHRT_MAX) {
 			ifile.clear(); // Cleanup
 			ifile.seekg(0, std::ios::beg);
 			return false;
@@ -37,13 +38,14 @@ inline const bool validDataSLLString(std::string& data) {
 	std::string trimmedData = trim(data);
 	std::istringstream iss(trimmedData);
 
-	short int num;
+	long long int num;
 	bool read = false;
 	unsigned int inputCount = 0;
+
 	while (iss >> num) {
 		read = true;
 		inputCount++;
-		if (inputCount > MAX_SLL_SIZE) {
+		if (inputCount > MAX_SLL_SIZE || iss.fail() || iss.bad() || num < SHRT_MIN || num > SHRT_MAX) {
 			return false;
 		}
 	}

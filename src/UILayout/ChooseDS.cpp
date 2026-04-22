@@ -393,6 +393,8 @@ void Program::displayChooseDSMenuScreenGUI() {
 
 
 		///// File dialog box
+		ImGui::Separator();
+		ImGui::Text(">>> File Loader:");
 		if (ImGui::Button("Open File")) {
 			const char* filters[] = { "*.txt" };
 			const char* path = tinyfd_openFileDialog(
@@ -447,7 +449,6 @@ void Program::displayChooseDSMenuScreenGUI() {
 			}
 		}
 
-		ImGui::Separator();
 
 		ImGui::Text("File content:");
 		ImGui::BeginChild("ContentBox", ImVec2(0, 200), true);
