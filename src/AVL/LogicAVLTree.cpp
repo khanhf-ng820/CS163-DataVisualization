@@ -19,14 +19,14 @@ LogicAVLTree::~LogicAVLTree() {
 	root = nullptr;
 }
 
-LogicAVLTree::LogicAVLTree(const LogicAVLTree& other)
-	: root(nullptr)
+LogicAVLTree::LogicAVLTree(const LogicAVLTree& other) // Copy constructor
+	: root(nullptr), minSuccKey(other.minSuccKey)
 {
 	if (!other.root) return;
 	root = copyTree(other.root);
 }
 
-LogicAVLTree& LogicAVLTree::operator=(const LogicAVLTree& other) {
+LogicAVLTree& LogicAVLTree::operator=(const LogicAVLTree& other) { // Assignment operator
 	if (this != &other) {
 		LogicAVLTree tempTree(other);
 		std::swap(root, tempTree.root);
@@ -228,6 +228,7 @@ LogicAVLNode* LogicAVLTree::generateDeleteEvents(LogicAVLNode*& node, int key, s
 		events.push_back(AVLAnimStep(AVLAnimType::COPY_KEY_FROM_MIN_SUCC, "Copy the minimum successor into node to delete", {16,17}, temp->key, treeSnapshots.size() - 1));
 		node->key = temp->key;
 		minSuccKey = temp->key; // Minimum successor key placeholder
+		treeSnapshots.back().minSuccKey = minSuccKey;
 
 		// events.push_back(AVLAnimStep(AVLAnimType::HIGHLIGHT_NODE, "Checking node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
 		// events.push_back(AVLAnimStep(AVLAnimType::MOVE_HIGHLIGHT_RIGHT_DOWN, "Looking at right subtree of node " + std::to_string(node->key), {}, node->key, treeSnapshots.size() - 1));
@@ -314,7 +315,7 @@ void LogicAVLTree::clear(LogicAVLNode*& node) {
 	node = nullptr;
 }
 
-// No events, snapshots
+// No events or snapshots
 LogicAVLNode* LogicAVLTree::insertKey(LogicAVLNode*& node, int key) {
 	if (!node) {
 		std::cerr << "(INIT) INSERTED NEW NODE" << std::endl; // DEBUG

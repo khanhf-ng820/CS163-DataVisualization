@@ -9,12 +9,27 @@
 // Drawing GUI: The top-left of the window is (0, 0) coordinates
 // Display main menu screen
 void Program::initMainMenuScreen() {
+	// Clear drawables vector
+	sfDrawables[ProgramState::MAIN_MENU]->drawables.clear();
+	sfDrawablesDefaultView[ProgramState::MAIN_MENU]->drawables.clear();
+}
+
+
+
+void Program::displayMainMenuScreenSFML() {
+	// Clear drawables vector
+	sfDrawables[ProgramState::MAIN_MENU]->drawables.clear();
+	sfDrawablesDefaultView[ProgramState::MAIN_MENU]->drawables.clear();
+
+	// --- Add SFML shapes ---
 	auto shape = std::make_unique<sf::CircleShape>(100.0f);
 	shape->setFillColor(sf::Color::Green);
 	auto rectangle = std::make_unique<sf::RectangleShape>(sf::Vector2f({NORMAL_WIDTH, NORMAL_HEIGHT}));
 	rectangle->setFillColor(sf::Color::Blue);
 
+	// Letterbox border
 	auto border = std::make_unique<sf::RectangleShape>(sf::Vector2f({NORMAL_WIDTH, NORMAL_HEIGHT}));
+	// auto border = std::make_unique<sf::RectangleShape>(sf::Vector2f(window.getSize()));
 	border->setOrigin({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f}); // origin at center
 	border->setPosition({0.f, 0.f}); // position at 0,0
 	border->setFillColor(sf::Color::Transparent);
@@ -36,44 +51,46 @@ void Program::initMainMenuScreen() {
 	cornerBox->setPosition({NORMAL_WIDTH / 2.f, NORMAL_HEIGHT / 2.f});
 
 
-	auto text = std::make_unique<sf::Text>(textFont, "Data Structure Visualizer", 40);
-	text->setFillColor(sf::Color::Black);
+	auto titleText = std::make_unique<sf::Text>(textFont, "Data Structure Visualizer", 40);
+	titleText->setFillColor(titleColor);
 
 	// Measure unscaled text
-	sf::FloatRect bounds = text->getLocalBounds();
+	sf::FloatRect bounds = titleText->getLocalBounds();
 
 	// Scale so the width matches the desired width
 	const float targetWidth = NORMAL_WIDTH * 0.625;
 	float scale = targetWidth / bounds.size.x;
-	// text->setScale({scale, scale});
-	// text->setScale({round(scale), round(scale)});
-	text->setCharacterSize(round(scale * 40));
+	// titleText->setScale({scale, scale});
+	// titleText->setScale({round(scale), round(scale)});
+	titleText->setCharacterSize(round(scale * 40));
 
 	// Set origin to the visual center
-	bounds = text->getLocalBounds();
-	text->setOrigin({
+	bounds = titleText->getLocalBounds();
+	titleText->setOrigin({
 		bounds.size.x / 2.f,
 		bounds.size.y / 2.f
 	});
 	// Position the center where you want it
 	sf::Vector2u window_size = window.getSize();
-	text->setPosition({0.f, -static_cast<float>(window_size.y) / 4});
-	text->setPosition(round(text->getPosition()));
+	titleText->setPosition({0.f, -static_cast<float>(window_size.y) / 4});
+	titleText->setPosition(round(titleText->getPosition()));
 
 
-	// Push back to vector
+	// Push back SFML drawables to vector
 	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(shape));
 	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(rectangle));
 	// Border for normal aspect ratio
 	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(border));
 	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(splitCircle));
 	// sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(cornerBox));
-	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(text));
-}
+	sfDrawables[ProgramState::MAIN_MENU]->drawables.push_back(std::move(titleText));
 
 
+	// Set size for letterbox border
+	// auto border = static_cast<sf::RectangleShape*>(sfDrawables[ProgramState::MAIN_MENU]->drawables[0].get());
+	// border->setSize(sf::Vector2f(window.getSize()));
+	// border->setOrigin(sf::Vector2f(window.getSize()) / 2.f); // origin at center
 
-void Program::displayMainMenuScreenSFML() {
 	sfDrawables[ProgramState::MAIN_MENU]->displayAll();
 }
 
@@ -120,6 +137,10 @@ void Program::displayMainMenuScreenGUI() {
 	// ImGui::End();
 
 
+	// Set WindowPadding to 0,0 before starting the window
+	// ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+
 	sf::Vector2u btnSize, btnPosition;
 	btnSize = sf::Vector2u(120, 40);
 	btnPosition = sfml_window_size / 2U;
@@ -131,6 +152,7 @@ void Program::displayMainMenuScreenGUI() {
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
 		// ImGuiWindowFlags_NoBackground |
+		ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoScrollbar
 	);
 
@@ -152,6 +174,7 @@ void Program::displayMainMenuScreenGUI() {
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
 		// ImGuiWindowFlags_NoBackground |
+		ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoScrollbar
 	);
 
@@ -172,6 +195,7 @@ void Program::displayMainMenuScreenGUI() {
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
 		// ImGuiWindowFlags_NoBackground |
+		ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoScrollbar
 	);
 
@@ -180,6 +204,9 @@ void Program::displayMainMenuScreenGUI() {
 		window.close();
 	}
 	ImGui::End();
+
+
+	// ImGui::PopStyleVar();
 }
 
 

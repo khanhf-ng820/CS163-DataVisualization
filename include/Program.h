@@ -128,6 +128,7 @@ private:
 	const unsigned int FRAMERATE_LIMIT = 60;
 	const sf::Vector2u MINIMUM_WINDOW_SIZE = {800U, 600U};
 	const float SCALING_FACTOR = 1.1; // When zooming
+	const float UI_FONT_SIZE = 16.f; // Before scaling
 
 	// SFML global vars
 	sf::RenderWindow window;
@@ -161,6 +162,15 @@ private:
 
 	ProgramState programState = ProgramState::MAIN_MENU;
 
+	// Set vis theme for engines
+	static inline VIS_THEME currentVisTheme = VIS_THEME::LIGHT; // Default is Light mode
+	void setLightVisTheme();
+	void setDarkVisTheme();
+	void refreshVisThemes();
+	// Shape colors for SFML
+	static inline sf::Color backgroundColor = sf::Color::White;
+	static inline sf::Color titleColor = sf::Color::Black;
+
 	// SFML shapes to draw
 	std::map<ProgramState, std::unique_ptr<sfLayout>> sfDrawables;
 	std::map<ProgramState, std::unique_ptr<sfLayout>> sfDrawablesDefaultView;
@@ -187,8 +197,11 @@ private:
 	const std::vector<sf::Vector2u> resolutionVectors = { {800,600}, {1920,1080}, {1366,768}, {1440,900}, {1280,720}, {1024,768} };
 	const char* appThemeOptions[3]               = { "Light", "Dark", "Purple" };
 	const std::vector<APP_THEME> appThemeVectors = { APP_THEME::LIGHT, APP_THEME::DARK, APP_THEME::PURPLE };
+	const char* visThemeOptions[2]               = { "Light", "Dark" };
+	const std::vector<VIS_THEME> visThemeVectors = { VIS_THEME::LIGHT, VIS_THEME::DARK };
 	int current_resolution_item = 0;
 	int current_appTheme_item = 1; // Default is Dark mode
+	int current_visTheme_item = 0; // Default is Light mode
 
 	unsigned int initHashTableSizeBuf   = 10;
 	unsigned int initHashTableModuloBuf = 10;

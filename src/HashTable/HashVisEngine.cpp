@@ -540,6 +540,7 @@ void HashVisEngine::addNodeDrawablesUpdate(std::vector<std::unique_ptr<sf::Drawa
 
 // --- Create DRAWABLES to draw later ---
 void HashVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, std::vector<std::unique_ptr<sf::Drawable>>& drawableListDefaultView) {
+	refreshOriginPos();
 	drawableList.clear();
 	drawableListDefaultView.clear();
 
@@ -593,7 +594,7 @@ void HashVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 
 	// Display description for algorithm visualization
 	auto descriptionText = std::make_unique<sf::Text>(*fontPtr, eventHash.desc, descriptionFontSize);
-	descriptionText->setFillColor(sf::Color::Black);
+	descriptionText->setFillColor(normalSlotColor);
 	descriptionText->setPosition(descriptionTextPos);
 	descriptionText->setPosition(round(descriptionText->getPosition()));
 
@@ -714,6 +715,12 @@ bool HashVisEngine::isUpdatable(int oldKey, int newKey) {
 
 
 
+void HashVisEngine::refreshOriginPos() {
+	originPos = originPosDisplacement - sf::Vector2f(normalWindowSize) / 2.f;
+}
+
+
+
 ///// Methods for drawing SFML
 void HashVisEngine::drawSlot(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, 
 	int slotIndex, int key, bool empty, bool deleted, sf::Vector2f topLeftPos) const {
@@ -776,6 +783,7 @@ void HashVisEngine::drawSlot(std::vector<std::unique_ptr<sf::Drawable>>& drawabl
 }
 
 
+
 void HashVisEngine::drawHighlightBorder(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, int slotIndex, int key, sf::Vector2f topLeftPos, bool isFoundSlot) const {
 	auto highlightBorder = std::make_unique<sf::RectangleShape>(slotKeyRectSize);
 	highlightBorder->setFillColor(sf::Color::Transparent);
@@ -783,4 +791,38 @@ void HashVisEngine::drawHighlightBorder(std::vector<std::unique_ptr<sf::Drawable
 	highlightBorder->setOutlineThickness(5.f);
 	highlightBorder->setPosition(topLeftPos);
 	drawableList.push_back(std::move(highlightBorder));
+}
+
+
+
+
+
+// Set vis themes
+void HashVisEngine::setVisTheme(VIS_THEME visTheme) {
+	switch (visTheme) {
+	case VIS_THEME::LIGHT:
+		setLightVisTheme();
+		break;
+	case VIS_THEME::DARK:
+		setDarkVisTheme();
+		break;
+	}
+}
+
+void HashVisEngine::setLightVisTheme() {
+	normalSlotColor         = lightNormalSlotColor;
+	normalSlotValueColor    = lightNormalSlotValueColor;
+	normalSlotKeyColor      = lightNormalSlotKeyColor;
+	normalSlotIndexColor    = lightNormalSlotIndexColor;
+	highlightSlotColor      = lightHighlightSlotColor;
+	highlightFoundSlotColor = lightHighlightFoundSlotColor;
+}
+
+void HashVisEngine::setDarkVisTheme() {
+	normalSlotColor         = darkNormalSlotColor;
+	normalSlotValueColor    = darkNormalSlotValueColor;
+	normalSlotKeyColor      = darkNormalSlotKeyColor;
+	normalSlotIndexColor    = darkNormalSlotIndexColor;
+	highlightSlotColor      = darkHighlightSlotColor;
+	highlightFoundSlotColor = darkHighlightFoundSlotColor;
 }

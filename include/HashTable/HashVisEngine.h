@@ -9,6 +9,7 @@
 #include <chrono>
 #include <random>
 
+#include "Themes/Themes.h"
 #include "sfLayout/sfLayout.h"
 #include "utils/readData.hpp"
 #include "utils/utils.h"
@@ -41,6 +42,10 @@ public:
 
 	// Reset all properties to get ready for visualize new action
 	void resetParams();
+
+	// Set vis theme
+	void setVisTheme(VIS_THEME visTheme);
+
 	// Initialize table data
 	void initHashTableData(); // Empty HashTable
 	void initHashTableData(std::mt19937& rng); // Randomized HashTable
@@ -62,6 +67,7 @@ public:
 
 	sf::RenderWindow* windowPtr;
 	sf::Font* fontPtr;
+	sf::Vector2f normalWindowSize = {800.f, 600.f};
 
 	HashVisMode visMode = HashVisMode::NONE;
 	std::vector<HashAnimStep> eventList;
@@ -138,6 +144,7 @@ public:
 	static constexpr int RANDOM_DISTRIB_KEY_MAX = 100;
 
 
+private:
 	static constexpr sf::Vector2f originPosDisplacement = {75, 50};
 	sf::Vector2f originPos;
 	static constexpr sf::Vector2f descriptionTextPos = {50, 10};
@@ -150,21 +157,22 @@ public:
 	static constexpr int          indexFontSize = 12;
 	static constexpr int          descriptionFontSize = 15;
 
-	static constexpr sf::Color    normalSlotColor         = sf::Color::Black;
-	static constexpr sf::Color    normalSlotValueColor    = sf::Color::Black;
-	static constexpr sf::Color    normalSlotKeyColor      = sf::Color::Blue;
-	static constexpr sf::Color    normalSlotIndexColor    = sf::Color::Blue;
-	static constexpr sf::Color    highlightSlotColor      = sf::Color::Red;
-	static constexpr sf::Color    highlightFoundSlotColor = sf::Color::Green;
+	static inline    sf::Color    normalSlotColor         = sf::Color::Black;
+	static inline    sf::Color    normalSlotValueColor    = sf::Color::Black;
+	static inline    sf::Color    normalSlotKeyColor      = sf::Color::Blue;
+	static inline    sf::Color    normalSlotIndexColor    = sf::Color::Blue;
+	static inline    sf::Color    highlightSlotColor      = sf::Color::Red;
+	static inline    sf::Color    highlightFoundSlotColor = sf::Color::Green;
 	static constexpr ImVec4       highlightCodeColor      = {0.4f, 1.f, 0.f, 1.f};
 
-private:
+
 	int hashFunc(int key);
 
 	//// Helper methods
 	bool containsKey(int key);
 	bool isFull();
 
+	void refreshOriginPos();
 	// Create AND display ImGui window to highlight source code (pseudocode)
 	void drawPseudocodeWindow(HashAnimStep eventHash);
 
@@ -176,4 +184,25 @@ private:
 	void drawSlot(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, TableSlot& slot, sf::Vector2f topLeftPos) const;
 	// Draw highlight border around a slot
 	void drawHighlightBorder(std::vector<std::unique_ptr<sf::Drawable>>& drawableList, int slotIndex, int key, sf::Vector2f pos, bool isFoundSlot) const;
+
+
+
+
+	// Predefined colors for vis themes
+	static constexpr sf::Color lightNormalSlotColor         = sf::Color::Black;
+	static constexpr sf::Color lightNormalSlotValueColor    = sf::Color::Black;
+	static constexpr sf::Color lightNormalSlotKeyColor      = sf::Color::Blue;
+	static constexpr sf::Color lightNormalSlotIndexColor    = sf::Color::Blue;
+	static constexpr sf::Color lightHighlightSlotColor      = sf::Color::Red;
+	static constexpr sf::Color lightHighlightFoundSlotColor = sf::Color::Green;
+
+	static constexpr sf::Color darkNormalSlotColor         = sf::Color::White;
+	static constexpr sf::Color darkNormalSlotValueColor    = sf::Color::White;
+	static constexpr sf::Color darkNormalSlotKeyColor      = sf::Color(0x90D5FFFF);
+	static constexpr sf::Color darkNormalSlotIndexColor    = sf::Color(0x80EF80FF);
+	static constexpr sf::Color darkHighlightSlotColor      = sf::Color::Red;
+	static constexpr sf::Color darkHighlightFoundSlotColor = sf::Color::Green;
+
+	void setLightVisTheme();
+	void setDarkVisTheme();
 };

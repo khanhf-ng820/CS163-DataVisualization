@@ -5,6 +5,7 @@
 
 TrieVisEngine::TrieVisEngine(sf::RenderWindow* window, sf::Font* font)
 	: windowPtr(window), fontPtr(font)
+	// , normalWindowSize(window->getSize())
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {
 	initInputBuffers();
@@ -12,10 +13,11 @@ TrieVisEngine::TrieVisEngine(sf::RenderWindow* window, sf::Font* font)
 
 TrieVisEngine::TrieVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Font* font)
 	: windowPtr(window), fontPtr(font)
+	// , normalWindowSize(window->getSize())
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {
 	initInputBuffers();
-	std::uniform_int_distribution<size_t> size_distrib(TRIE_INIT_MIN_SIZE, TRIE_INIT_MAX_SIZE);
+	std::uniform_int_distribution<size_t> size_distrib(TRIE_INIT_RANDOM_MIN_SIZE, TRIE_INIT_RANDOM_MAX_SIZE); // Number of words
 	std::uniform_int_distribution<size_t> wordLen_distrib(TRIE_INIT_WORD_MIN_LENGTH, TRIE_INIT_WORD_MAX_LENGTH);
 	std::uniform_int_distribution<int> char_distrib(TRIE_RANDOM_DISTRIB_KEY_MIN, TRIE_RANDOM_DISTRIB_KEY_MAX);
 
@@ -31,6 +33,7 @@ TrieVisEngine::TrieVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Fo
 
 TrieVisEngine::TrieVisEngine(std::vector<std::string>& words, sf::RenderWindow* window, sf::Font* font)
 	: windowPtr(window), fontPtr(font)
+	// , normalWindowSize(window->getSize())
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {
 	initInputBuffers();
@@ -441,6 +444,7 @@ void TrieVisEngine::drawPseudocodeWindow(TrieAnimStep eventTrie) {
 			}
 			break;
 		}
+		break;
 	case TrieVisMode::INSERT:
 		for (int i = 0; i < TRIE_CODE_INSERT.size(); i++) {
 			bool highlightLine = vecContains(eventTrie.highlightCodeLineIndex, i);
@@ -535,7 +539,7 @@ void TrieVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 
 	// Display description for algorithm visualization
 	auto descriptionText = std::make_unique<sf::Text>(*fontPtr, eventTrie.description, descriptionFontSize);
-	descriptionText->setFillColor(sf::Color::Black);
+	descriptionText->setFillColor(normalNodeColor);
 	descriptionText->setPosition(descriptionTextPos);
 	descriptionText->setPosition(round(descriptionText->getPosition()));
 
@@ -568,7 +572,7 @@ void TrieVisEngine::generateAllVisNodePosXHelper(std::map<int, VisualTrieNode>& 
 	visualNodes.clear();
 	unsigned int size = logicTree.countLeaf();
 	float xPos = canvasLeftMargin;
-	float dx = (windowPtr->getSize().x - 2 * canvasLeftMargin) / (size > 1 ? size-1 : 1);
+	float dx = (normalWindowSize.x - 2 * canvasLeftMargin) / (size > 1 ? size-1 : 1);
 	// Prevent nodes overlapping
 	if (dx < 2 * nodeCircleRadius) dx = 2 * nodeCircleRadius;
 
@@ -799,17 +803,17 @@ void TrieVisEngine::drawNodeArrow(std::vector<std::unique_ptr<sf::Drawable>>& dr
 
 	auto arrowBody = std::make_unique<sf::VertexArray>(sf::PrimitiveType::Lines, 2);
 	(*arrowBody)[0].position = start;
-	(*arrowBody)[0].color = sf::Color::Black;
+	(*arrowBody)[0].color = normalNodeArrowColor;
 	(*arrowBody)[1].position = end;
-	(*arrowBody)[1].color = sf::Color::Black;
+	(*arrowBody)[1].color = normalNodeArrowColor;
 
 	auto arrowHead = std::make_unique<sf::VertexArray>(sf::PrimitiveType::Triangles, 3);
 	(*arrowHead)[0].position = end;
-	(*arrowHead)[0].color = sf::Color::Black;
+	(*arrowHead)[0].color = normalNodeArrowColor;
 	(*arrowHead)[1].position = sf::Vector2f(leftX, leftY);
-	(*arrowHead)[1].color = sf::Color::Black;
+	(*arrowHead)[1].color = normalNodeArrowColor;
 	(*arrowHead)[2].position = sf::Vector2f(rightX, rightY);
-	(*arrowHead)[2].color = sf::Color::Black;
+	(*arrowHead)[2].color = normalNodeArrowColor;
 
 	drawableList.push_back(std::move(arrowBody));
 	drawableList.push_back(std::move(arrowHead));
@@ -828,5 +832,39 @@ void TrieVisEngine::initInputBuffers() {
 }
 
 void TrieVisEngine::refreshOriginPos() {
-	originPos = originPosDisplacement - sf::Vector2f(windowPtr->getSize()) / 2.f;
+	originPos = originPosDisplacement - sf::Vector2f(normalWindowSize) / 2.f;
+}
+
+
+
+
+
+// Set vis themes
+void TrieVisEngine::setVisTheme(VIS_THEME visTheme) {
+	switch (visTheme) {
+	case VIS_THEME::LIGHT:
+		setLightVisTheme();
+		break;
+	case VIS_THEME::DARK:
+		setDarkVisTheme();
+		break;
+	}
+}
+
+void TrieVisEngine::setLightVisTheme() {
+	normalNodeColor           = lightNormalNodeColor;
+	normalNodeKeyColor        = lightNormalNodeKeyColor;
+	normalNodeArrowColor      = lightNormalNodeArrowColor;
+	normalNodeEOW_BGColor     = lightNormalNodeEOW_BGColor;
+	highlightCircleColor      = lightHighlightCircleColor;
+	highlightFoundCircleColor = lightHighlightFoundCircleColor;
+}
+
+void TrieVisEngine::setDarkVisTheme() {
+	normalNodeColor           = darkNormalNodeColor;
+	normalNodeKeyColor        = darkNormalNodeKeyColor;
+	normalNodeArrowColor      = darkNormalNodeArrowColor;
+	normalNodeEOW_BGColor     = darkNormalNodeEOW_BGColor;
+	highlightCircleColor      = darkHighlightCircleColor;
+	highlightFoundCircleColor = darkHighlightFoundCircleColor;
 }
