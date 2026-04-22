@@ -20,7 +20,8 @@ public:
 	uint64_t currentNodeID = 0;
 
 
-	unsigned int getSize(); // Get size of tree (not O(1))
+	unsigned int getSize(); // Get size of tree (number of nodes) (not O(1))
+	unsigned int getNumWords(); // Get number of words (not O(1))
 	unsigned int countLeaf(); // Get num of leaf nodes (not O(1))
 	LogicTrieNode* newNode(char c);
 	LogicTrieNode* newNode(char c, bool isEndOfWord);
@@ -69,6 +70,7 @@ private:
 	LogicTrieNode* copyTree(const LogicTrieNode* node); // Return copy of tree
 
 	unsigned int getSizeHelper(LogicTrieNode* node);
+	unsigned int getNumWordsHelper(LogicTrieNode* node);
 	void         countLeafHelper(LogicTrieNode* node, unsigned int& totalCnt);
 	// Get node, knowing the ID (helper function)
 	LogicTrieNode* getNodeIDHelper(uint64_t ID, LogicTrieNode* node);
