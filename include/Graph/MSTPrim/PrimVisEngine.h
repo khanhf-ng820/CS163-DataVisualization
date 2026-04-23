@@ -66,6 +66,7 @@ public:
 	sf::RenderWindow* windowPtr;
 	sf::Font* fontPtr;
 	sf::View* viewPtr;
+	ImFont* pseudocodeFont;
 
 	PrimVisMode visMode = PrimVisMode::NONE;
 	std::vector<PrimAnimStep> eventList;

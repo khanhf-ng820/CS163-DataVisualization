@@ -747,6 +747,7 @@ void SLLVisEngine::addNodeDrawablesRemove(std::vector<std::unique_ptr<sf::Drawab
 // Create ImGui window to highlight source code (pseudocode)
 void SLLVisEngine::drawPseudocodeWindow(SLLAnimStep eventSLL) {
 	ImGui::Begin("Pseudocode", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::PushFont(pseudocodeFont);
 
 	switch (visMode) {
 	case SLLVisMode::SEARCH:
@@ -797,6 +798,7 @@ void SLLVisEngine::drawPseudocodeWindow(SLLAnimStep eventSLL) {
 		break;
 	}
 
+	ImGui::PopFont();
 	ImGui::End();
 }
 

@@ -33,12 +33,35 @@ Program::Program()
 	ImGuiStyle& style = ImGui::GetStyle();
 	ioPtr = &io;
 	stylePtr = &style;
-	// -- Font and font size for UI
+
+	// -- Font and font size for ImGui
+	std::cerr << "-- Loading fonts...\n";
 	ioPtr->Fonts->Clear();
-	ioPtr->Fonts->AddFontFromFileTTF((fs::path(ASSET_DIR) / "Roboto/Roboto-VariableFont_wdth,wght.ttf").string().c_str(),
-		UI_FONT_SIZE);
+	// 5 sizes each font
+	for (int i = 0; i < NUM_FONT_SIZE; i++) {
+		ImFont* imguiFont = ioPtr->Fonts->AddFontFromFileTTF((fs::path(ASSET_DIR) / "Roboto/Roboto-VariableFont_wdth,wght.ttf").string().c_str(),
+			NORMAL_UI_FONT_SIZE * (1 + i * 0.25f));
+		assert(imguiFont != nullptr);
+		imFonts.push_back(imguiFont);
+		if (i == 0)
+			std::cerr << "-- Font: " << (fs::path(ASSET_DIR) / "Roboto/Roboto-VariableFont_wdth,wght.ttf").string() << " exists\n";
+	}
+	for (int i = 0; i < NUM_FONT_SIZE; i++) {
+		ImFont* imguiFont = ioPtr->Fonts->AddFontFromFileTTF((fs::path(ASSET_DIR) / "Roboto_Mono/RobotoMono-VariableFont_wght.ttf").string().c_str(),
+			NORMAL_UI_FONT_SIZE * (1 + i * 0.25f));
+		assert(imguiFont != nullptr);
+		imPseudocodeFonts.push_back(imguiFont);
+		if (i == 0)
+			std::cerr << "-- Font: " << (fs::path(ASSET_DIR) / "Roboto_Mono/RobotoMono-VariableFont_wght.ttf").string() << " exists\n";
+	}
 	// IMPORTANT for imgui-sfml: Re-create the font texture
 	ImGui::SFML::UpdateFontTexture();
+
+	// -- Set visualization themes (in SFML) for vis engines
+	refreshVisThemes();
+	// -- Set pseudocode font in ImGui for vis engines
+	refreshImFontForVisEngine();
+
 	// -- Modify the window background color (RGB alpha)
 	// style.Colors[ImGuiCol_WindowBg] = ImVec4(0.6f, 0.4f, 0.6f, 0.9f);
 	// style.Colors[ImGuiCol_WindowBg] = ImVec4(173.f/255, 216.f/255, 230.f/255, 0.6f);
@@ -269,6 +292,11 @@ void Program::mainLoop() {
 
 		ImGui::SFML::Update(window, deltaClock.restart());
 
+		// Refresh ImFonts for vis engines
+		refreshImFontForVisEngine();
+
+		ImGui::PushFont(imFonts[imFontSizeIndex]);
+
 		// Get the current window size
 		window_size = window.getSize();
 
@@ -353,6 +381,8 @@ void Program::mainLoop() {
 			break;
 		};
 
+
+		ImGui::PopFont();
 
 		ImGui::SFML::Render(window);
 		// Use default view to draw ImGui GUI
@@ -455,4 +485,14 @@ void Program::refreshVisThemes() {
 		setDarkVisTheme();
 		break;
 	};
+}
+
+void Program::refreshImFontForVisEngine() {
+	// --- MAKE SURE ALL DATA STRUCTURES ARE SET ---
+	visEngine_SLL.pseudocodeFont = imPseudocodeFonts[imFontSizeIndex];
+	visEngine_Hash.pseudocodeFont = imPseudocodeFonts[imFontSizeIndex];
+	visEngine_AVL.pseudocodeFont = imPseudocodeFonts[imFontSizeIndex];
+	visEngine_Trie.pseudocodeFont = imPseudocodeFonts[imFontSizeIndex];
+	visEngine_MSTPrim.pseudocodeFont = imPseudocodeFonts[imFontSizeIndex];
+	visEngine_Dijkstra.pseudocodeFont = imPseudocodeFonts[imFontSizeIndex];
 }

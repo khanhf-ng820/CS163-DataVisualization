@@ -63,6 +63,7 @@ public:
 
 	sf::RenderWindow& window;
 	sf::Font& font;
+	ImFont* pseudocodeFont;
 
 	SLLVisMode visMode = SLLVisMode::NONE;
 	std::vector<SLLAnimStep> eventList;
