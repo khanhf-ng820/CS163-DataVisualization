@@ -238,7 +238,7 @@ void Program::displaySettingsMenuScreenGUI() {
 		// Set ImGui font size
 		// ioPtr->FontGlobalScale = real_ui_scale; // May be blurry
 		// ioPtr->Fonts->Clear();
-		// ioPtr->Fonts->AddFontFromFileTTF((fs::path(ASSET_DIR) / "Roboto/Roboto-VariableFont_wdth,wght.ttf").string().c_str(),
+		// ioPtr->Fonts->AddFontFromFileTTF((fs::path(ASSET_DIR) / "Roboto" / "Roboto-VariableFont_wdth,wght.ttf").string().c_str(),
 		// 	UI_FONT_SIZE * real_ui_scale);
 		imFontSizeIndex = ui_size_step - 1;
 
