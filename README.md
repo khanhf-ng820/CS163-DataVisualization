@@ -2,7 +2,7 @@
 **Data Structure Visualization**, a solo project for CS163 - Data Structures course.
 
 <!-- This project uses **C++**, **CMake**, and the **raylib** graphics library. -->
-This project uses **C++17**, **CMake**, the **SFML** graphics library, and the **ImGui-SFML** GUI library.
+This project uses **C++17**, **CMake**, the **SFML** graphics library, the **ImGui-SFML** GUI library, and the **tinyfiledialogs** library.
 
 ## Overview
 
@@ -10,7 +10,7 @@ The data structure visualization application provides an intuitive and user-frie
 
 The application displays the existing data within the structure in a clear and easy-to-read format with animations, step-by-step playback, and highlighting pseudocode. Users can perform various operations on the data structures.
 
-This project contains visualizations and operations for these data structures and algorithms:
+This project contains visualizations for these data structures and algorithms:
 
 - **Singly linked list**
 	- Searching a value
@@ -125,7 +125,7 @@ cmake --build . --config Release
 ```
 
 ### 3. Running the application
-You can run the application by double-clicking the application in the ```build/src/``` folder inside the project's directory in File Explorer/Finder, or you can open the Terminal in the **project root folder** and run:
+You can run the application by double-clicking the `DSVisualizer` executable file found in the ```build/src/``` folder inside the project's directory in File Explorer/Finder, or you can open the Terminal in the **project root folder** and run:
 
 **macOS** and **Linux:**
 ```bash
@@ -134,5 +134,5 @@ You can run the application by double-clicking the application in the ```build/s
 
 **Windows:**
 ```powershell
-.\build\src\DSVisualizer.exe
+.\build\src\Release\DSVisualizer.exe
 ```
