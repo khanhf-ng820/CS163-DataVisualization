@@ -392,7 +392,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 
 
 
-		///// File dialog box
+		///// File dialog box /////
 		ImGui::Separator();
 		ImGui::Text(">>> File Loader:");
 		if (ImGui::Button("Open File")) {
@@ -400,7 +400,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 			const char* path = tinyfd_openFileDialog(
 				"Select a file",
 				"",
-				3,
+				1,
 				filters,
 				"Text / Data files",
 				0 // 0 = single file only
@@ -427,6 +427,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 
 		if (selectedFile.size() && fileContent != "Failed to open file.") {
 			std::filesystem::path path = std::filesystem::u8path(selectedFile.c_str());
+			///// --- MUST FINISH ALL 6 DATA STRUCTURES --- /////
 			switch (chosenDSType) {
 			case DSType::SINGLY_LINKED_LIST:
 				SLL_DATA_FILEPATH = path;
@@ -465,6 +466,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 			ImGui::SameLine();
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 1.f, 0.f, 1.f));
 
+			///// --- MUST FINISH ALL 6 DATA STRUCTURES --- /////
 			switch (chosenDSType) {
 			case DSType::SINGLY_LINKED_LIST:
 				ImGui::Text("\"%s\"", SLL_DATA_FILEPATH.string().c_str());
