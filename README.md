@@ -35,7 +35,7 @@ This project contains visualizations for these data structures and algorithms:
 	- *Dijkstra's algorithm:* Single source vertex and finding shortest paths (if exist) to all other vertices in an *undirected weighted* graph
 
 ### Technology stack:
-- **C++17, CMake**
+- **C++17, [CMake](https://cmake.org/)**
 - 2D Graphics: **[SFML v3.0.2](https://github.com/SFML/SFML)**
 - GUI: **[Dear ImGui v1.91.1](https://github.com/ocornut/imgui)**, **[ImGui-SFML v3.0](https://github.com/SFML/imgui-sfml)**
 - File dialog box: **[tinyfiledialogs](https://github.com/native-toolkit/libtinyfiledialogs)**

@@ -23,7 +23,8 @@ enum DataInitOption {
 	DATA_INIT_RANDOMIZED,
 	DATA_INIT_CUSTOM,
 	DATA_INIT_FROM_FILE,
-	DATA_INIT_DEFAULT // Error value, must avoid
+	DATA_INIT_CONTINUE
+	// Must avoid other values
 };
 
 

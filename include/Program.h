@@ -214,8 +214,8 @@ private:
 	int current_appTheme_item = 1; // Default is Dark mode
 	int current_visTheme_item = 0; // Default is Light mode
 
-	unsigned int initHashTableSizeBuf   = 10;
-	unsigned int initHashTableModuloBuf = 10;
+	unsigned int initHashTableSizeBuf   = 11;
+	unsigned int initHashTableModuloBuf = 11;
 	constexpr static unsigned int MAX_INIT_HASHTABLE_SIZE   = 128;
 	constexpr static unsigned int MAX_INIT_HASHTABLE_MODULO = 128;
 	const std::string SIZE_INPUT_WARNING_STRING   = "Table Size (min. 2, max. " + std::to_string(MAX_INIT_HASHTABLE_SIZE) + ")";
