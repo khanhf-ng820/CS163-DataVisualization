@@ -6,7 +6,7 @@
 
 HashVisEngine::HashVisEngine(sf::RenderWindow* window, sf::Font* font)
 	// *** tableSize FOR TESTING ONLY, WILL DELETE LATER ***
-	: tableSize(11), tableModulo(10), windowPtr(window), fontPtr(font)
+	: tableSize(11), tableModulo(11), windowPtr(window), fontPtr(font)
 	, originPos(originPosDisplacement - sf::Vector2f(window->getSize()) / 2.f)
 {
 	// *** FOR TESTING ONLY, WILL DELETE LATER ***

@@ -137,7 +137,7 @@ void Program::displayVisMSTPrimScreenGUI() {
 	if (ImGui::InputInt("Start vertex", &visEngine_MSTPrim.startVertexIDInput)) {
 		visEngine_MSTPrim.startVertexIDInput = std::clamp(visEngine_MSTPrim.startVertexIDInput, 
 			0, 
-			static_cast<int>(visEngine_MSTPrim.graph.getNumVertex()));
+			static_cast<int>(visEngine_MSTPrim.graph.getNumVertex()) - 1);
 	}
 	// float f;
 	// ImGui::SliderFloat("float", &f, 0.0f, 1.0f);

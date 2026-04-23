@@ -29,6 +29,8 @@ bool Program::initSLL(const int dataInitOption) {
 	std::vector<int> SLLData; // Data to be initialized into SLL
 
 	switch (dataInitOption) {
+	case DATA_INIT_CONTINUE:
+		return true;
 	case DATA_INIT_CUSTOM: // Custom data as string
 		dataString = std::string(customDataSLLBuf);
 		validData = validDataSLLString(dataString);
@@ -91,6 +93,8 @@ bool Program::initHashTable(const int dataInitOption) {
 	std::vector<TableSlotInput> hashTableData; // Data to be initialized into HashTable
 
 	switch (dataInitOption) {
+	case DATA_INIT_CONTINUE:
+		return true;
 	case DATA_INIT_CUSTOM: // Custom data as string
 		dataString = std::string(customDataHashBuf);
 		validData = validDataHashTableString(dataString);
@@ -145,6 +149,8 @@ bool Program::initAVL(const int dataInitOption) {
 	std::vector<int> AVLData; // Data to be initialized into AVL Tree
 
 	switch (dataInitOption) {
+	case DATA_INIT_CONTINUE:
+		return true;
 	case DATA_INIT_CUSTOM: // Custom data as string
 		dataString = std::string(customDataAVLBuf);
 		validData = validDataAVLString(dataString);
@@ -199,6 +205,8 @@ bool Program::initTrie(const int dataInitOption) {
 	std::vector<std::string> trieData; // Data to be initialized into Trie
 
 	switch (dataInitOption) {
+	case DATA_INIT_CONTINUE:
+		return true;
 	case DATA_INIT_CUSTOM: // Custom data as string
 		dataString = std::string(customDataTrieBuf);
 		validData = validDataTrieString(dataString);
@@ -265,6 +273,8 @@ const char customDataBuf[], const fs::path& DATA_FILEPATH, const std::ifstream& 
 	// MST_PRIM
 	if (customDataBuf == customDataMSTPrimBuf) {
 		switch (dataInitOption) {
+		case DATA_INIT_CONTINUE:
+			return true;
 		// -- CUSTOM DATA AS STRING --
 		case DATA_INIT_CUSTOM:
 			dataString = std::string(customDataBuf);
@@ -395,6 +405,8 @@ const char customDataBuf[], const fs::path& DATA_FILEPATH, const std::ifstream& 
 	// DIJKSTRA
 	} else if (customDataBuf == customDataDijkstraBuf) {
 		switch (dataInitOption) {
+		case DATA_INIT_CONTINUE:
+			return true;
 		// -- CUSTOM DATA AS STRING --
 		case DATA_INIT_CUSTOM:
 			dataString = std::string(customDataBuf);

@@ -268,13 +268,35 @@ void Program::displayChooseDSMenuScreenGUI() {
 	ImGui::RadioButton("Enter custom data", &dataInitOption, DATA_INIT_CUSTOM); // Value 2
 	ImGui::SameLine();
 	ImGui::RadioButton("Data from \".txt\" file", &dataInitOption, DATA_INIT_FROM_FILE); // Value 3
+	ImGui::SameLine();
+	ImGui::RadioButton("Continue from before", &dataInitOption, DATA_INIT_CONTINUE); // Value 4
 
 
 	bool invalidDataCustom = false; // To print error messages when invalid data
 
 	///// --- MUST FINISH ALL 6 DATA STRUCTURES --- /////
+	// --- Continue from before ---
+	if (dataInitOption == DATA_INIT_CONTINUE) {
+		std::string message;
+		switch (chosenDSType) {
+		case DSType::HASH_TABLE:
+			message = "NOTE: If the data structure has never been initialized, then it will be initialized as empty.\nThe hash table will have 11 slots, and the hash function will be h(k) = k mod 11, by default.";
+			break;
+		case DSType::SINGLY_LINKED_LIST:
+		case DSType::AVL_TREE:
+		case DSType::TRIE_TREE:
+			message = "NOTE: If the data structure has never been initialized, then it will be initialized as empty.";
+			break;
+		case DSType::MST_PRIM_GRAPH:
+		case DSType::DIJKSTRA_GRAPH:
+			message = "NOTE: If the data structure has never been initialized, then it will be initialized as a single vertex with index 0.";
+			break;
+		default:
+			break;
+		}
+		ImGui::Text("%s", message.c_str());
 	// --- Empty initialization ---
-	if (dataInitOption == DATA_INIT_EMPTY) {
+	} else if (dataInitOption == DATA_INIT_EMPTY) {
 		switch (chosenDSType) {
 		case DSType::HASH_TABLE:
 			// Input HashTable size and modulo integer
@@ -286,14 +308,11 @@ void Program::displayChooseDSMenuScreenGUI() {
 				ImGuiDataType_U32, &initHashTableModuloBuf);
 			initHashTableModuloBuf = std::min(std::max(initHashTableModuloBuf, 2U), MAX_INIT_HASHTABLE_MODULO); // Clamp table modulo for hash function
 			break;
+		case DSType::SINGLY_LINKED_LIST:
 		case DSType::AVL_TREE:
-			break;
 		case DSType::TRIE_TREE:
-			break;
 		case DSType::MST_PRIM_GRAPH:
-			break;
 		case DSType::DIJKSTRA_GRAPH:
-			break;
 		default:
 			break;
 		}
@@ -310,14 +329,11 @@ void Program::displayChooseDSMenuScreenGUI() {
 				ImGuiDataType_U32, &initHashTableModuloBuf);
 			initHashTableModuloBuf = std::min(std::max(initHashTableModuloBuf, 2U), MAX_INIT_HASHTABLE_MODULO); // Clamp table modulo for hash function
 			break;
+		case DSType::SINGLY_LINKED_LIST:
 		case DSType::AVL_TREE:
-			break;
 		case DSType::TRIE_TREE:
-			break;
 		case DSType::MST_PRIM_GRAPH:
-			break;
 		case DSType::DIJKSTRA_GRAPH:
-			break;
 		default:
 			break;
 		}
