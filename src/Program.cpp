@@ -13,8 +13,8 @@ Program::Program()
 	, rng(std::random_device()())
 	, visEngine_SLL(window, textFont), visEngine_Hash(&window, &textFont)
 	, visEngine_AVL(&window, &textFont), visEngine_Trie(&window, &textFont)
-	, visEngine_Dijkstra(10, &window, &textFont, &view)
-	, visEngine_MSTPrim(10, &window, &textFont, &view)
+	, visEngine_Dijkstra(1, &window, &textFont, &view)
+	, visEngine_MSTPrim(1, &window, &textFont, &view)
 {
 	window.requestFocus();
 	window.setFramerateLimit(FRAMERATE_LIMIT);

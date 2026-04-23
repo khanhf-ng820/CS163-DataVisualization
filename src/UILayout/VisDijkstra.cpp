@@ -133,7 +133,7 @@ void Program::displayVisDijkstraScreenGUI() {
 	if (ImGui::InputInt("Start vertex", &visEngine_Dijkstra.startVertexIDInput)) {
 		visEngine_Dijkstra.startVertexIDInput = std::clamp(visEngine_Dijkstra.startVertexIDInput, 
 			0, 
-			static_cast<int>(visEngine_Dijkstra.graph.getNumVertex()));
+			static_cast<int>(visEngine_Dijkstra.graph.getNumVertex()) - 1);
 	}
 	// float f;
 	// ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
