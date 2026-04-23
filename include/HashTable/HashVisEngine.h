@@ -67,6 +67,7 @@ public:
 
 	sf::RenderWindow* windowPtr;
 	sf::Font* fontPtr;
+	ImFont* pseudocodeFont;
 	sf::Vector2f normalWindowSize = {800.f, 600.f};
 
 	HashVisMode visMode = HashVisMode::NONE;

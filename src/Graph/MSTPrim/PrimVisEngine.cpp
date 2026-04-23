@@ -313,6 +313,7 @@ void PrimVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>&
 // // Create AND display ImGui window to highlight source code (pseudocode)
 void PrimVisEngine::drawPseudocodeWindow(PrimAnimStep eventPrim) {
 	ImGui::Begin("Pseudocode", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::PushFont(pseudocodeFont);
 
 	switch (visMode) {
 	case PrimVisMode::MST_PRIM:
@@ -330,6 +331,7 @@ void PrimVisEngine::drawPseudocodeWindow(PrimAnimStep eventPrim) {
 		break;
 	}
 
+	ImGui::PopFont();
 	ImGui::End();
 }
 

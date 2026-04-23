@@ -599,6 +599,7 @@ void AVLVisEngine::addNodeDrawablesUpdate(std::vector<std::unique_ptr<sf::Drawab
 // Create AND display ImGui window to highlight source code (pseudocode)
 void AVLVisEngine::drawPseudocodeWindow(AVLAnimStep eventAVL) {
 	ImGui::Begin("Pseudocode", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::PushFont(pseudocodeFont);
 
 	switch (visMode) {
 	case AVLVisMode::SEARCH:
@@ -661,6 +662,7 @@ void AVLVisEngine::drawPseudocodeWindow(AVLAnimStep eventAVL) {
 		break;
 	}
 
+	ImGui::PopFont();
 	ImGui::End();
 }
 

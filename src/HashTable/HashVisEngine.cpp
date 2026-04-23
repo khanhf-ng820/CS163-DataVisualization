@@ -616,6 +616,7 @@ void HashVisEngine::createDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 // Create AND display ImGui window to highlight source code (pseudocode)
 void HashVisEngine::drawPseudocodeWindow(HashAnimStep eventHash) {
 	ImGui::Begin("Pseudocode", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::PushFont(pseudocodeFont);
 
 	switch (visMode) {
 	case HashVisMode::SEARCH:
@@ -663,6 +664,7 @@ void HashVisEngine::drawPseudocodeWindow(HashAnimStep eventHash) {
 		break;
 	}
 
+	ImGui::PopFont();
 	ImGui::End();
 }
 

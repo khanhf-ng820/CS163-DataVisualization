@@ -66,6 +66,7 @@ public:
 	sf::RenderWindow* windowPtr;
 	sf::Font* fontPtr;
 	sf::View* viewPtr;
+	ImFont* pseudocodeFont;
 
 	DijkstraVisMode visMode = DijkstraVisMode::NONE;
 	std::vector<DijkstraAnimStep> eventList;
