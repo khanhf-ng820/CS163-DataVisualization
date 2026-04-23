@@ -132,7 +132,8 @@ private:
 	const unsigned int FRAMERATE_LIMIT = 60;
 	const sf::Vector2u MINIMUM_WINDOW_SIZE = {800U, 600U};
 	const float SCALING_FACTOR = 1.1; // When zooming
-	const float UI_FONT_SIZE = 16.f; // Before scaling
+	const float NORMAL_UI_FONT_SIZE = 16.f; // Before scaling
+	const unsigned int NUM_FONT_SIZE = 5; // Number of font sizes
 
 	// SFML global vars
 	sf::RenderWindow window;
@@ -144,6 +145,12 @@ private:
 	// ImGui global vars
 	ImGuiIO* ioPtr;
 	ImGuiStyle* stylePtr;
+
+	// ImGui fonts
+	std::vector<ImFont*> imFonts;
+	std::vector<ImFont*> imPseudocodeFonts;
+	unsigned int imFontSizeIndex = 0;
+	void refreshImFontForVisEngine();
 
 	// Random number generator
 	std::mt19937 rng;

@@ -418,6 +418,7 @@ void TrieVisEngine::addNodeDrawablesUpdate(std::vector<std::unique_ptr<sf::Drawa
 // Create AND display ImGui window to highlight source code (pseudocode)
 void TrieVisEngine::drawPseudocodeWindow(TrieAnimStep eventTrie) {
 	ImGui::Begin("Pseudocode", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::PushFont(pseudocodeFont);
 
 	switch (visMode) {
 	case TrieVisMode::SEARCH:
@@ -480,6 +481,7 @@ void TrieVisEngine::drawPseudocodeWindow(TrieAnimStep eventTrie) {
 		break;
 	}
 
+	ImGui::PopFont();
 	ImGui::End();
 }
 

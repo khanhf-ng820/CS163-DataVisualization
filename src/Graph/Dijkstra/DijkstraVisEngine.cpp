@@ -309,6 +309,7 @@ void DijkstraVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawabl
 // Create AND display ImGui window to highlight source code (pseudocode)
 void DijkstraVisEngine::drawPseudocodeWindow(DijkstraAnimStep eventDijkstra) {
 	ImGui::Begin("Pseudocode", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::PushFont(pseudocodeFont);
 
 	switch (visMode) {
 	case DijkstraVisMode::DIJKSTRA:
@@ -326,6 +327,7 @@ void DijkstraVisEngine::drawPseudocodeWindow(DijkstraAnimStep eventDijkstra) {
 		break;
 	}
 
+	ImGui::PopFont();
 	ImGui::End();
 }
 

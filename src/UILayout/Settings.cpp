@@ -182,7 +182,7 @@ void Program::displaySettingsMenuScreenGUI() {
 	ImGui::Text("GUI Font Size:");
 	static int ui_size_step = 1;
 	static float real_ui_scale = 1 + (ui_size_step - 1) * 0.25f;
-	if (ImGui::SliderInt("##UI Font Size", &ui_size_step, 1, 5)) {
+	if (ImGui::SliderInt("##UI Font Size", &ui_size_step, 1, NUM_FONT_SIZE)) {
 		real_ui_scale = 1 + (ui_size_step - 1) * 0.25f;
 	}
 
@@ -235,20 +235,25 @@ void Program::displaySettingsMenuScreenGUI() {
 		currentVisTheme = visThemeVectors[current_visTheme_item];
 		refreshVisThemes();
 
-		// Set UI font size
-		// ioPtr->FontGlobalScale = real_ui_scale;
-		ioPtr->Fonts->Clear();
-		ioPtr->Fonts->AddFontFromFileTTF((fs::path(ASSET_DIR) / "Roboto/Roboto-VariableFont_wdth,wght.ttf").string().c_str(),
-			UI_FONT_SIZE * real_ui_scale);
+		// Set ImGui font size
+		// ioPtr->FontGlobalScale = real_ui_scale; // May be blurry
+		// ioPtr->Fonts->Clear();
+		// ioPtr->Fonts->AddFontFromFileTTF((fs::path(ASSET_DIR) / "Roboto/Roboto-VariableFont_wdth,wght.ttf").string().c_str(),
+		// 	UI_FONT_SIZE * real_ui_scale);
+		imFontSizeIndex = ui_size_step - 1;
+
+		refreshImFontForVisEngine();
+
 
 		// IMPORTANT for imgui-sfml: Re-create the font texture
-		ImGui::SFML::UpdateFontTexture();
+		// ImGui::SFML::UpdateFontTexture();
+
 		// Scale all UI elements (paddings, spacing) to match
 		// ImGui::GetStyle().ScaleAllSizes(real_ui_scale);
 
 
 
-		// Set size for SFML text in default view
+		// Set size for the SFML text in default view
 		// auto sfmlText = static_cast<sf::Text*>(sfDrawables[ProgramState::MAIN_MENU]->drawables[0].get());
 		// sf::FloatRect bounds = titleText->getLocalBounds();
 		// sfmlText->setSize(sf::Vector2f(window.getSize()));
