@@ -8,8 +8,8 @@ Program::Program()
 	)
 	// , view(sf::FloatRect({0.f, 0.f}, {NORMAL_WIDTH, NORMAL_HEIGHT}))
 	, view(window.getDefaultView())
-	, textFont(fs::path(ASSET_DIR) / "Roboto_Mono/RobotoMono-VariableFont_wght.ttf")
-	// , textFont(fs::path(ASSET_DIR) / "Roboto/Roboto-VariableFont_wdth,wght.ttf")
+	, textFont(fs::path(ASSET_DIR) / "Roboto_Mono" / "RobotoMono-VariableFont_wght.ttf")
+	// , textFont(fs::path(ASSET_DIR) / "Roboto" / "Roboto-VariableFont_wdth,wght.ttf")
 	, rng(std::random_device()())
 	, visEngine_SLL(window, textFont), visEngine_Hash(&window, &textFont)
 	, visEngine_AVL(&window, &textFont), visEngine_Trie(&window, &textFont)
@@ -39,20 +39,20 @@ Program::Program()
 	ioPtr->Fonts->Clear();
 	// 5 sizes each font
 	for (int i = 0; i < NUM_FONT_SIZE; i++) {
-		ImFont* imguiFont = ioPtr->Fonts->AddFontFromFileTTF((fs::path(ASSET_DIR) / "Roboto/Roboto-VariableFont_wdth,wght.ttf").string().c_str(),
+		ImFont* imguiFont = ioPtr->Fonts->AddFontFromFileTTF((fs::path(ASSET_DIR) / "Roboto" / "Roboto-VariableFont_wdth,wght.ttf").string().c_str(),
 			NORMAL_UI_FONT_SIZE * (1 + i * 0.25f));
 		assert(imguiFont != nullptr);
 		imFonts.push_back(imguiFont);
 		if (i == 0)
-			std::cerr << "-- Font: " << (fs::path(ASSET_DIR) / "Roboto/Roboto-VariableFont_wdth,wght.ttf").string() << " exists\n";
+			std::cerr << "-- Font: " << (fs::path(ASSET_DIR) / "Roboto" / "Roboto-VariableFont_wdth,wght.ttf").string() << " exists\n";
 	}
 	for (int i = 0; i < NUM_FONT_SIZE; i++) {
-		ImFont* imguiFont = ioPtr->Fonts->AddFontFromFileTTF((fs::path(ASSET_DIR) / "Roboto_Mono/RobotoMono-VariableFont_wght.ttf").string().c_str(),
+		ImFont* imguiFont = ioPtr->Fonts->AddFontFromFileTTF((fs::path(ASSET_DIR) / "Roboto_Mono" / "RobotoMono-VariableFont_wght.ttf").string().c_str(),
 			NORMAL_UI_FONT_SIZE * (1 + i * 0.25f));
 		assert(imguiFont != nullptr);
 		imPseudocodeFonts.push_back(imguiFont);
 		if (i == 0)
-			std::cerr << "-- Font: " << (fs::path(ASSET_DIR) / "Roboto_Mono/RobotoMono-VariableFont_wght.ttf").string() << " exists\n";
+			std::cerr << "-- Font: " << (fs::path(ASSET_DIR) / "Roboto_Mono" / "RobotoMono-VariableFont_wght.ttf").string() << " exists\n";
 	}
 	// IMPORTANT for imgui-sfml: Re-create the font texture
 	ImGui::SFML::UpdateFontTexture();
