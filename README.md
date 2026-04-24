@@ -4,7 +4,7 @@
 <!-- This project uses **C++**, **CMake**, and the **raylib** graphics library. -->
 This project uses **C++17**, **CMake**, the **SFML** graphics library, the **ImGui-SFML** GUI library, and the **tinyfiledialogs** library.
 
-This project is inspired by [Data Structure Visualizations \- USFCA](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html) and [visualgo](https://visualgo.net/en).
+This project is inspired by [Data Structure Visualizations](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html) (USFCA) and [visualgo](https://visualgo.net/en) (NUS).
 
 The developer of this application: Nguyễn Phúc Khánh ([Github](https://github.com/khanhf-ng820)).
 
