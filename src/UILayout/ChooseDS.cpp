@@ -275,7 +275,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 	bool invalidDataCustom = false; // To print error messages when invalid data
 
 	///// --- MUST FINISH ALL 6 DATA STRUCTURES --- /////
-	// --- Continue from before ---
+	// --- CONTINUE FROM BEFORE ---
 	if (dataInitOption == DATA_INIT_CONTINUE) {
 		std::string message;
 		switch (chosenDSType) {
@@ -295,7 +295,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 			break;
 		}
 		ImGui::Text("%s", message.c_str());
-	// --- Empty initialization ---
+	// --- EMPTY INITIALIZATION ---
 	} else if (dataInitOption == DATA_INIT_EMPTY) {
 		switch (chosenDSType) {
 		case DSType::HASH_TABLE:
@@ -316,7 +316,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 		default:
 			break;
 		}
-	// --- Randomized initialization ---
+	// --- RANDOMIZED INITIALIZATION ---
 	} else if (dataInitOption == DATA_INIT_RANDOMIZED) {
 		switch (chosenDSType) {
 		case DSType::HASH_TABLE:
@@ -337,27 +337,43 @@ void Program::displayChooseDSMenuScreenGUI() {
 		default:
 			break;
 		}
-	// --- Data as string ---
+	// --- DATA AS STRING ---
 	} else if (dataInitOption == DATA_INIT_CUSTOM) {
 		///// --- MUST FINISH ALL 6 DATA STRUCTURES --- /////
 		std::string dataString; // String of entered data
 		switch (chosenDSType) {
 		case DSType::SINGLY_LINKED_LIST:
+			// Instructions
+			ImGui::Text("NOTE: Enter only a line of integers (short int), separated by space characters.");
+			ImGui::Text("%s", SLL_EXAMPLE);
+
 			ImGui::InputTextMultiline("##CustomDataSLL", customDataSLLBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			dataString = std::string(customDataSLLBuf);
 			invalidDataCustom = !validDataSLLString(dataString);
 			break;
 		case DSType::HASH_TABLE:
+			// Instructions
+			ImGui::Text("NOTE: Enter only a line of integers (short int, denotes a filled slot) or the character \'N\' (denotes an empty slot), separated by space characters.");
+			ImGui::Text("%s", HASH_TABLE_EXAMPLE);
+
 			ImGui::InputTextMultiline("##CustomDataHash", customDataHashBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			dataString = std::string(customDataHashBuf);
 			invalidDataCustom = !validDataHashTableString(dataString);
 			break;
 		case DSType::AVL_TREE:
+			// Instructions
+			ImGui::Text("NOTE: Enter only a line of integers (short int), separated by space characters.");
+			ImGui::Text("%s", AVL_EXAMPLE);
+
 			ImGui::InputTextMultiline("##CustomDataAVL", customDataAVLBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			dataString = std::string(customDataAVLBuf);
 			invalidDataCustom = !validDataAVLString(dataString);
 			break;
 		case DSType::TRIE_TREE:
+			// Instructions
+			ImGui::Text("NOTE: Enter only a line of strings (containing ONLY lowercase a-z characters), separated by space characters.");
+			ImGui::Text("%s", TRIE_EXAMPLE);
+
 			ImGui::InputTextMultiline("##CustomDataTrie", customDataTrieBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			dataString = std::string(customDataTrieBuf);
 			invalidDataCustom = !validDataTrieString(dataString);
@@ -368,6 +384,22 @@ void Program::displayChooseDSMenuScreenGUI() {
 			ImGui::RadioButton("Adjacency List", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::ADJ_LIST); // Value 1
 			ImGui::SameLine();
 			ImGui::RadioButton("Edge List", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::EDGE_LIST); // Value 2
+
+			// Instructions
+			switch (graphInitOption) {
+			case GraphReader::GraphInitMethod::ADJ_MATRIX:
+				ImGui::Text("NOTE: Enter V lines, each line containing V integers of positive weights (denotes an edge) or the integer 0 (denotes no edge).\n(V is the number of vertices.)");
+				ImGui::Text("%s", GRAPH_ADJ_MATRIX_EXAMPLE);
+				break;
+			case GraphReader::GraphInitMethod::ADJ_LIST:
+				ImGui::Text("NOTE: First line: a single integer V - the number of vertices.\nNext V lines: the i-th line (0-based indexed) describes vertex i.\nEach line contains pairs of integers (u, w), where u is a neighboring vertex and w is the weight of the edge to u.");
+				ImGui::Text("%s",GRAPH_ADJ_LIST_EXAMPLE);
+				break;
+			case GraphReader::GraphInitMethod::EDGE_LIST:
+				ImGui::Text("NOTE: First line: a single integer V - the number of vertices.\nNext lines: Each line contains triplets of integers (u, v, w), where u, v are neighboring vertices and w is the weight of that edge.");
+				ImGui::Text("%s",GRAPH_EDGE_LIST_EXAMPLE);
+				break;
+			}
 
 			ImGui::InputTextMultiline("##CustomDataMST", customDataMSTPrimBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			
@@ -381,6 +413,22 @@ void Program::displayChooseDSMenuScreenGUI() {
 			ImGui::SameLine();
 			ImGui::RadioButton("Edge List", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::EDGE_LIST); // Value 2
 
+			// Instructions
+			switch (graphInitOption) {
+			case GraphReader::GraphInitMethod::ADJ_MATRIX:
+				ImGui::Text("NOTE: Enter V lines, each line containing V integers of positive weights (denotes an edge) or the integer 0 (denotes no edge).\n(V is the number of vertices.)");
+				ImGui::Text("%s", GRAPH_ADJ_MATRIX_EXAMPLE);
+				break;
+			case GraphReader::GraphInitMethod::ADJ_LIST:
+				ImGui::Text("NOTE: First line: a single integer V - the number of vertices.\nNext V lines: the i-th line (0-based indexed) describes vertex i.\nEach line contains one or multiple pairs of integers (u, w), where u is a neighboring vertex and w is the weight of the edge to u.");
+				ImGui::Text("%s",GRAPH_ADJ_LIST_EXAMPLE);
+				break;
+			case GraphReader::GraphInitMethod::EDGE_LIST:
+				ImGui::Text("NOTE: First line: a single integer V - the number of vertices.\nNext lines: Each line contains a triplet of integers (u, v, w), representing an edge between vertices u and v with weight w.");
+				ImGui::Text("%s",GRAPH_EDGE_LIST_EXAMPLE);
+				break;
+			}
+
 			ImGui::InputTextMultiline("##CustomDataDijkstra", customDataDijkstraBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			
 			dataString = std::string(customDataDijkstraBuf);
@@ -389,7 +437,7 @@ void Program::displayChooseDSMenuScreenGUI() {
 		default:
 			break;
 		}
-	// --- Data from file ---
+	// --- DATA FROM FILE ---
 	} else if (dataInitOption == DATA_INIT_FROM_FILE) {
 		std::string dataFileName = getDataFileName(DSVectors[current_DS_item]);
 
@@ -401,6 +449,40 @@ void Program::displayChooseDSMenuScreenGUI() {
 			ImGui::RadioButton("Adjacency List", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::ADJ_LIST); // Value 1
 			ImGui::SameLine();
 			ImGui::RadioButton("Edge List", (int*)&graphInitOption, (int)GraphReader::GraphInitMethod::EDGE_LIST); // Value 2
+			
+			// Instructions
+			switch (graphInitOption) {
+			case GraphReader::GraphInitMethod::ADJ_MATRIX:
+				ImGui::Text("NOTE: Enter V lines, each line containing V integers of positive weights (denotes an edge) or the integer 0 (denotes no edge).\n(V is the number of vertices.)");
+				ImGui::Text("%s", GRAPH_ADJ_MATRIX_EXAMPLE);
+				break;
+			case GraphReader::GraphInitMethod::ADJ_LIST:
+				ImGui::Text("NOTE: First line: a single integer V - the number of vertices.\nNext V lines: the i-th line (0-based indexed) describes vertex i.\nEach line contains one or multiple pairs of integers (u, w), where u is a neighboring vertex and w is the weight of the edge to u.");
+				ImGui::Text("%s",GRAPH_ADJ_LIST_EXAMPLE);
+				break;
+			case GraphReader::GraphInitMethod::EDGE_LIST:
+				ImGui::Text("NOTE: First line: a single integer V - the number of vertices.\nNext lines: Each line contains a triplet of integers (u, v, w), representing an edge between vertices u and v with weight w.");
+				ImGui::Text("%s",GRAPH_EDGE_LIST_EXAMPLE);
+				break;
+			}
+
+			break;
+		// Instructions
+		case DSType::SINGLY_LINKED_LIST:
+			ImGui::Text("NOTE: Enter only a line of integers (short int), separated by space characters.");
+			ImGui::Text("%s", SLL_EXAMPLE);
+			break;
+		case DSType::HASH_TABLE:
+			ImGui::Text("NOTE: Enter only a line of integers (short int, denotes a filled slot) or the character \'N\' (denotes an empty slot), separated by space characters.");
+			ImGui::Text("%s", HASH_TABLE_EXAMPLE);
+			break;
+		case DSType::AVL_TREE:
+			ImGui::Text("NOTE: Enter only a line of integers (short int), separated by space characters.");
+			ImGui::Text("%s", AVL_EXAMPLE);
+			break;
+		case DSType::TRIE_TREE:
+			ImGui::Text("NOTE: Enter only a line of strings (containing ONLY lowercase a-z characters), separated by space characters.");
+			ImGui::Text("%s", TRIE_EXAMPLE);
 			break;
 		default:
 			break;
