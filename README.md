@@ -1,5 +1,5 @@
 # Data Structure Visualization
-**Data Structure Visualization**, a solo project for CS163 - Data Structures course at VNUHCM \- University of Science.
+**Data Structure Visualization**, a solo project for *CS163 - Data Structures* course at VNUHCM \- University of Science.
 
 <!-- This project uses **C++**, **CMake**, and the **raylib** graphics library. -->
 This project uses **C++17**, **CMake**, the **SFML** graphics library, the **ImGui-SFML** GUI library, and the **tinyfiledialogs** library.
@@ -41,7 +41,7 @@ This project contains visualizations for these data structures and algorithms:
 ### Technology stack:
 - **C++17, [CMake](https://cmake.org/)**
 - 2D Graphics Library: **[SFML v3.0.2](https://github.com/SFML/SFML)**
-- GUI Library: **[Dear ImGui v1.91.1](https://github.com/ocornut/imgui)**, **[ImGui-SFML v3.0](https://github.com/SFML/imgui-sfml)**
+- GUI Library: **[Dear ImGui v1.91.1](https://github.com/ocornut/imgui), [ImGui-SFML v3.0](https://github.com/SFML/imgui-sfml)**
 - File dialog box library: **[tinyfiledialogs](https://github.com/native-toolkit/libtinyfiledialogs)**
 
 ## Main features
@@ -65,7 +65,7 @@ This project uses **CMake** as its build system.
 Download and make sure you have:
 - git (version 2.50.1 or higher)
 - [CMake](https://cmake.org/download/) (version 3.20 or higher)
-- A C++ compiler (GCC, Clang, MinGW-w64, or MSVC) that ***MUST*** support **C++17**
+- A C++ compiler (GCC, Clang, MinGW-w64, or MSVC) that ***MUST SUPPORT C++17***
 
 Make sure all of them are available in **PATH** in order to be used in the Terminal, and make sure you have Internet connection while following these building steps.
 
