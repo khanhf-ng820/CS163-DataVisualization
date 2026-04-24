@@ -10,6 +10,8 @@
 // Display settings menu screen
 void Program::initSettingsMenuScreen() {
 	allowDragCanvas = false;
+
+	imFontSizeIndexSlider = imFontSizeIndex;
 }
 
 
@@ -180,11 +182,9 @@ void Program::displaySettingsMenuScreenGUI() {
 
 	ImGui::Separator();
 	ImGui::Text("GUI Font Size:");
-	static int ui_size_step = 1;
-	static float real_ui_scale = 1 + (ui_size_step - 1) * 0.25f;
-	if (ImGui::SliderInt("##UI Font Size", &ui_size_step, 1, NUM_FONT_SIZE)) {
-		real_ui_scale = 1 + (ui_size_step - 1) * 0.25f;
-	}
+	float imFontSizeFloat = NORMAL_UI_FONT_SIZE * (1 + imFontSizeIndexSlider * 0.25f);
+	std::string sliderDisplay = std::to_string(static_cast<int>(imFontSizeFloat));
+	ImGui::SliderInt("##UI Font Size", &imFontSizeIndexSlider, 0, NUM_FONT_SIZE - 1, sliderDisplay.c_str());
 
 
 	ImGui::Separator();
@@ -207,7 +207,7 @@ void Program::displaySettingsMenuScreenGUI() {
 
 
 	ImGui::Separator();
-	if (ImGui::Button("Apply All Settings")) {
+	if (ImGui::Button("Apply & Save All Settings")) {
 		window.setSize(resolutionVectors[current_resolution_item]);
 
 		// Setting app GUI theme
@@ -240,7 +240,7 @@ void Program::displaySettingsMenuScreenGUI() {
 		// ioPtr->Fonts->Clear();
 		// ioPtr->Fonts->AddFontFromFileTTF((fs::path(ASSET_DIR) / "Roboto" / "Roboto-VariableFont_wdth,wght.ttf").string().c_str(),
 		// 	UI_FONT_SIZE * real_ui_scale);
-		imFontSizeIndex = ui_size_step - 1;
+		imFontSizeIndex = imFontSizeIndexSlider;
 
 		refreshImFontForVisEngine();
 
@@ -258,6 +258,10 @@ void Program::displaySettingsMenuScreenGUI() {
 		// sf::FloatRect bounds = titleText->getLocalBounds();
 		// sfmlText->setSize(sf::Vector2f(window.getSize()));
 		// sfmlText->setOrigin(sf::Vector2f(window.getSize()) / 2.f); // origin at center
+
+
+		// -- Save all settings into config file
+		saveSettings();
 	}
 
 
