@@ -15,6 +15,8 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE ASSET_DIR="${CMAKE_CURRENT_LIST_DIR}/../assets")
 target_compile_definitions(${PROJECT_NAME} PRIVATE DATA_DIR="${CMAKE_CURRENT_LIST_DIR}/../data")
+target_compile_definitions(${PROJECT_NAME} PRIVATE CONFIG_DIR="${CMAKE_CURRENT_LIST_DIR}/../config")
+target_compile_definitions(${PROJECT_NAME} PRIVATE SETTINGS_FILE="${CMAKE_CURRENT_LIST_DIR}/../config/settings.cfg")
 
 
 

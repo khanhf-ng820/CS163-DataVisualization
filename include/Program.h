@@ -13,6 +13,7 @@ extern "C" {
 }
 
 #include "Themes/Themes.h"
+#include "utils/readSettings.h"
 #include "utils/readData.hpp"
 #include "sfLayout/sfLayout.h"
 #include "SLL/SLLVisEngine.h"
@@ -124,6 +125,8 @@ private:
 
 
 
+
+
 	// Constants
 	const std::string PROGRAM_WINDOW_NAME = "Data Structure Visualizer";
 	// Logical resolution
@@ -149,9 +152,8 @@ private:
 	ImGuiStyle* stylePtr;
 
 	// ImGui fonts
-	std::vector<ImFont*> imFonts;
-	std::vector<ImFont*> imPseudocodeFonts;
-	unsigned int imFontSizeIndex = 0;
+	std::vector<ImFont*> imFonts; // size of NUM_FONT_SIZE
+	std::vector<ImFont*> imPseudocodeFonts; // size of NUM_FONT_SIZE
 	void refreshImFontForVisEngine();
 
 	// Random number generator
@@ -175,12 +177,12 @@ private:
 
 	ProgramState programState = ProgramState::MAIN_MENU;
 
-	// Set vis theme for engines
+	// Set vis theme for engines (SETTINGS)
 	static inline VIS_THEME currentVisTheme = VIS_THEME::LIGHT; // Default is Light mode
 	void setLightVisTheme();
 	void setDarkVisTheme();
 	void refreshVisThemes();
-	// Shape colors for SFML
+	// Colors for SFML 
 	static inline sf::Color backgroundColor = sf::Color::White;
 	static inline sf::Color titleColor = sf::Color::Black;
 
@@ -203,19 +205,29 @@ private:
 	///// Input buffers for ImGui /////
 	char* buf = new char[25];
 	float f = 0.36;
+	int imFontSizeIndexSlider = 0;
 
 
-	///// Input buffers for settings /////
-	const char* resolutionOptions[6]                  = { "800×600", "1920×1080", "1366×768", "1440×900", "1280×720", "1024×768" }; // Removed 2560×1440
+
+	///// Input buffers for SETTINGS /////
+	const char* resolutionOptions[6]                  = { "800x600", "1920x1080", "1366x768", "1440x900", "1280x720", "1024x768" }; // Removed 2560x1440
 	const std::vector<sf::Vector2u> resolutionVectors = { {800,600}, {1920,1080}, {1366,768}, {1440,900}, {1280,720}, {1024,768} };
 	const char* appThemeOptions[3]               = { "Light", "Dark", "Purple" };
 	const std::vector<APP_THEME> appThemeVectors = { APP_THEME::LIGHT, APP_THEME::DARK, APP_THEME::PURPLE };
 	const char* visThemeOptions[2]               = { "Light", "Dark" };
 	const std::vector<VIS_THEME> visThemeVectors = { VIS_THEME::LIGHT, VIS_THEME::DARK };
+	///// SETTINGS variables
 	int current_resolution_item = 0;
 	int current_appTheme_item = 1; // Default is Dark mode
 	int current_visTheme_item = 0; // Default is Light mode
+	int imFontSizeIndex = 0; // (SETTINGS) for ImGui fonts
 
+	void loadSettings(); // Load settings into Program
+	void saveSettings(); // Save settings in Program into .cfg file
+
+
+
+	///// Input buffers for data initialization /////
 	unsigned int initHashTableSizeBuf   = 11;
 	unsigned int initHashTableModuloBuf = 11;
 	constexpr static unsigned int MAX_INIT_HASHTABLE_SIZE   = 128;

@@ -57,10 +57,13 @@ Program::Program()
 	// IMPORTANT for imgui-sfml: Re-create the font texture
 	ImGui::SFML::UpdateFontTexture();
 
-	// -- Set visualization themes (in SFML) for vis engines
+	// -- Set default visualization themes (in SFML) for vis engines
 	refreshVisThemes();
-	// -- Set pseudocode font in ImGui for vis engines
+	// -- Set default pseudocode font in ImGui for vis engines
 	refreshImFontForVisEngine();
+
+	// -- Load settings first
+	loadSettings();
 
 	// -- Modify the window background color (RGB alpha)
 	// style.Colors[ImGuiCol_WindowBg] = ImVec4(0.6f, 0.4f, 0.6f, 0.9f);
@@ -495,4 +498,54 @@ void Program::refreshImFontForVisEngine() {
 	visEngine_Trie.pseudocodeFont = imPseudocodeFonts[imFontSizeIndex];
 	visEngine_MSTPrim.pseudocodeFont = imPseudocodeFonts[imFontSizeIndex];
 	visEngine_Dijkstra.pseudocodeFont = imPseudocodeFonts[imFontSizeIndex];
+}
+
+
+
+
+
+// Load settings into Program
+void Program::loadSettings() {
+	Settings read = SettingsReader::readSettings(); // If fails, return default settings
+	current_resolution_item = read.resolutionItemIndex;
+	current_appTheme_item = read.appThemeItemIndex; // Default is Dark mode
+	current_visTheme_item = read.visThemeItemIndex; // Default is Light mode
+	imFontSizeIndex = read.imFontSizeIndex; // (SETTINGS) for ImGui fonts
+
+	// Clamping values
+	current_resolution_item = std::clamp(current_resolution_item, 0, static_cast<int>(resolutionVectors.size()) - 1);
+	current_appTheme_item = std::clamp(current_appTheme_item, 0, static_cast<int>(appThemeVectors.size()) - 1);
+	current_visTheme_item = std::clamp(current_visTheme_item, 0, static_cast<int>(visThemeVectors.size()) - 1);
+	imFontSizeIndex = std::clamp(imFontSizeIndex, 0, static_cast<int>(imFonts.size()) - 1);
+
+
+	window.setSize(resolutionVectors[current_resolution_item]);
+
+	// Setting app GUI theme
+	switch (appThemeVectors[current_appTheme_item]) {
+	case APP_THEME::LIGHT:
+		ImGui::StyleColorsLight(); // Light theme
+		break;
+	case APP_THEME::DARK:
+		ImGui::StyleColorsDark(); // Dark theme
+		break;
+	case APP_THEME::PURPLE:
+		ImGui::StyleColorsClassic(); // Purple theme
+		break;
+	}
+
+	// Setting vis engine theme
+	currentVisTheme = visThemeVectors[current_visTheme_item];
+	refreshVisThemes();
+
+	refreshImFontForVisEngine();
+
+	// Set ImGui buffer
+	imFontSizeIndexSlider = imFontSizeIndex;
+}
+
+// Save settings in Program into .cfg file
+void Program::saveSettings() {
+	Settings settingsInProgram(current_resolution_item, current_appTheme_item, current_visTheme_item, imFontSizeIndex);
+	SettingsReader::saveSettings(settingsInProgram);
 }
