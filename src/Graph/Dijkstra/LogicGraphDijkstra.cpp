@@ -199,7 +199,10 @@ void LogicGraphDijkstra::generateDijkstraEvents(int startVertex, std::vector<Dij
 		}
 	}
 
+
+	std::string descriptionString = "Finished Dijkstra\'s algorithm, hold right click on a vertex to see shortest path.\nIn a vertex, the top number is the cost of shortest path from " + std::to_string(startVertex) + " to that vertex.\nThe bottom number is the predecessor vertex on the shortest path.";
+
 	graphSnapshots.push_back(dijkstraVertices);
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::FINISHED_DIJKSTRA, "Finished Dijkstra\'s algorithm, hold right click on a vertex to see shortest path.", {16}, 
+	events.push_back(DijkstraAnimStep(DijkstraAnimType::FINISHED_DIJKSTRA, descriptionString, {16}, 
 		-1, -1, graphSnapshots.size() - 1));
 }

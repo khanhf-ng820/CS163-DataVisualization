@@ -89,7 +89,10 @@ std::vector<PrimAnimStep> PrimVisEngine::getEventsPrim(int startVertex) {
 	oldGraphSnapshots.clear();
 	oldGraphSnapshots.push_back(graph.logicVertices);
 
-	events.push_back(PrimAnimStep(PrimAnimType::NONE, "Before running Prim\'s algorithm with starting vertex: " + std::to_string(startVertex), {1,2,3}, 
+	std::string descriptionString = "Before running Prim\'s algorithm with starting vertex: " + std::to_string(startVertex)
+	+ ".\nIn a vertex, the top number is the minimum weight of an edge connecting the vertex\noutside the growing MST to a vertex already within it.\nThe bottom number is the parent vertex in the MST.";
+
+	events.push_back(PrimAnimStep(PrimAnimType::NONE, descriptionString, {1,2,3}, 
 		-1, -1, oldGraphSnapshots.size() - 1));
 	graph.generatePrimEvents(startVertex, events, oldGraphSnapshots);
 

@@ -89,7 +89,10 @@ std::vector<DijkstraAnimStep> DijkstraVisEngine::getEventsDijkstra(int startVert
 	oldGraphSnapshots.clear();
 	oldGraphSnapshots.push_back(graph.logicVertices);
 
-	events.push_back(DijkstraAnimStep(DijkstraAnimType::NONE, "Before running Dijkstra\'s algorithm with starting vertex: " + std::to_string(startVertex), {1,2}, 
+	std::string descriptionString = "Before running Dijkstra\'s algorithm with starting vertex: " + std::to_string(startVertex)
+	+ ".\nIn a vertex, the top number is the cost of shortest path from " + std::to_string(startVertex) + " to that vertex.\nThe bottom number is the predecessor vertex on the shortest path.";
+
+	events.push_back(DijkstraAnimStep(DijkstraAnimType::NONE, descriptionString, {1,2}, 
 		-1, -1, oldGraphSnapshots.size() - 1));
 	graph.generateDijkstraEvents(startVertex, events, oldGraphSnapshots);
 
