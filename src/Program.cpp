@@ -34,6 +34,15 @@ Program::Program()
 	ioPtr = &io;
 	stylePtr = &style;
 
+	// -- Set global style for ImGui
+	// Core rounding settings
+	style.WindowRounding = 5.0f;     // Radius for main window corners
+	style.ChildRounding = 5.0f;      // Radius for child windows
+	style.FrameRounding = 5.0f;      // Radius for buttons, inputs, and checkboxes
+	style.PopupRounding = 5.0f;      // Radius for tooltips and menus
+	style.GrabRounding = 5.0f;       // Radius for sliders and scrollbar grabbers
+	style.TabRounding = 4.0f;        // Radius for docking tabs
+
 	// -- Font and font size for ImGui
 	std::cerr << "-- Loading fonts...\n";
 	ioPtr->Fonts->Clear();
