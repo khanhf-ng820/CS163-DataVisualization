@@ -249,6 +249,7 @@ void LogicGraphPrim::generatePrimEvents(int startVertex, std::vector<PrimAnimSte
 	std::string resultDescription = isMST
 		? ("Finished Prim\'s algorithm, the total cost of MST is " + std::to_string(edgeSumMST(primVertices)) + ".")
 		: "Finished Prim\'s algorithm, the Minimum Spanning Tree does not exist.\nOnly found a Minimum Spanning Tree of a connected subgraph.";
+	resultDescription += "\nIn a vertex, the top number is the minimum weight of an edge connecting the vertex\noutside the growing MST to a vertex already within it.\nThe bottom number is the parent vertex in the MST.";
 
 	graphSnapshots.push_back(primVertices);
 	events.push_back(PrimAnimStep(PrimAnimType::FINISHED_MST_PRIM, resultDescription, {22}, 

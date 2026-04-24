@@ -62,6 +62,9 @@ public:
 	~Program();
 	// Main loop of program
 	void mainLoop();
+
+
+private:
 	// Function to update View based on new window size
 	void resizeView();
 
@@ -121,7 +124,6 @@ public:
 
 
 
-private:
 	// Constants
 	const std::string PROGRAM_WINDOW_NAME = "Data Structure Visualizer";
 	// Logical resolution
