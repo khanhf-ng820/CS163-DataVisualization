@@ -1,8 +1,12 @@
-# CS163-DataVisualization
-**Data Structure Visualization**, a solo project for CS163 - Data Structures course.
+# Data Structure Visualization
+**Data Structure Visualization**, a solo project for CS163 - Data Structures course at VNUHCM \- University of Science.
 
 <!-- This project uses **C++**, **CMake**, and the **raylib** graphics library. -->
 This project uses **C++17**, **CMake**, the **SFML** graphics library, the **ImGui-SFML** GUI library, and the **tinyfiledialogs** library.
+
+This project is inspired by [Data Structure Visualizations](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html) (USFCA) and [visualgo](https://visualgo.net/en) (NUS).
+
+The developer of this application: Nguyễn Phúc Khánh ([Github](https://github.com/khanhf-ng820)).
 
 ## Overview
 
@@ -36,9 +40,9 @@ This project contains visualizations for these data structures and algorithms:
 
 ### Technology stack:
 - **C++17, [CMake](https://cmake.org/)**
-- 2D Graphics: **[SFML v3.0.2](https://github.com/SFML/SFML)**
-- GUI: **[Dear ImGui v1.91.1](https://github.com/ocornut/imgui)**, **[ImGui-SFML v3.0](https://github.com/SFML/imgui-sfml)**
-- File dialog box: **[tinyfiledialogs](https://github.com/native-toolkit/libtinyfiledialogs)**
+- 2D Graphics Library: **[SFML v3.0.2](https://github.com/SFML/SFML)**
+- GUI Library: **[Dear ImGui v1.91.1](https://github.com/ocornut/imgui)**, **[ImGui-SFML v3.0](https://github.com/SFML/imgui-sfml)**
+- File dialog box library: **[tinyfiledialogs](https://github.com/native-toolkit/libtinyfiledialogs)**
 
 ## Main features
 
