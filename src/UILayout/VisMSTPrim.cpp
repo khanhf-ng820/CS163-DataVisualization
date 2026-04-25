@@ -92,7 +92,7 @@ void Program::displayVisMSTPrimScreenGUI() {
 		// ImGuiWindowFlags_NoBackground
 	);
 	// -- GO BACK TO MAIN MENU BUTTON
-	if (ImGui::Button("<- Back to Main Menu")) {
+	if (ImGui::Button("<= Back to Main Menu")) {
 		programState = ProgramState::MAIN_MENU;
 		resizeView();
 	}
@@ -101,9 +101,16 @@ void Program::displayVisMSTPrimScreenGUI() {
 	if (ImGui::Button("Reset View")) {
 		resizeView();
 	}
+
 	// -- SPEED/PAUSE/STEP MENU
 	ImGui::SliderFloat("Animation Speed", &visEngine_MSTPrim.dt, 0.001f, 0.499f);
 
+	// ImGui::BeginDisabled(!visEngine_MSTPrim.animPaused);
+	if (ImGui::Button("Skip to Start")) {
+		visEngine_MSTPrim.skipToStartState();
+	}
+	// ImGui::EndDisabled();
+	ImGui::SameLine();
 	ImGui::BeginDisabled(!visEngine_MSTPrim.animPaused);
 	if (ImGui::Button("Previous Step")) {
 		visEngine_MSTPrim.prevStep();
@@ -121,15 +128,17 @@ void Program::displayVisMSTPrimScreenGUI() {
 	}
 	ImGui::EndDisabled();
 	ImGui::SameLine();
-	ImGui::BeginDisabled(!visEngine_MSTPrim.animPaused);
+	// ImGui::BeginDisabled(!visEngine_MSTPrim.animPaused);
 	if (ImGui::Button("Skip to Final")) {
 		visEngine_MSTPrim.skipToFinalState();
 	}
-	ImGui::EndDisabled();
+	// ImGui::EndDisabled();
 
 	ImGui::Separator();
 
 
+
+	ImGui::Text("Hold right-click on a vertex to drag it.");
 
 	// -- RUN MST_PRIM OPERATION --
 	ImGui::BeginDisabled(visEngine_MSTPrim.animInProgress);

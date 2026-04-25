@@ -272,7 +272,8 @@ void Program::mainLoop() {
 
 			// Zoom when mouse is scrolling
 			if (const auto* scroll = event->getIf<sf::Event::MouseWheelScrolled>()) {
-				if (scroll->wheel == sf::Mouse::Wheel::Vertical) {
+				if (scroll->wheel == sf::Mouse::Wheel::Vertical
+				&& !ImGui::GetIO().WantCaptureMouse /* mouse not on ImGui widget */) {
 					float zoomFactor = (scroll->delta > 0) ? 1/SCALING_FACTOR : SCALING_FACTOR;
 					view.zoom(zoomFactor);
 					window.setView(view);

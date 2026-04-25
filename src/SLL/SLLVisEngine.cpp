@@ -55,6 +55,11 @@ void SLLVisEngine::nextStep() {
 	targetTime = floor(targetTime);
 	targetTime = std::max(targetTime, 0.f);
 }
+void SLLVisEngine::skipToStartState() {
+	time = 0;
+	if (animPaused) targetTime = 0;
+	// animPaused = false; // Auto un-pause
+}
 void SLLVisEngine::skipToFinalState() {
 	time = std::max(100000, static_cast<int>(eventList.size() + 1));
 	animPaused = false; // Auto un-pause
@@ -958,7 +963,7 @@ void SLLVisEngine::resetEngine() {
 	animStepIndex = 0; // first step
 	oldAnimStepIndex = 0; // first step
 	time = 0;
-	dt = 0.005;
+	dt = 0.010;
 	targetTime = 0; // ONLY USE WHEN PAUSED
 
 	animPaused = false;

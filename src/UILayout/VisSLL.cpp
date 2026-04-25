@@ -298,7 +298,7 @@ void Program::displayVisSLLScreenGUI() {
 		// ImGuiWindowFlags_NoBackground
 	);
 	// -- GO BACK TO MAIN MENU BUTTON
-	if (ImGui::Button("<- Back to Main Menu")) {
+	if (ImGui::Button("<= Back to Main Menu")) {
 		programState = ProgramState::MAIN_MENU;
 		resizeView();
 	}
@@ -307,9 +307,16 @@ void Program::displayVisSLLScreenGUI() {
 	if (ImGui::Button("Reset View")) {
 		resizeView();
 	}
+
 	// -- SPEED/PAUSE/STEP MENU
 	ImGui::SliderFloat("Animation Speed", &visEngine_SLL.dt, 0.001f, 0.499f);
 
+	// ImGui::BeginDisabled(!visEngine_SLL.animPaused);
+	if (ImGui::Button("Skip to Start")) {
+		visEngine_SLL.skipToStartState();
+	}
+	// ImGui::EndDisabled();
+	ImGui::SameLine();
 	ImGui::BeginDisabled(!visEngine_SLL.animPaused);
 	if (ImGui::Button("Previous Step")) {
 		visEngine_SLL.prevStep();
@@ -327,11 +334,11 @@ void Program::displayVisSLLScreenGUI() {
 	}
 	ImGui::EndDisabled();
 	ImGui::SameLine();
-	ImGui::BeginDisabled(!visEngine_SLL.animPaused);
+	// ImGui::BeginDisabled(!visEngine_SLL.animPaused);
 	if (ImGui::Button("Skip to Final")) {
 		visEngine_SLL.skipToFinalState();
 	}
-	ImGui::EndDisabled();
+	// ImGui::EndDisabled();
 
 	ImGui::Separator();
 

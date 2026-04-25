@@ -136,7 +136,7 @@ void Program::displaySettingsMenuScreenGUI() {
 	);
 	ImGui::PopStyleColor();
 
-	if (ImGui::Button("<- Go back")) {
+	if (ImGui::Button("<= Go back")) {
 		programState = ProgramState::MAIN_MENU;
 		std::cout << "-- Go to main menu." << std::endl;
 		resizeView();
