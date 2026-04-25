@@ -175,9 +175,16 @@ void Program::displayVisAVLScreenGUI() {
 	if (ImGui::Button("Reset View")) {
 		resizeView();
 	}
+
 	// -- SPEED/PAUSE/STEP MENU
 	ImGui::SliderFloat("Animation Speed", &visEngine_AVL.dt, 0.001f, 0.499f);
 
+	ImGui::BeginDisabled(!visEngine_AVL.animPaused);
+	if (ImGui::Button("Skip to Start")) {
+		visEngine_AVL.skipToStartState();
+	}
+	ImGui::EndDisabled();
+	ImGui::SameLine();
 	ImGui::BeginDisabled(!visEngine_AVL.animPaused);
 	if (ImGui::Button("Previous Step")) {
 		visEngine_AVL.prevStep();

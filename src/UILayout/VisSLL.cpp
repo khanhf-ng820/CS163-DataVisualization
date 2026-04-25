@@ -307,9 +307,16 @@ void Program::displayVisSLLScreenGUI() {
 	if (ImGui::Button("Reset View")) {
 		resizeView();
 	}
+
 	// -- SPEED/PAUSE/STEP MENU
 	ImGui::SliderFloat("Animation Speed", &visEngine_SLL.dt, 0.001f, 0.499f);
 
+	ImGui::BeginDisabled(!visEngine_SLL.animPaused);
+	if (ImGui::Button("Skip to Start")) {
+		visEngine_SLL.skipToStartState();
+	}
+	ImGui::EndDisabled();
+	ImGui::SameLine();
 	ImGui::BeginDisabled(!visEngine_SLL.animPaused);
 	if (ImGui::Button("Previous Step")) {
 		visEngine_SLL.prevStep();

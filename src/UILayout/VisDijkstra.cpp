@@ -127,6 +127,8 @@ void Program::displayVisDijkstraScreenGUI() {
 
 
 
+	ImGui::Text("Hold right-click on a vertex to drag it.");
+
 	// -- RUN DIJKSTRA OPERATION --
 	ImGui::BeginDisabled(visEngine_Dijkstra.animInProgress);
 	ImGui::Text("Enter starting vertex:");

@@ -101,9 +101,16 @@ void Program::displayVisMSTPrimScreenGUI() {
 	if (ImGui::Button("Reset View")) {
 		resizeView();
 	}
+
 	// -- SPEED/PAUSE/STEP MENU
 	ImGui::SliderFloat("Animation Speed", &visEngine_MSTPrim.dt, 0.001f, 0.499f);
 
+	ImGui::BeginDisabled(!visEngine_MSTPrim.animPaused);
+	if (ImGui::Button("Skip to Start")) {
+		visEngine_MSTPrim.skipToStartState();
+	}
+	ImGui::EndDisabled();
+	ImGui::SameLine();
 	ImGui::BeginDisabled(!visEngine_MSTPrim.animPaused);
 	if (ImGui::Button("Previous Step")) {
 		visEngine_MSTPrim.prevStep();
@@ -130,6 +137,8 @@ void Program::displayVisMSTPrimScreenGUI() {
 	ImGui::Separator();
 
 
+
+	ImGui::Text("Hold right-click on a vertex to drag it.");
 
 	// -- RUN MST_PRIM OPERATION --
 	ImGui::BeginDisabled(visEngine_MSTPrim.animInProgress);

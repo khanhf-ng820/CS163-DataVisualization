@@ -101,6 +101,7 @@ public:
 
 	void prevStep();
 	void nextStep();
+	void skipToStartState();
 	void skipToFinalState();
 
 

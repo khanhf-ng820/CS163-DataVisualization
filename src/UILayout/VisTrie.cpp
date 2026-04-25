@@ -175,9 +175,16 @@ void Program::displayVisTrieScreenGUI() {
 	if (ImGui::Button("Reset View")) {
 		resizeView();
 	}
+
 	// -- SPEED/PAUSE/STEP MENU
 	ImGui::SliderFloat("Animation Speed", &visEngine_Trie.dt, 0.001f, 0.499f);
 
+	ImGui::BeginDisabled(!visEngine_Trie.animPaused);
+	if (ImGui::Button("Skip to Start")) {
+		visEngine_Trie.skipToStartState();
+	}
+	ImGui::EndDisabled();
+	ImGui::SameLine();
 	ImGui::BeginDisabled(!visEngine_Trie.animPaused);
 	if (ImGui::Button("Previous Step")) {
 		visEngine_Trie.prevStep();
