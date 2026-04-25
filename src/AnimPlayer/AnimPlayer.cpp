@@ -35,6 +35,12 @@ void AnimPlayer::nextStep() {
 	targetTime = std::max(targetTime, 0.f);
 }
 
+void AnimPlayer::skipToStartState() {
+	time = 0;
+	if (animPaused) targetTime = 0;
+	// animPaused = false; // Auto un-pause
+}
+
 void AnimPlayer::skipToFinalState() {
 	time = 100000;
 	animPaused = false; // Auto un-pause
