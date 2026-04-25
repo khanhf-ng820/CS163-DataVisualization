@@ -56,7 +56,8 @@ void SLLVisEngine::nextStep() {
 	targetTime = std::max(targetTime, 0.f);
 }
 void SLLVisEngine::skipToStartState() {
-	time = targetTime = 0;
+	time = 0;
+	if (animPaused) targetTime = 0;
 	// animPaused = false; // Auto un-pause
 }
 void SLLVisEngine::skipToFinalState() {

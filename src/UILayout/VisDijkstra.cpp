@@ -97,9 +97,16 @@ void Program::displayVisDijkstraScreenGUI() {
 	if (ImGui::Button("Reset View")) {
 		resizeView();
 	}
+
 	// -- SPEED/PAUSE/STEP MENU
 	ImGui::SliderFloat("Animation Speed", &visEngine_Dijkstra.dt, 0.001f, 0.499f);
 
+	// ImGui::BeginDisabled(!visEngine_Dijkstra.animPaused);
+	if (ImGui::Button("Skip to Start")) {
+		visEngine_Dijkstra.skipToStartState();
+	}
+	// ImGui::EndDisabled();
+	ImGui::SameLine();
 	ImGui::BeginDisabled(!visEngine_Dijkstra.animPaused);
 	if (ImGui::Button("Previous Step")) {
 		visEngine_Dijkstra.prevStep();
@@ -117,11 +124,11 @@ void Program::displayVisDijkstraScreenGUI() {
 	}
 	ImGui::EndDisabled();
 	ImGui::SameLine();
-	ImGui::BeginDisabled(!visEngine_Dijkstra.animPaused);
+	// ImGui::BeginDisabled(!visEngine_Dijkstra.animPaused);
 	if (ImGui::Button("Skip to Final")) {
 		visEngine_Dijkstra.skipToFinalState();
 	}
-	ImGui::EndDisabled();
+	// ImGui::EndDisabled();
 
 	ImGui::Separator();
 

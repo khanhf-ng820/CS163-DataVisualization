@@ -311,11 +311,11 @@ void Program::displayVisSLLScreenGUI() {
 	// -- SPEED/PAUSE/STEP MENU
 	ImGui::SliderFloat("Animation Speed", &visEngine_SLL.dt, 0.001f, 0.499f);
 
-	ImGui::BeginDisabled(!visEngine_SLL.animPaused);
+	// ImGui::BeginDisabled(!visEngine_SLL.animPaused);
 	if (ImGui::Button("Skip to Start")) {
 		visEngine_SLL.skipToStartState();
 	}
-	ImGui::EndDisabled();
+	// ImGui::EndDisabled();
 	ImGui::SameLine();
 	ImGui::BeginDisabled(!visEngine_SLL.animPaused);
 	if (ImGui::Button("Previous Step")) {
@@ -334,11 +334,11 @@ void Program::displayVisSLLScreenGUI() {
 	}
 	ImGui::EndDisabled();
 	ImGui::SameLine();
-	ImGui::BeginDisabled(!visEngine_SLL.animPaused);
+	// ImGui::BeginDisabled(!visEngine_SLL.animPaused);
 	if (ImGui::Button("Skip to Final")) {
 		visEngine_SLL.skipToFinalState();
 	}
-	ImGui::EndDisabled();
+	// ImGui::EndDisabled();
 
 	ImGui::Separator();
 

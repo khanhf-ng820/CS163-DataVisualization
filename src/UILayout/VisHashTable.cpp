@@ -179,11 +179,11 @@ void Program::displayVisHashScreenGUI() {
 	// -- SPEED/PAUSE/STEP MENU
 	ImGui::SliderFloat("Animation Speed", &visEngine_Hash.dt, 0.001f, 0.499f);
 
-	ImGui::BeginDisabled(!visEngine_Hash.animPaused);
+	// ImGui::BeginDisabled(!visEngine_Hash.animPaused);
 	if (ImGui::Button("Skip to Start")) {
 		visEngine_Hash.skipToStartState();
 	}
-	ImGui::EndDisabled();
+	// ImGui::EndDisabled();
 	ImGui::SameLine();
 	ImGui::BeginDisabled(!visEngine_Hash.animPaused);
 	if (ImGui::Button("Previous Step")) {
@@ -202,11 +202,11 @@ void Program::displayVisHashScreenGUI() {
 	}
 	ImGui::EndDisabled();
 	ImGui::SameLine();
-	ImGui::BeginDisabled(!visEngine_Hash.animPaused);
+	// ImGui::BeginDisabled(!visEngine_Hash.animPaused);
 	if (ImGui::Button("Skip to Final")) {
 		visEngine_Hash.skipToFinalState();
 	}
-	ImGui::EndDisabled();
+	// ImGui::EndDisabled();
 
 	ImGui::Separator();
 

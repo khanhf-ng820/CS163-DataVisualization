@@ -105,11 +105,11 @@ void Program::displayVisMSTPrimScreenGUI() {
 	// -- SPEED/PAUSE/STEP MENU
 	ImGui::SliderFloat("Animation Speed", &visEngine_MSTPrim.dt, 0.001f, 0.499f);
 
-	ImGui::BeginDisabled(!visEngine_MSTPrim.animPaused);
+	// ImGui::BeginDisabled(!visEngine_MSTPrim.animPaused);
 	if (ImGui::Button("Skip to Start")) {
 		visEngine_MSTPrim.skipToStartState();
 	}
-	ImGui::EndDisabled();
+	// ImGui::EndDisabled();
 	ImGui::SameLine();
 	ImGui::BeginDisabled(!visEngine_MSTPrim.animPaused);
 	if (ImGui::Button("Previous Step")) {
@@ -128,11 +128,11 @@ void Program::displayVisMSTPrimScreenGUI() {
 	}
 	ImGui::EndDisabled();
 	ImGui::SameLine();
-	ImGui::BeginDisabled(!visEngine_MSTPrim.animPaused);
+	// ImGui::BeginDisabled(!visEngine_MSTPrim.animPaused);
 	if (ImGui::Button("Skip to Final")) {
 		visEngine_MSTPrim.skipToFinalState();
 	}
-	ImGui::EndDisabled();
+	// ImGui::EndDisabled();
 
 	ImGui::Separator();
 

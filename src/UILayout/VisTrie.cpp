@@ -179,11 +179,11 @@ void Program::displayVisTrieScreenGUI() {
 	// -- SPEED/PAUSE/STEP MENU
 	ImGui::SliderFloat("Animation Speed", &visEngine_Trie.dt, 0.001f, 0.499f);
 
-	ImGui::BeginDisabled(!visEngine_Trie.animPaused);
+	// ImGui::BeginDisabled(!visEngine_Trie.animPaused);
 	if (ImGui::Button("Skip to Start")) {
 		visEngine_Trie.skipToStartState();
 	}
-	ImGui::EndDisabled();
+	// ImGui::EndDisabled();
 	ImGui::SameLine();
 	ImGui::BeginDisabled(!visEngine_Trie.animPaused);
 	if (ImGui::Button("Previous Step")) {
@@ -202,11 +202,11 @@ void Program::displayVisTrieScreenGUI() {
 	}
 	ImGui::EndDisabled();
 	ImGui::SameLine();
-	ImGui::BeginDisabled(!visEngine_Trie.animPaused);
+	// ImGui::BeginDisabled(!visEngine_Trie.animPaused);
 	if (ImGui::Button("Skip to Final")) {
 		visEngine_Trie.skipToFinalState();
 	}
-	ImGui::EndDisabled();
+	// ImGui::EndDisabled();
 
 	ImGui::Separator();
 
