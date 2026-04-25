@@ -89,7 +89,7 @@ public:
 	int animStepIndex = 0; // first step
 	int oldAnimStepIndex = 0; // first step
 	float time = 0;
-	float dt = 0.005;
+	float dt = 0.010;
 	float targetTime = 0; // ONLY USE WHEN PAUSED
 
 	bool animPaused = false;

@@ -963,7 +963,7 @@ void SLLVisEngine::resetEngine() {
 	animStepIndex = 0; // first step
 	oldAnimStepIndex = 0; // first step
 	time = 0;
-	dt = 0.005;
+	dt = 0.010;
 	targetTime = 0; // ONLY USE WHEN PAUSED
 
 	animPaused = false;
