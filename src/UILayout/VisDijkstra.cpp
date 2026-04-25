@@ -88,7 +88,7 @@ void Program::displayVisDijkstraScreenGUI() {
 		// ImGuiWindowFlags_NoBackground
 	);
 	// -- GO BACK TO MAIN MENU BUTTON
-	if (ImGui::Button("<- Back to Main Menu")) {
+	if (ImGui::Button("<= Back to Main Menu")) {
 		programState = ProgramState::MAIN_MENU;
 		resizeView();
 	}
