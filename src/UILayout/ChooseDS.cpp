@@ -345,8 +345,13 @@ void Program::displayChooseDSMenuScreenGUI() {
 		case DSType::SINGLY_LINKED_LIST:
 			// Instructions
 			ImGui::Text("NOTE: Enter only a line of integers (short int), separated by space characters.");
-			ImGui::Text("%s", SLL_EXAMPLE);
+			ImGui::Text("Example:");
+			ImGui::InputTextMultiline("##readonlySLL_EXAMPLE", SLL_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+				ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 1.5f),
+				ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+			);
 
+			ImGui::Text("Enter custom data here:");
 			ImGui::InputTextMultiline("##CustomDataSLL", customDataSLLBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			dataString = std::string(customDataSLLBuf);
 			invalidDataCustom = !validDataSLLString(dataString);
@@ -354,8 +359,13 @@ void Program::displayChooseDSMenuScreenGUI() {
 		case DSType::HASH_TABLE:
 			// Instructions
 			ImGui::Text("NOTE: Enter only a line of integers (short int, denotes a filled slot) or the character \'N\' (denotes an empty slot), separated by space characters.");
-			ImGui::Text("%s", HASH_TABLE_EXAMPLE);
+			ImGui::Text("Example:");
+			ImGui::InputTextMultiline("##readonlyHASH_TABLE_EXAMPLE", HASH_TABLE_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+				ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 1.5f),
+				ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+			);
 
+			ImGui::Text("Enter custom data here:");
 			ImGui::InputTextMultiline("##CustomDataHash", customDataHashBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			dataString = std::string(customDataHashBuf);
 			invalidDataCustom = !validDataHashTableString(dataString);
@@ -363,8 +373,13 @@ void Program::displayChooseDSMenuScreenGUI() {
 		case DSType::AVL_TREE:
 			// Instructions
 			ImGui::Text("NOTE: Enter only a line of integers (short int), separated by space characters.");
-			ImGui::Text("%s", AVL_EXAMPLE);
+			ImGui::Text("Example:");
+			ImGui::InputTextMultiline("##readonlyAVL_EXAMPLE", AVL_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+				ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 1.5f),
+				ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+			);
 
+			ImGui::Text("Enter custom data here:");
 			ImGui::InputTextMultiline("##CustomDataAVL", customDataAVLBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			dataString = std::string(customDataAVLBuf);
 			invalidDataCustom = !validDataAVLString(dataString);
@@ -372,8 +387,13 @@ void Program::displayChooseDSMenuScreenGUI() {
 		case DSType::TRIE_TREE:
 			// Instructions
 			ImGui::Text("NOTE: Enter only a line of strings (containing ONLY lowercase a-z characters), separated by space characters.");
-			ImGui::Text("%s", TRIE_EXAMPLE);
+			ImGui::Text("Example:");
+			ImGui::InputTextMultiline("##readonlyTRIE_EXAMPLE", TRIE_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+				ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 1.5f),
+				ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+			);
 
+			ImGui::Text("Enter custom data here:");
 			ImGui::InputTextMultiline("##CustomDataTrie", customDataTrieBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			dataString = std::string(customDataTrieBuf);
 			invalidDataCustom = !validDataTrieString(dataString);
@@ -389,18 +409,31 @@ void Program::displayChooseDSMenuScreenGUI() {
 			switch (graphInitOption) {
 			case GraphReader::GraphInitMethod::ADJ_MATRIX:
 				ImGui::Text("NOTE: Enter V lines, each line containing V integers of positive weights (denotes an edge) or the integer 0 (denotes no edge).\n(V is the number of vertices.)");
-				ImGui::Text("%s", GRAPH_ADJ_MATRIX_EXAMPLE);
+				ImGui::Text("Example:");
+				ImGui::InputTextMultiline("##readonlyGRAPH_ADJ_MATRIX_EXAMPLE", GRAPH_ADJ_MATRIX_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+					ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 10.5f),
+					ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+				);
 				break;
 			case GraphReader::GraphInitMethod::ADJ_LIST:
 				ImGui::Text("NOTE: First line: a single integer V - the number of vertices.\nNext V lines: the i-th line (0-based indexed) describes vertex i.\nEach line contains pairs of integers (u, w), where u is a neighboring vertex and w is the weight of the edge to u.");
-				ImGui::Text("%s",GRAPH_ADJ_LIST_EXAMPLE);
+				ImGui::Text("Example:");
+				ImGui::InputTextMultiline("##readonlyGRAPH_ADJ_LIST_EXAMPLE", GRAPH_ADJ_LIST_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+					ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 11.5f),
+					ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+				);
 				break;
 			case GraphReader::GraphInitMethod::EDGE_LIST:
 				ImGui::Text("NOTE: First line: a single integer V - the number of vertices.\nNext lines: Each line contains triplets of integers (u, v, w), where u, v are neighboring vertices and w is the weight of that edge.");
-				ImGui::Text("%s",GRAPH_EDGE_LIST_EXAMPLE);
+				ImGui::Text("Example:");
+				ImGui::InputTextMultiline("##readonlyGRAPH_EDGE_LIST_EXAMPLE", GRAPH_EDGE_LIST_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+					ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 18.5f),
+					ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+				);
 				break;
 			}
 
+			ImGui::Text("Enter custom data here:");
 			ImGui::InputTextMultiline("##CustomDataMST", customDataMSTPrimBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			
 			dataString = std::string(customDataMSTPrimBuf);
@@ -417,18 +450,31 @@ void Program::displayChooseDSMenuScreenGUI() {
 			switch (graphInitOption) {
 			case GraphReader::GraphInitMethod::ADJ_MATRIX:
 				ImGui::Text("NOTE: Enter V lines, each line containing V integers of positive weights (denotes an edge) or the integer 0 (denotes no edge).\n(V is the number of vertices.)");
-				ImGui::Text("%s", GRAPH_ADJ_MATRIX_EXAMPLE);
+				ImGui::Text("Example:");
+				ImGui::InputTextMultiline("##readonlyGRAPH_ADJ_MATRIX_EXAMPLE", GRAPH_ADJ_MATRIX_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+					ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 10.5f),
+					ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+				);
 				break;
 			case GraphReader::GraphInitMethod::ADJ_LIST:
 				ImGui::Text("NOTE: First line: a single integer V - the number of vertices.\nNext V lines: the i-th line (0-based indexed) describes vertex i.\nEach line contains one or multiple pairs of integers (u, w), where u is a neighboring vertex and w is the weight of the edge to u.");
-				ImGui::Text("%s",GRAPH_ADJ_LIST_EXAMPLE);
+				ImGui::Text("Example:");
+				ImGui::InputTextMultiline("##readonlyGRAPH_ADJ_LIST_EXAMPLE", GRAPH_ADJ_LIST_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+					ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 11.5f),
+					ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+				);
 				break;
 			case GraphReader::GraphInitMethod::EDGE_LIST:
 				ImGui::Text("NOTE: First line: a single integer V - the number of vertices.\nNext lines: Each line contains a triplet of integers (u, v, w), representing an edge between vertices u and v with weight w.");
-				ImGui::Text("%s",GRAPH_EDGE_LIST_EXAMPLE);
+				ImGui::Text("Example:");
+				ImGui::InputTextMultiline("##readonlyGRAPH_EDGE_LIST_EXAMPLE", GRAPH_EDGE_LIST_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+					ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 18.5f),
+					ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+				);
 				break;
 			}
 
+			ImGui::Text("Enter custom data here:");
 			ImGui::InputTextMultiline("##CustomDataDijkstra", customDataDijkstraBuf, CUSTOM_DATA_BUF_SIZE, ImVec2(-1.0f, 200.0f));
 			
 			dataString = std::string(customDataDijkstraBuf);
@@ -454,15 +500,27 @@ void Program::displayChooseDSMenuScreenGUI() {
 			switch (graphInitOption) {
 			case GraphReader::GraphInitMethod::ADJ_MATRIX:
 				ImGui::Text("NOTE: Enter V lines, each line containing V integers of positive weights (denotes an edge) or the integer 0 (denotes no edge).\n(V is the number of vertices.)");
-				ImGui::Text("%s", GRAPH_ADJ_MATRIX_EXAMPLE);
+				ImGui::Text("Example:");
+				ImGui::InputTextMultiline("##readonlyGRAPH_ADJ_MATRIX_EXAMPLE", GRAPH_ADJ_MATRIX_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+					ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 10.5f),
+					ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+				);
 				break;
 			case GraphReader::GraphInitMethod::ADJ_LIST:
 				ImGui::Text("NOTE: First line: a single integer V - the number of vertices.\nNext V lines: the i-th line (0-based indexed) describes vertex i.\nEach line contains one or multiple pairs of integers (u, w), where u is a neighboring vertex and w is the weight of the edge to u.");
-				ImGui::Text("%s",GRAPH_ADJ_LIST_EXAMPLE);
+				ImGui::Text("Example:");
+				ImGui::InputTextMultiline("##readonlyGRAPH_ADJ_LIST_EXAMPLE", GRAPH_ADJ_LIST_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+					ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 11.5f),
+					ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+				);
 				break;
 			case GraphReader::GraphInitMethod::EDGE_LIST:
 				ImGui::Text("NOTE: First line: a single integer V - the number of vertices.\nNext lines: Each line contains a triplet of integers (u, v, w), representing an edge between vertices u and v with weight w.");
-				ImGui::Text("%s",GRAPH_EDGE_LIST_EXAMPLE);
+				ImGui::Text("Example:");
+				ImGui::InputTextMultiline("##readonlyGRAPH_EDGE_LIST_EXAMPLE", GRAPH_EDGE_LIST_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+					ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 18.5f),
+					ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+				);
 				break;
 			}
 
@@ -470,19 +528,35 @@ void Program::displayChooseDSMenuScreenGUI() {
 		// Instructions
 		case DSType::SINGLY_LINKED_LIST:
 			ImGui::Text("NOTE: Enter only a line of integers (short int), separated by space characters.");
-			ImGui::Text("%s", SLL_EXAMPLE);
+			ImGui::Text("Example:");
+			ImGui::InputTextMultiline("##readonlySLL_EXAMPLE", SLL_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+				ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 1.5f),
+				ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+			);
 			break;
 		case DSType::HASH_TABLE:
 			ImGui::Text("NOTE: Enter only a line of integers (short int, denotes a filled slot) or the character \'N\' (denotes an empty slot), separated by space characters.");
-			ImGui::Text("%s", HASH_TABLE_EXAMPLE);
+			ImGui::Text("Example:");
+			ImGui::InputTextMultiline("##readonlyHASH_TABLE_EXAMPLE", HASH_TABLE_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+				ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 1.5f),
+				ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+			);
 			break;
 		case DSType::AVL_TREE:
 			ImGui::Text("NOTE: Enter only a line of integers (short int), separated by space characters.");
-			ImGui::Text("%s", AVL_EXAMPLE);
+			ImGui::Text("Example:");
+			ImGui::InputTextMultiline("##readonlyAVL_EXAMPLE", AVL_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+				ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 1.5f),
+				ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+			);
 			break;
 		case DSType::TRIE_TREE:
 			ImGui::Text("NOTE: Enter only a line of strings (containing ONLY lowercase a-z characters), separated by space characters.");
-			ImGui::Text("%s", TRIE_EXAMPLE);
+			ImGui::Text("Example:");
+			ImGui::InputTextMultiline("##readonlyTRIE_EXAMPLE", TRIE_EXAMPLE, CUSTOM_DATA_BUF_SIZE,
+				ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 1.5f),
+				ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+			);
 			break;
 		default:
 			break;

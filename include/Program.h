@@ -32,6 +32,7 @@ extern "C" {
 #include <filesystem>
 #include <random>
 #include <chrono>
+#include <climits>
 
 namespace fs = std::filesystem;
 
