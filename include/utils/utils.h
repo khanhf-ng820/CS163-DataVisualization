@@ -73,7 +73,15 @@ inline const std::string trim(const std::string& str) {
 	return std::string(start, end);
 }
 
-// (for Trie)
+inline const void SetStringToClipboard(const std::string& text) {
+    sf::Clipboard::setString(text);
+}
+
+
+
+
+
+///// Trie utility functions
 inline const bool isLowercaseAZChar(const char c) {
 	return (c >= 'a' && c <= 'z'); // Must change this if changing Trie alphabet
 }

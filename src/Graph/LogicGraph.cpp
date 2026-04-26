@@ -92,3 +92,64 @@ void LogicGraph::printAdjList() const {
 		std::cerr << std::endl;
 	}
 }
+
+
+
+
+
+// Print graph to string
+std::string LogicGraph::printAdjMatString() const {
+    std::ostringstream oss;
+    // Create matrix initialized to 0
+    std::vector<std::vector<int>> mat(numVertex, std::vector<int>(numVertex, 0));
+
+    // Fill adj matrix
+    for (int i = 0; i < numVertex; i++) {
+        for (const auto& [to, weight] : adjList[i]) {
+            mat[i][to] = weight;
+        }
+    }
+
+    for (int i = 0; i < numVertex; i++) {
+        for (int j = 0; j < numVertex; j++) {
+            oss << mat[i][j] << ' ';
+        }
+        oss << '\n';
+    }
+
+    return oss.str();
+}
+
+std::string LogicGraph::printAdjListString() const {
+	std::ostringstream oss;
+	oss << numVertex << '\n';
+	for (int i = 0; i < numVertex; i++) {
+		for (const auto& [to, weight] : adjList[i]) {
+			oss << to << ' ' << weight << ' ';
+		}
+		oss << '\n';
+	}
+
+    return oss.str();
+}
+
+std::string LogicGraph::printEdgeListString() const {
+    std::ostringstream oss;
+
+    std::vector<std::tuple<int,int,int>> edges;
+
+    for (int i = 0; i < numVertex; i++) {
+        for (const auto& [to, weight] : adjList[i]) {
+            if (i < to) { // prevent duplicate edges
+                edges.emplace_back(i, to, weight);
+            }
+        }
+    }
+
+    oss << numVertex << '\n';
+    for (const auto& [u, v, w] : edges) {
+        oss << u << ' ' << v << ' ' << w << '\n';
+    }
+
+    return oss.str();
+}
