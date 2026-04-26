@@ -1,5 +1,6 @@
 #pragma once
 #include <random>
+#include <sstream>
 
 #include "Graph/VisualGraphVertex.h"
 #include "Graph/EdgeStruct.h"
@@ -32,6 +33,11 @@ public:
 	unsigned int getNumVertex() const;
 	// Print adjacency list
 	void printAdjList() const;
+
+	// Print graph to string
+	std::string printAdjMatString() const;
+	std::string printAdjListString() const;
+	std::string printEdgeListString() const;
 
 	// // Get vertex, knowing the ID
 	// LogicGraphVertex* getVertexID(int ID);
