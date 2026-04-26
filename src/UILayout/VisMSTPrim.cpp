@@ -138,120 +138,164 @@ void Program::displayVisMSTPrimScreenGUI() {
 
 
 
-	ImGui::Text("Hold right-click on a vertex to drag it.");
+	if (ImGui::BeginTabBar("PrimTabBar")) {
+	// ImGui::Text("Hold right-click on a vertex to drag it.");
 
-	// -- RUN MST_PRIM OPERATION --
-	ImGui::BeginDisabled(visEngine_MSTPrim.animInProgress);
-	ImGui::Text("Enter starting vertex:");
-	if (ImGui::InputInt("Start vertex", &visEngine_MSTPrim.startVertexIDInput)) {
-		visEngine_MSTPrim.startVertexIDInput = std::clamp(visEngine_MSTPrim.startVertexIDInput, 
-			0, 
-			static_cast<int>(visEngine_MSTPrim.graph.getNumVertex()) - 1);
+	if (ImGui::BeginTabItem("Operation")) {
+		// -- RUN MST_PRIM OPERATION --
+		ImGui::BeginDisabled(visEngine_MSTPrim.animInProgress);
+		ImGui::Text("Enter starting vertex:");
+		if (ImGui::InputInt("Start vertex", &visEngine_MSTPrim.startVertexIDInput)) {
+			visEngine_MSTPrim.startVertexIDInput = std::clamp(visEngine_MSTPrim.startVertexIDInput, 
+				0, 
+				static_cast<int>(visEngine_MSTPrim.graph.getNumVertex()) - 1);
+		}
+		// float f;
+		// ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+
+		if (ImGui::Button("Run Prim\'s algorithm")) {
+			visEngine_MSTPrim.startVertexID = visEngine_MSTPrim.startVertexIDInput;
+			visEngine_MSTPrim.visMode = PrimVisMode::MST_PRIM;
+
+			visEngine_MSTPrim.resetParams();
+			visEngine_MSTPrim.animPaused = false; // Auto un-pause
+
+			// Generate events
+			visEngine_MSTPrim.eventList = visEngine_MSTPrim.getEventsPrim(visEngine_MSTPrim.startVertexID);
+			std::cout << "run MSTPrim cool, " << visEngine_MSTPrim.eventList.size() << " events" << std::endl; // DEBUG
+		}
+		ImGui::EndDisabled();
+
+		ImGui::Separator();
+
+
+		// // -- INSERT OPERATION --
+		// ImGui::BeginDisabled(visEngine_MSTPrim.animInProgress);
+		// ImGui::Text("Enter key to insert:");
+		// ImGui::InputInt("Key to insert", &visEngine_MSTPrim.keyToInsertInput);
+
+		// if (ImGui::Button("Insert")) {
+		// 	visEngine_MSTPrim.keyToInsert = visEngine_MSTPrim.keyToInsertInput;
+		// 	visEngine_MSTPrim.visMode = PrimVisMode::INSERT;
+
+		// 	visEngine_MSTPrim.resetParams();
+		// 	visEngine_MSTPrim.animPaused = false; // Auto un-pause
+
+		// 	// visEngine_MSTPrim.insert(visEngine_MSTPrim.keyToInsert);
+		// 	// Generate events
+		// 	visEngine_MSTPrim.eventList = visEngine_MSTPrim.getEventsInsert(visEngine_MSTPrim.keyToInsert);
+		// 	std::cout << "insert MSTPrim tree cool" << std::endl; // DEBUG
+		// }
+		// ImGui::EndDisabled();
+
+		// ImGui::Separator();
+
+
+		// // -- REMOVE OPERATION --
+		// ImGui::BeginDisabled(visEngine_MSTPrim.animInProgress);
+		// ImGui::Text("Enter key of slot to remove:");
+		// ImGui::InputInt("Key to remove", &visEngine_MSTPrim.keyToRemoveInput);
+
+		// if (ImGui::Button("Remove")) {
+		// 	visEngine_MSTPrim.keyToRemove = visEngine_MSTPrim.keyToRemoveInput;
+		// 	visEngine_MSTPrim.visMode = PrimVisMode::REMOVE;
+
+		// 	visEngine_MSTPrim.resetParams();
+		// 	visEngine_MSTPrim.animPaused = false; // Auto un-pause
+
+		// 	// Generate events
+		// 	visEngine_MSTPrim.eventList = visEngine_MSTPrim.getEventsDelete(visEngine_MSTPrim.keyToRemove);
+		// 	std::cout << "remove MSTPrim tree cool" << std::endl; // DEBUG
+		// }
+		// ImGui::EndDisabled();
+
+		// ImGui::Separator();
+
+
+		// // -- UPDATE OPERATION --
+		// ImGui::BeginDisabled(visEngine_MSTPrim.animInProgress);
+		// ImGui::Text("Enter keys to update:");
+		// ImGui::InputInt("Old key", &visEngine_MSTPrim.oldKeyToUpdateInput);
+		// ImGui::InputInt("New key", &visEngine_MSTPrim.newKeyToUpdateInput);
+
+		// bool updatable = (visEngine_MSTPrim.tree.getNodeKey(visEngine_MSTPrim.oldKeyToUpdateInput) != nullptr);
+		// ImGui::BeginDisabled(!updatable);
+		// if (ImGui::Button("Update")) {
+		// 	visEngine_MSTPrim.keyToRemove = visEngine_MSTPrim.oldKeyToUpdateInput;
+		// 	visEngine_MSTPrim.keyToInsert = visEngine_MSTPrim.newKeyToUpdateInput;
+		// 	visEngine_MSTPrim.visMode = PrimVisMode::UPDATE;
+
+		// 	visEngine_MSTPrim.resetParams();
+		// 	visEngine_MSTPrim.animPaused = false; // Auto un-pause
+
+		// 	// Generate events
+		// 	// visEngine_MSTPrim.update(visEngine_MSTPrim.keyToRemove, visEngine_MSTPrim.keyToInsert);
+		// 	visEngine_MSTPrim.eventList = visEngine_MSTPrim.getEventsUpdate(visEngine_MSTPrim.keyToRemove, visEngine_MSTPrim.keyToInsert);
+		// 	std::cout << "update MSTPrim tree cool" << std::endl; // DEBUG
+		// }
+		// ImGui::EndDisabled();
+		// ImGui::EndDisabled();
+
+
+
+		// const char* items[] = { "Option 1", "Option 2", "Option 3", "Option 4" };
+		// static int current_item = 0;
+		// if (ImGui::BeginCombo("##mycombo", items[current_item])) { // Pass the "current" item name as the preview
+		// 	for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
+		// 		bool is_selected = (current_item == n);
+		// 		if (ImGui::Selectable(items[n], is_selected)) {
+		// 			current_item = n;
+		// 		}
+
+		// 		// Set the initial focus when opening the combo (scrolling + keyboard navigation)
+		// 		if (is_selected) {
+		// 			ImGui::SetItemDefaultFocus();
+		// 		}
+		// 	}
+		// 	ImGui::EndCombo();
+		// }
+
+		ImGui::EndTabItem();
 	}
-	// float f;
-	// ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
 
-	if (ImGui::Button("Run Prim\'s algorithm")) {
-		visEngine_MSTPrim.startVertexID = visEngine_MSTPrim.startVertexIDInput;
-		visEngine_MSTPrim.visMode = PrimVisMode::MST_PRIM;
 
-		visEngine_MSTPrim.resetParams();
-		visEngine_MSTPrim.animPaused = false; // Auto un-pause
 
-		// Generate events
-		visEngine_MSTPrim.eventList = visEngine_MSTPrim.getEventsPrim(visEngine_MSTPrim.startVertexID);
-		std::cout << "run MSTPrim cool, " << visEngine_MSTPrim.eventList.size() << " events" << std::endl; // DEBUG
+	// -- EXPORT DATA STRUCTURE TO STRING --
+	if (ImGui::BeginTabItem("Export")) {
+		static GraphReader::GraphInitMethod graphMSTPrimExportOption = GraphReader::GraphInitMethod::ADJ_MATRIX; // State variable to hold the selected option's value
+		ImGui::RadioButton("Adjacency Matrix", (int*)&graphMSTPrimExportOption, (int)GraphReader::GraphInitMethod::ADJ_MATRIX); // Value 0
+		ImGui::SameLine();
+		ImGui::RadioButton("Adjacency List", (int*)&graphMSTPrimExportOption, (int)GraphReader::GraphInitMethod::ADJ_LIST); // Value 1
+		ImGui::SameLine();
+		ImGui::RadioButton("Edge List", (int*)&graphMSTPrimExportOption, (int)GraphReader::GraphInitMethod::EDGE_LIST); // Value 2
+
+		std::string exportGraphString;
+		switch (graphMSTPrimExportOption) {
+		case GraphReader::GraphInitMethod::ADJ_MATRIX:
+			exportGraphString = visEngine_MSTPrim.graph.printAdjMatString();
+			break;
+		case GraphReader::GraphInitMethod::ADJ_LIST:
+			exportGraphString = visEngine_MSTPrim.graph.printAdjListString();
+			break;
+		case GraphReader::GraphInitMethod::EDGE_LIST:
+			exportGraphString = visEngine_MSTPrim.graph.printEdgeListString();
+			break;
+		}
+
+		if (ImGui::Button("Copy to Clipboard")) {
+			SetStringToClipboard(exportGraphString);
+		}
+		ImGui::InputTextMultiline("##readonlyGRAPH_EXPORT", exportGraphString.data(), exportGraphString.size() + 1U,
+			ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 11.5f),
+			ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll
+		);
+
+		ImGui::EndTabItem();
 	}
-	ImGui::EndDisabled();
-
-	ImGui::Separator();
 
 
-	// // -- INSERT OPERATION --
-	// ImGui::BeginDisabled(visEngine_MSTPrim.animInProgress);
-	// ImGui::Text("Enter key to insert:");
-	// ImGui::InputInt("Key to insert", &visEngine_MSTPrim.keyToInsertInput);
-
-	// if (ImGui::Button("Insert")) {
-	// 	visEngine_MSTPrim.keyToInsert = visEngine_MSTPrim.keyToInsertInput;
-	// 	visEngine_MSTPrim.visMode = PrimVisMode::INSERT;
-
-	// 	visEngine_MSTPrim.resetParams();
-	// 	visEngine_MSTPrim.animPaused = false; // Auto un-pause
-
-	// 	// visEngine_MSTPrim.insert(visEngine_MSTPrim.keyToInsert);
-	// 	// Generate events
-	// 	visEngine_MSTPrim.eventList = visEngine_MSTPrim.getEventsInsert(visEngine_MSTPrim.keyToInsert);
-	// 	std::cout << "insert MSTPrim tree cool" << std::endl; // DEBUG
-	// }
-	// ImGui::EndDisabled();
-
-	// ImGui::Separator();
-
-
-	// // -- REMOVE OPERATION --
-	// ImGui::BeginDisabled(visEngine_MSTPrim.animInProgress);
-	// ImGui::Text("Enter key of slot to remove:");
-	// ImGui::InputInt("Key to remove", &visEngine_MSTPrim.keyToRemoveInput);
-
-	// if (ImGui::Button("Remove")) {
-	// 	visEngine_MSTPrim.keyToRemove = visEngine_MSTPrim.keyToRemoveInput;
-	// 	visEngine_MSTPrim.visMode = PrimVisMode::REMOVE;
-
-	// 	visEngine_MSTPrim.resetParams();
-	// 	visEngine_MSTPrim.animPaused = false; // Auto un-pause
-
-	// 	// Generate events
-	// 	visEngine_MSTPrim.eventList = visEngine_MSTPrim.getEventsDelete(visEngine_MSTPrim.keyToRemove);
-	// 	std::cout << "remove MSTPrim tree cool" << std::endl; // DEBUG
-	// }
-	// ImGui::EndDisabled();
-
-	// ImGui::Separator();
-
-
-	// // -- UPDATE OPERATION --
-	// ImGui::BeginDisabled(visEngine_MSTPrim.animInProgress);
-	// ImGui::Text("Enter keys to update:");
-	// ImGui::InputInt("Old key", &visEngine_MSTPrim.oldKeyToUpdateInput);
-	// ImGui::InputInt("New key", &visEngine_MSTPrim.newKeyToUpdateInput);
-
-	// bool updatable = (visEngine_MSTPrim.tree.getNodeKey(visEngine_MSTPrim.oldKeyToUpdateInput) != nullptr);
-	// ImGui::BeginDisabled(!updatable);
-	// if (ImGui::Button("Update")) {
-	// 	visEngine_MSTPrim.keyToRemove = visEngine_MSTPrim.oldKeyToUpdateInput;
-	// 	visEngine_MSTPrim.keyToInsert = visEngine_MSTPrim.newKeyToUpdateInput;
-	// 	visEngine_MSTPrim.visMode = PrimVisMode::UPDATE;
-
-	// 	visEngine_MSTPrim.resetParams();
-	// 	visEngine_MSTPrim.animPaused = false; // Auto un-pause
-
-	// 	// Generate events
-	// 	// visEngine_MSTPrim.update(visEngine_MSTPrim.keyToRemove, visEngine_MSTPrim.keyToInsert);
-	// 	visEngine_MSTPrim.eventList = visEngine_MSTPrim.getEventsUpdate(visEngine_MSTPrim.keyToRemove, visEngine_MSTPrim.keyToInsert);
-	// 	std::cout << "update MSTPrim tree cool" << std::endl; // DEBUG
-	// }
-	// ImGui::EndDisabled();
-	// ImGui::EndDisabled();
-
-
-
-	// const char* items[] = { "Option 1", "Option 2", "Option 3", "Option 4" };
-	// static int current_item = 0;
-	// if (ImGui::BeginCombo("##mycombo", items[current_item])) { // Pass the "current" item name as the preview
-	// 	for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
-	// 		bool is_selected = (current_item == n);
-	// 		if (ImGui::Selectable(items[n], is_selected)) {
-	// 			current_item = n;
-	// 		}
-
-	// 		// Set the initial focus when opening the combo (scrolling + keyboard navigation)
-	// 		if (is_selected) {
-	// 			ImGui::SetItemDefaultFocus();
-	// 		}
-	// 	}
-	// 	ImGui::EndCombo();
-	// }
+	ImGui::EndTabBar();
+	}
 	ImGui::End();
 }
 
