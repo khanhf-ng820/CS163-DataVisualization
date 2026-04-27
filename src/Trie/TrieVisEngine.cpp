@@ -18,7 +18,7 @@ TrieVisEngine::TrieVisEngine(std::mt19937& rng, sf::RenderWindow* window, sf::Fo
 {
 	initInputBuffers();
 	std::uniform_int_distribution<size_t> size_distrib(TRIE_INIT_RANDOM_MIN_SIZE, TRIE_INIT_RANDOM_MAX_SIZE); // Number of words
-	std::uniform_int_distribution<size_t> wordLen_distrib(TRIE_INIT_WORD_MIN_LENGTH, TRIE_INIT_WORD_MAX_LENGTH);
+	std::uniform_int_distribution<size_t> wordLen_distrib(TRIE_INIT_RANDOM_WORD_MIN_LENGTH, TRIE_INIT_RANDOM_WORD_MAX_LENGTH);
 	std::uniform_int_distribution<int> char_distrib(TRIE_RANDOM_DISTRIB_KEY_MIN, TRIE_RANDOM_DISTRIB_KEY_MAX);
 
 	size_t wordCount = size_distrib(rng);
