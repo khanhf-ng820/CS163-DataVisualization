@@ -201,7 +201,7 @@ private:
 
 
 
-	constexpr static size_t CUSTOM_DATA_BUF_SIZE = 512;
+	constexpr static size_t CUSTOM_DATA_BUF_SIZE = 65536;
 
 	///// Input buffers for ImGui /////
 	char* buf = new char[25];
