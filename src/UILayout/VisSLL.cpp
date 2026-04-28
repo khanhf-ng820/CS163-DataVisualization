@@ -368,10 +368,10 @@ void Program::displayVisSLLScreenGUI() {
 	ImGui::InputInt("Value to insert", &visEngine_SLL.valToInsertInput);
 	ImGui::InputInt("Index to insert", &visEngine_SLL.idxToInsertInput);
 
-	bool idxOutOfRange = !(visEngine_SLL.idxToInsertInput >= 0 && visEngine_SLL.idxToInsertInput <= visEngine_SLL.size);
+	bool idxOutOfRange = !(visEngine_SLL.idxToInsertInput >= 0 && visEngine_SLL.idxToInsertInput < visEngine_SLL.size);
 	if (idxOutOfRange) {
 		if (visEngine_SLL.size > 0)
-			ImGui::Text("Index must be between 0 and %d.", visEngine_SLL.size);
+			ImGui::Text("Index must be between 0 and %d.", visEngine_SLL.size - 1);
 		else
 			ImGui::Text("Index must be 0.");
 	}
@@ -406,7 +406,7 @@ void Program::displayVisSLLScreenGUI() {
 	idxOutOfRange = !(visEngine_SLL.idxToUpdateInput >= 0 && visEngine_SLL.idxToUpdateInput < visEngine_SLL.size);
 	if (idxOutOfRange) {
 		if (visEngine_SLL.size > 1)
-			ImGui::Text("Index must be between 0 and %d.", visEngine_SLL.size);
+			ImGui::Text("Index must be between 0 and %d.", visEngine_SLL.size - 1);
 		else if (visEngine_SLL.size == 1)
 			ImGui::Text("Index must be 0.");
 		else
@@ -436,7 +436,7 @@ void Program::displayVisSLLScreenGUI() {
 	idxOutOfRange = !(visEngine_SLL.idxToRemoveInput >= 0 && visEngine_SLL.idxToRemoveInput < visEngine_SLL.size);
 	if (idxOutOfRange) {
 		if (visEngine_SLL.size > 1)
-			ImGui::Text("Index must be between 0 and %d.", visEngine_SLL.size);
+			ImGui::Text("Index must be between 0 and %d.", visEngine_SLL.size - 1);
 		else if (visEngine_SLL.size == 1)
 			ImGui::Text("Index must be 0.");
 		else
