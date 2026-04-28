@@ -139,9 +139,9 @@ void SLLVisEngine::addNodeDrawables(std::vector<std::unique_ptr<sf::Drawable>>& 
 		);
 
 		// Text inside node (usually value of node)
-		std::string valueTextStr = (visMode == SLLVisMode::UPDATE && eventSLL.type != SLLAnimType::UPDATE_CUR_VAL)
+		std::string valueTextStr = (visMode == SLLVisMode::UPDATE && eventSLL.type != SLLAnimType::UPDATE_CUR_VAL && index == idxToUpdate)
 								 ? std::to_string(oldUpdateVal) : std::to_string(cur->val);
-		auto valueText = std::make_unique<sf::Text>(font, std::to_string(cur->val), valueFontSize);
+		auto valueText = std::make_unique<sf::Text>(font, valueTextStr, valueFontSize);
 		sf::FloatRect localBounds = valueText->getLocalBounds();
 		valueText->setOrigin({localBounds.position.x + localBounds.size.x / 2.f, localBounds.position.y + localBounds.size.y / 2.f});
 		valueText->setFillColor(normalNodeColor);
